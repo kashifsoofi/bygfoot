@@ -352,7 +352,7 @@ treeview2_create_bets(GtkListStore *ls)
 			if(query_fixture_has_tables(fix))
 			{
 			    if(fix->clid < ID_CUP_START)
-				rank = team_get_league_rank(fix->teams[j]);
+				rank = team_get_league_rank(fix->teams[j], fix->clid);
 			    else
 				rank = team_get_cup_rank(fix->teams[j], 
 							 cup_get_last_tables_round(fix->clid), TRUE);
@@ -698,7 +698,7 @@ void
 treeview2_show_news(void)
 {
 #ifdef DEBUG
-    printf("treeview2_show_job_exchange\n");
+    printf("treeview2_show_news\n");
 #endif
 
     GtkTreeView *treeview = 
@@ -713,4 +713,157 @@ treeview2_show_news(void)
     treeview2_create_news(model);
     gtk_tree_view_set_model(treeview, GTK_TREE_MODEL(model));
     g_object_unref(model);        
+}
+
+/** Types of constants we use in the game, 
+    enum needed for displaying purposes. */
+enum
+{
+    CONSTANTS_TYPE_INT = 0,
+    CONSTANTS_TYPE_FLOAT,
+    CONSTANTS_TYPE_STRING,
+    CONSTANTS_TYPE_APP,
+    CONSTANTS_TYPE_END
+};
+
+GtkTreeModel*
+treeview2_create_constants(const GPtrArray *list, gint type)
+{
+#ifdef DEBUG
+    printf("treeview2_create_constants\n");
+#endif
+
+    gint i;
+    GtkTreeIter iter;
+    GtkListStore *ls;
+
+    switch(type)
+    {
+    default:
+        debug_print_message("treeview2_create_constants: unknown constants type\n");
+        return NULL;
+    case CONSTANTS_TYPE_INT:
+        ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+        break;
+    case CONSTANTS_TYPE_FLOAT:
+        ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_FLOAT);
+        break;
+    case CONSTANTS_TYPE_STRING:
+    case CONSTANTS_TYPE_APP:
+        ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+        break;
+    }	
+
+    for(i = 0; i < list->len; i++)
+    {
+	gtk_list_store_append(ls, &iter);
+        
+        if(type == CONSTANTS_TYPE_INT)
+            gtk_list_store_set(ls, &iter, 
+                               0, ((Option*)g_ptr_array_index(list, i))->name, 
+                               1, ((Option*)g_ptr_array_index(list, i))->value,
+                               -1);        
+        else if(type == CONSTANTS_TYPE_FLOAT)
+            gtk_list_store_set(ls, &iter, 
+                               0, ((Option*)g_ptr_array_index(list, i))->name, 
+                               1, (gfloat)((Option*)g_ptr_array_index(list, i))->value / OPTION_FLOAT_DIVISOR,
+                               -1);        
+        else
+            gtk_list_store_set(ls, &iter, 
+                               0, ((Option*)g_ptr_array_index(list, i))->name, 
+                               1, ((Option*)g_ptr_array_index(list, i))->string_value,
+                               -1);        
+    }
+
+    return GTK_TREE_MODEL(ls);
+}
+
+void
+treeview2_set_up_constants(GtkTreeView *treeview, gint type)
+{
+#ifdef DEBUG
+    printf("treeview2_set_up_constants\n");
+#endif
+
+    GtkTreeViewColumn   *col;
+    GtkCellRenderer     *renderer;
+    gchar *titles[2] =
+	{_("Name"),
+	 _("Value")};
+    gint i;
+
+    gtk_tree_selection_set_mode(gtk_tree_view_get_selection(treeview),
+				GTK_SELECTION_SINGLE);
+    gtk_tree_view_set_headers_visible(treeview, TRUE);
+    gtk_tree_view_set_rules_hint(treeview, TRUE);
+    gtk_tree_view_set_search_column(treeview, 0);
+    gtk_tree_view_set_search_equal_func(treeview,
+					treeview_helper_search_equal_strings,
+					NULL, NULL);
+
+    for(i = 0; i < 2; i++)
+    {
+        col = gtk_tree_view_column_new();
+        gtk_tree_view_column_set_title(col, titles[i]);
+        gtk_tree_view_append_column(treeview, col);
+        renderer = treeview_helper_cell_renderer_text_new();
+        gtk_tree_view_column_pack_start(col, renderer, TRUE);	
+        gtk_tree_view_column_add_attribute(col, renderer,
+                                           "text", i);
+        
+        if(i == 1)
+        {
+            g_object_set(renderer, "editable", TRUE, NULL);
+            g_signal_connect (renderer,
+                              "edited",
+                              (type == CONSTANTS_TYPE_APP) ?
+                              G_CALLBACK (treeview_helper_constants_app_editing_done) :
+                              G_CALLBACK (treeview_helper_constants_editing_done),
+                              treeview);
+        }
+    }
+}
+
+/** Show the news in the news treeview. */
+void
+treeview2_show_constants(void)
+{
+#ifdef DEBUG
+    printf("treeview2_show_constants\n");
+#endif
+
+    gint i;
+    GtkTreeView *treeview[4] = 
+        {GTK_TREE_VIEW(lookup_widget(window.constants, "treeview_constants_integer")),
+         GTK_TREE_VIEW(lookup_widget(window.constants, "treeview_constants_float")),
+         GTK_TREE_VIEW(lookup_widget(window.constants, "treeview_constants_string")),
+         GTK_TREE_VIEW(lookup_widget(window.constants, "treeview_constants_app"))};
+    GtkTreeModel *model;
+    GPtrArray *list[4] =
+        {g_ptr_array_new(),
+         g_ptr_array_new(),
+         g_ptr_array_new(),
+         g_ptr_array_new()};
+    
+    for(i = 0; i < constants.list->len; i++)
+        if(g_str_has_prefix(g_array_index(constants.list, Option, i).name, "int_"))
+            g_ptr_array_add(list[CONSTANTS_TYPE_INT], &g_array_index(constants.list, Option, i));
+        else if(g_str_has_prefix(g_array_index(constants.list, Option, i).name, "float_"))
+            g_ptr_array_add(list[CONSTANTS_TYPE_FLOAT], &g_array_index(constants.list, Option, i));
+        else
+            g_ptr_array_add(list[CONSTANTS_TYPE_STRING], &g_array_index(constants.list, Option, i));
+
+    for(i = 0; i < constants_app.list->len; i++)
+        g_ptr_array_add(list[CONSTANTS_TYPE_APP], &g_array_index(constants_app.list, Option, i));
+
+    for(i = 0; i < 4; i++)
+    {
+        treeview_helper_clear(treeview[i]);
+        treeview2_set_up_constants(treeview[i], i);
+        model = treeview2_create_constants(list[i], i);
+        gtk_tree_view_set_model(treeview[i], model);
+        g_object_unref(model);        
+
+        g_ptr_array_free(list[i], TRUE);
+    }        
 }

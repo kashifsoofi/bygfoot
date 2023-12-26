@@ -423,7 +423,7 @@ league_remove_team_with_id(League *league, gint id)
 	    return;
 	}
 
-    g_warning("league_remove_team_with_id: team with id %d in league %s not found\n",
+    debug_print_message("league_remove_team_with_id: team with id %d in league %s not found\n",
 	      id, league->name);
 }
 
@@ -493,7 +493,7 @@ league_season_start(League *league)
     for(i=0;i<league->teams->len;i++)
     {
 	team_is_top = 
-	    (team_get_league_rank(&g_array_index(league->teams, Team, i)) <= 
+	    (team_get_league_rank(&g_array_index(league->teams, Team, i), -1) <= 
 	     user_champ_best_teams_limit && idx == 0 && user_champ);
 
 	team_change_factor = 

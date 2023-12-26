@@ -47,6 +47,7 @@ enum BooleanOptions
     BOOL_OPT_PROGRESSBAR_PICS,
     BOOL_OPT_SKIP,
     BOOL_OPT_AUTOSAVE,
+    BOOL_OPT_AUTO_STORE_RESTORE_DEFAULT_TEAM,
     BOOL_OPT_SHOW_LIVE,
     BOOL_OPT_SHOW_TENDENCY,
     BOOL_OPT_PAUSE_INJURY,
@@ -125,7 +126,9 @@ option_gui_write_bool_widgets(gint **bool_options, GtkToggleButton **bool_widget
     bool_widgets[BOOL_OPT_SAVE_OVERWRITE] = 
 	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_save_overwrite"));
     bool_options[BOOL_OPT_SAVE_OVERWRITE] = opt_intp("int_opt_save_will_overwrite");
-
+    bool_widgets[BOOL_OPT_AUTO_STORE_RESTORE_DEFAULT_TEAM] = 
+	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_store_restore_default_team"));
+    bool_options[BOOL_OPT_AUTO_STORE_RESTORE_DEFAULT_TEAM] = opt_user_intp("int_opt_user_store_restore_default_team");
     bool_widgets[BOOL_OPT_MAXIMIZE] = 
 	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_maximize"));
     bool_options[BOOL_OPT_MAXIMIZE] = opt_intp("int_opt_maximize_main_window");
@@ -560,7 +563,7 @@ option_gui_write_options(void)
 
 	if(i == ENTRY_OPT_CONSTANTS && 
 	   strcmp(gtk_entry_get_text(entry_widgets[i]), opt_str("string_opt_constants_file")) != 0)
-	    file_load_opt_file(gtk_entry_get_text(entry_widgets[i]), &constants);
+	    file_load_opt_file(gtk_entry_get_text(entry_widgets[i]), &constants, TRUE);
 	else if(i == ENTRY_OPT_FONT_NAME &&
 		strcmp(gtk_entry_get_text(entry_widgets[i]), opt_str("string_opt_font_name")) != 0)
 	    on_button_back_to_main_clicked(NULL, NULL);

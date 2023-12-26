@@ -24,11 +24,13 @@
 */
 
 #include "file.h"
+#include "option.h"
 #include "options_callbacks.h"
 #include "options_interface.h"
 #include "option_gui.h"
 #include "support.h"
 #include "training.h"
+#include "treeview2.h"
 #include "user.h"
 #include "variables.h"
 #include "window.h"
@@ -107,7 +109,7 @@ on_button_reload_constants_clicked     (GtkButton       *button,
     const gchar *constants_file =
 	gtk_entry_get_text(GTK_ENTRY(lookup_widget(window.options, "entry_constants_file")));
 
-    file_load_opt_file(constants_file, &constants);
+    file_load_opt_file(constants_file, &constants, TRUE);
 }
 
 
@@ -125,7 +127,7 @@ on_checkbutton_save_global_button_press_event
     {
 	gchar *conf_file = file_find_support_file("bygfoot.conf", TRUE);
 	
-	file_load_opt_file(conf_file, &options);
+	file_load_opt_file(conf_file, &options, FALSE);
 	g_free(conf_file);
 
 	option_gui_set_up_window();
@@ -186,4 +188,77 @@ on_spinbutton_recreation_value_changed (GtkSpinButton   *spinbutton,
     sprintf(buf, "%d", CAMP_SCALE_MAX - gtk_spin_button_get_value_as_int(spinbutton));
     
     gtk_label_set_text(GTK_LABEL(lookup_widget(window.options, "label_training")), buf);
+}
+
+void
+on_button_edit_constants_clicked       (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    window_show_constants();    
+}
+
+
+gboolean
+on_window_constants_destroy_event      (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+    on_button_constants_close_clicked(NULL, NULL);
+    return FALSE;
+}
+
+
+gboolean
+on_window_constants_delete_event       (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+    on_button_constants_close_clicked(NULL, NULL);
+    return FALSE;
+}
+
+
+void
+on_button_constants_reload_clicked     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    if(gtk_notebook_get_current_page(
+           GTK_NOTEBOOK(lookup_widget(GTK_WIDGET(button), "notebook_constants"))) == 3)
+        file_load_opt_file(opt_str("string_opt_appearance_file"),
+                           &constants_app, TRUE);
+    else
+        file_load_opt_file(opt_str("string_opt_constants_file"),
+                           &constants, TRUE);
+
+    treeview2_show_constants();
+}
+
+
+void
+on_button_constants_close_clicked      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    window_destroy(&window.constants);
+}
+
+
+void
+on_button_constants_save_clicked       (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    gchar buf[SMALL];
+
+    if(gtk_notebook_get_current_page(
+           GTK_NOTEBOOK(lookup_widget(GTK_WIDGET(button), "notebook_constants"))) == 3)
+    {
+        sprintf(buf, "%s%s%s", file_get_first_support_dir(),
+                G_DIR_SEPARATOR_S, opt_str("string_opt_appearance_file"));
+        file_save_opt_file(buf, &constants_app);
+    }
+    else
+    {
+        sprintf(buf, "%s%s%s", file_get_first_support_dir(),
+                G_DIR_SEPARATOR_S, opt_str("string_opt_constants_file"));
+        file_save_opt_file(buf, &constants);
+    }
 }

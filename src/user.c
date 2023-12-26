@@ -80,6 +80,7 @@ user_new(void)
 
     new.bets[0] = g_array_new(FALSE, FALSE, sizeof(BetUser));
     new.bets[1] = g_array_new(FALSE, FALSE, sizeof(BetUser));
+    new.default_team = g_array_new(FALSE, FALSE, sizeof(gint));
     return new;
 }
 
@@ -210,6 +211,7 @@ user_set_up_finances(User *user)
 	user->money_in[0][i] = user->money_in[1][i] = 0;
     
     user->debt = 
+    user->debt_interest = 
         user->alr_start_week =
         user->alr_weekly_installment = 0;
     user->money = 
@@ -407,7 +409,7 @@ user_weekly_update_counters(User *user)
     printf("user_weekly_update_counters\n");
 #endif
 
-    gint rank = team_get_league_rank(user->tm);
+    gint rank = team_get_league_rank(user->tm, -1);
     gint teamslen = ((GArray*)(league_cup_get_teams(user->tm->clid)))->len;
     gint rank_bounds[2] = 
 	{(gint)rint(const_float("float_user_success_table_bound_upper") *
@@ -550,14 +552,14 @@ user_event_show_next(void)
     switch(event->type)
     {
 	default:
-	    g_warning("user_event_show_next: unknown event type %d\n", event->type);
+	    debug_print_message("user_event_show_next: unknown event type %d\n", event->type);
 	    break;
 	case EVENT_TYPE_PLAYER_LEFT:
 	    game_gui_show_warning(_("%s has left your team because his contract expired."),
 		    event->value_string);
 	    break;
 	case EVENT_TYPE_WARNING:
-	    game_gui_show_warning(event->value_string);
+	    game_gui_show_warning(event->value_string, NULL);
 	    break;
 	case EVENT_TYPE_FIRE_FINANCE:
 	    game_gui_show_job_offer((Team*)event->value_pointer, NULL,
@@ -634,7 +636,7 @@ user_event_show_next(void)
 	    else
 		player_remove_from_team(event->user->tm, player_id_index(event->user->tm, event->value1));
 	    treeview_show_user_player_list();
-	    game_gui_show_warning(buf);
+	    game_gui_show_warning(buf,NULL);
 	    break;
 	case EVENT_TYPE_CHARITY:
 	    game_gui_show_warning(_("The team owners are very satisfied with your financial management. Since the team's been earning a lot of money lately, they decide to donate half of it to charity."));
@@ -819,7 +821,7 @@ user_history_to_string(const UserHistory *history, gchar *buf)
     switch(history->type)
     {
 	default:
-	    g_warning("user_history_to_string: unknown history type %d.\n", history->type);
+	    debug_print_message("user_history_to_string: unknown history type %d.\n", history->type);
 	    strcpy(buf, "FIXME!!!");
 	case USER_HISTORY_START_GAME:
 	    /* Buy a team in a league. */
@@ -1115,7 +1117,7 @@ user_show_sponsor_continue(void)
 
     sponsor = user_get_sponsor(&current_user);
 
-    g_string_printf(sponsor.name, current_user.sponsor.name->str);
+    g_string_printf(sponsor.name, current_user.sponsor.name->str, NULL);
     
     g_array_append_val(sponsors, sponsor);
 
@@ -1308,4 +1310,46 @@ user_mm_export_file(const gchar *filename)
     user_mm_save_file(buf, mmatches);
 
     g_array_free(mmatches, TRUE);
+}
+
+/**
+ * This will store the default team of a user
+ */
+void
+store_default_team(User *user)
+{
+#ifdef DEBUG
+    printf("store_player_order\n");
+#endif
+
+    gint i;
+    user->default_team = g_array_sized_new(FALSE, FALSE, sizeof(gint), user->tm->players->len);
+    for (i = 0; i < user->tm->players->len; i++) {
+       g_array_append_val(user->default_team, g_array_index(user->tm->players, Player, i).id);
+    }
+    user->default_structure = user->tm->structure;
+}
+
+/**
+ * This will restore the default team
+ */
+void
+restore_default_team(User *user)
+{
+#ifdef DEBUG
+    printf("restore_player_order\n");
+#endif
+
+    gint i, player1, player2;
+    for (i=0;i<user->tm->players->len; i++){
+        player1 = g_array_index(user->default_team, gint, i);
+        player2 = g_array_index(user->tm->players, Player, i).id;
+        if (player1 != player2) {
+            player_swap(user->tm,player_id_index(user->tm,player1), user->tm, player_id_index(user->tm,player2)); 
+        }
+    }
+    team_change_structure(user->tm, user->default_structure);
+    user->default_structure=-1;
+    g_array_free(user->default_team, TRUE);
+    user->default_team = g_array_new(FALSE, FALSE, sizeof(gint));
 }

@@ -46,7 +46,7 @@ gboolean
 file_get_next_opt_line(FILE *fil, gchar *opt_name, gchar *opt_value);
 
 void
-file_load_opt_file(const gchar *filename, OptionList *optionlist);
+file_load_opt_file(const gchar *filename, OptionList *optionlist, gboolean sort);
 
 void
 file_save_opt_file(const gchar *filename, OptionList *optionlist);
@@ -114,5 +114,8 @@ file_load_text_from_saves(const gchar *filename);
 
 void
 file_store_text_in_saves(const gchar *filename, const gchar *text);
+
+gchar*
+file_get_mac_resource_path(const gchar *resource);
 
 #endif

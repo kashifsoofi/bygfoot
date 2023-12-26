@@ -342,8 +342,8 @@ cup_load_choose_team(Cup *cup, GPtrArray *teams, GPtrArray *teams_sorted, const 
     const Cup *cup_temp = NULL;
 
     if(debug > 60)
-	g_print("cup_load_choose_team: %s, %s \n", cup->name,
-	       ct->sid);
+	g_print("cup_load_choose_team: %s, %s, teams %d to %d, random: %d \n", cup->name,
+                ct->sid, ct->start_idx, ct->end_idx, ct->randomly);
 
     cup_get_choose_team_league_cup(ct, &league, &cup_temp);
 
@@ -500,7 +500,8 @@ cup_load_choose_team_from_league(Cup *cup, const League *league,
         for(j = 0; j < end; j++)
         {
             if(debug > 80)
-                g_print("team %s isinint %d numteams %d\n",
+                g_print("j %d order %d team %s isinint %d numteams %d\n",
+                        j, order[j],
                         team_of_id(g_array_index(table->elements, 
                                                  TableElement, order[j]).team_id)->name,
                         query_team_is_in_cups(
@@ -836,19 +837,19 @@ cup_get_first_week_of_cup_round(Cup *cup, gint cup_round, gboolean with_delay)
 
     if(week_number <= 0)
     {
-	g_warning("cup_get_first_week_of_cup_round: First week of cup %s, cup round %d is not positive (%d). Please correct the cup definition file!!!\n",
+	debug_print_message("cup_get_first_week_of_cup_round: First week of cup %s, cup round %d is not positive (%d). Please correct the cup definition file!!!\n",
 		  cup->name, cup_round, week_number);
 	
 	if(cup->week_gap > 1)
 	{
 	    cup->week_gap--;
-	    g_warning("Lowering week gap to %d and trying again.\n",
+	    debug_print_message("Lowering week gap to %d and trying again.\n",
 		      cup->week_gap);
 	}
 	else
 	{
 	    cup->last_week++;
-	    g_warning("Increasing last week to %d and trying again.\n",
+	    debug_print_message("Increasing last week to %d and trying again.\n",
 		      cup->last_week);
 	}
 
@@ -1250,7 +1251,7 @@ cup_check_fixtures(const Cup *cup)
            g_array_index(cup->fixtures, Fixture, i).teams[1])
         {
             if(!query_league_cup_has_property(cup->id, "silent_on_fixture_error"))
-                g_warning("cup_check_fixture: bad fixture found in cup %s; cup will be disabled\n", cup->name);
+                debug_print_message("cup_check_fixture: bad fixture found in cup %s; cup will be disabled\n", cup->name);
 
             return FALSE;
         }

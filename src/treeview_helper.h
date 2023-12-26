@@ -215,11 +215,18 @@ treeview_helper_bet_odds(GtkTreeViewColumn *col,
 			 gpointer           user_data);
 
 gboolean
-treeview_helper_search_equal(GtkTreeModel *model,
-			     gint column,
-			     const gchar *key,
-			     GtkTreeIter *iter,
-			     gpointer search_data);
+treeview_helper_search_equal_teams(GtkTreeModel *model,
+                                   gint column,
+                                   const gchar *key,
+                                   GtkTreeIter *iter,
+                                   gpointer search_data);
+
+gboolean
+treeview_helper_search_equal_strings(GtkTreeModel *model,
+                                     gint column,
+                                     const gchar *key,
+                                     GtkTreeIter *iter,
+                                     gpointer search_data);
 
 void
 treeview_helper_job_exchange(GtkTreeViewColumn *col,
@@ -242,5 +249,32 @@ treeview_helper_news_additional(GtkTreeViewColumn *col,
                                 GtkTreeModel      *model,
                                 GtkTreeIter       *iter,
                                 gpointer           user_data);
+
+void
+treeview_helper_player_name_editing_done(GtkCellRendererText *renderer,
+                                         gchar               *path,
+                                         gchar               *new_text,
+                                         gpointer             user_data);
+void
+treeview_helper_player_name_editing_started(GtkCellRenderer *renderer,
+                                            GtkCellEditable *editable,
+                                            gchar           *path,
+                                            gpointer         user_data);
+
+void
+treeview_helper_player_name_editing_canceled(GtkCellRendererText *renderer,
+                                             gpointer             user_data);
+
+void
+treeview_helper_constants_editing_done(GtkCellRendererText *renderer,
+                                       gchar               *path,
+                                       gchar               *new_text,
+                                       gpointer             user_data);
+
+void
+treeview_helper_constants_app_editing_done(GtkCellRendererText *renderer,
+                                           gchar               *path,
+                                           gchar               *new_text,
+                                           gpointer             user_data);
 
 #endif

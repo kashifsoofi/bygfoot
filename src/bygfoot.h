@@ -1,47 +1,55 @@
 /*
-   bygfoot.h
+  bygfoot.h
 
-   Bygfoot Football Manager -- a small and simple GTK2-based
-   football management game.
+  Bygfoot Football Manager -- a small and simple GTK2-based
+  football management game.
 
-   http://bygfoot.sourceforge.net
+  http://bygfoot.sourceforge.net
 
-   Copyright (C) 2005  Gyözö Both (gyboth@bygfoot.com)
+  Copyright (C) 2005  Gyözö Both (gyboth@bygfoot.com)
 
-   This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License
-   as published by the Free Software Foundation; either version 2
-   of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #ifndef BYGFOOT_H
 #define BYGFOOT_H
 
+//#define MAC_BUILD
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef MAC_BUILD
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
+#endif
+#else
+#  include "config.h"
+#include <Carbon/Carbon.h>
 #endif
 
 #include <gtk/gtk.h>
 #include "gettext_macros.h"
+#include "debug.h"
 
 /**
  * Program version number and year (copyright).
  */
-#define VERS "2.3.1"
-#define YEAR "2005 - 2008"
+#define VERS "2.3.2"
+#define YEAR "2005 - 2009"
 
 /** Home dir name */
 //#define HOMEDIRNAME ".bygfoot-cvs"
@@ -90,7 +98,7 @@
 #define stat4 status[4]
 #define stat5 status[5]
 
-#define debug const_int("int_debug")
+#define debug debug_level
 #define debug_writer const_int("int_debug_writer")
 /* Uncommenting this will cause each function to print its name when it's entered.
    Makes the whole program really slow, of course. */
@@ -160,6 +168,7 @@ typedef struct
 	*job_offer,
 	*yesno,
 	*options,
+        *constants,
 	*font_sel,
 	*file_chooser,
 	*contract,

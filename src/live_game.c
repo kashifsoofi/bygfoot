@@ -100,6 +100,7 @@ live_game_calculate_fixture(Fixture *fix, LiveGame *live_game)
 	if(stat2 != -1 || stat5 < -1000)
 	    lg_commentary_free_tokens();
 	game_post_match(fix);
+        stat0 = STATUS_NONE;
     }
     else if(stat0 == STATUS_LIVE_GAME_CHANGE)
 	live_game_resume();
@@ -168,7 +169,7 @@ live_game_create_unit(void)
 
     if(uni(unis->len - 1).event.type == LIVE_GAME_EVENT_END_MATCH)
     {
-	g_warning("live_game_create_unit: called after end of match.\n");
+	debug_print_message("live_game_create_unit: called after end of match.\n");
 	return;
     }
 
@@ -232,9 +233,6 @@ live_game_fill_new_unit(LiveGameUnit *new)
 	(1 + (const_float("float_player_boost_injury_effect") *
 	      (tm0->boost != 0 || tm1->boost != 0)));
 
-    foul_event_prob = const_float("float_live_game_foul") *
-	(1 + (tm0->boost + tm1->boost) * const_float("float_team_boost_foul_factor"));
-
     new->possession = old->possession;
 
     if(old->event.type == LIVE_GAME_EVENT_GENERAL)
@@ -243,6 +241,8 @@ live_game_fill_new_unit(LiveGameUnit *new)
     if(new->area == LIVE_GAME_UNIT_AREA_ATTACK)
 	scoring_chance = const_float("float_live_game_scoring_chance") *
 	    live_game_pit_teams(new, const_float("float_live_game_scoring_chance_team_exponent"));
+
+    foul_event_prob = game_get_foul_prob(match, new);
 
     if(rndom < foul_event_prob)
 	new->event.type = LIVE_GAME_EVENT_FOUL;
@@ -347,7 +347,7 @@ live_game_evaluate_unit(LiveGameUnit *unit)
 	    misc_callback_pause_live_game();
     }
     else if(type != LIVE_GAME_EVENT_END_MATCH)
-	g_warning("live_game_evaluate_unit: unknown event type %d\n",
+	debug_print_message("live_game_evaluate_unit: unknown event type %d\n",
 		  type);
 }
 
@@ -360,6 +360,7 @@ live_game_event_foul(void)
 #endif
 
     gfloat rndom = math_rnd(0, 1);
+    gfloat reduction_factor = 1;
     gint type, fouled_player, foul_player, foul_team;
 
     if((debug > 100 && stat2 != -1) ||
@@ -393,16 +394,22 @@ live_game_event_foul(void)
 			    last_unit.area, 0, -1, FALSE);
     }
 
-    if(rndom < const_float("float_live_game_foul_red_injury"))
+    /* Probability of hard foul gets reduced if the player is already booked, except when boost is on. */
+    if(tms[foul_team]->boost != 1 && 
+       player_of_id_team(tms[foul_team], foul_player)->card_status == PLAYER_CARD_STATUS_YELLOW)
+        reduction_factor = 1 - const_float("float_live_game_foul_booked_reduction");
+
+    if(rndom < const_float("float_live_game_foul_red_injury") * reduction_factor)
 	type = LIVE_GAME_EVENT_FOUL_RED_INJURY;
-    else if(rndom < const_float("float_live_game_foul_red"))
+    else if(rndom < const_float("float_live_game_foul_red") * reduction_factor)
 	type = LIVE_GAME_EVENT_FOUL_RED;
-    else if(rndom < const_float("float_live_game_foul_yellow"))
+    else if(rndom < const_float("float_live_game_foul_yellow") * reduction_factor)
     {
 	type = LIVE_GAME_EVENT_FOUL_YELLOW;
 	player_card_set(player_of_id_team(tms[foul_team], foul_player),
 			match->fix->clid, PLAYER_VALUE_CARD_YELLOW, 1, TRUE);
 	player_of_id_team(tms[foul_team], foul_player)->career[PLAYER_VALUE_CARD_YELLOW]++;
+        player_of_id_team(tms[foul_team], foul_player)->card_status = PLAYER_CARD_STATUS_YELLOW;
     }
     else
 	type = LIVE_GAME_EVENT_FOUL;
@@ -420,6 +427,7 @@ live_game_event_foul(void)
 				 query_live_game_second_yellow(foul_team, foul_player));
 	if(type == LIVE_GAME_EVENT_FOUL_RED_INJURY)
 	    live_game_event_injury(!foul_team, fouled_player, TRUE);
+        player_of_id_team(tms[foul_team], foul_player)->card_status = PLAYER_CARD_STATUS_RED;
     }
 
     if(last_unit.area == LIVE_GAME_UNIT_AREA_ATTACK && foul_team !=
@@ -1450,7 +1458,7 @@ live_game_unit_before(const LiveGameUnit* unit, gint gap)
 		if(i - gap > 0)
 		    return &uni(i - gap);
 		else
-		    g_warning("live_game_unit_before: no unit found for gap %d\n", gap);
+		    debug_print_message("live_game_unit_before: no unit found for gap %d\n", gap);
 	    }
     }
     else
@@ -1461,7 +1469,7 @@ live_game_unit_before(const LiveGameUnit* unit, gint gap)
 		if(i + gap < unis->len - 1)
 		    return &uni(i + gap);
 		else
-		    g_warning("live_game_unit_before: no unit found for gap %d\n", gap);
+		    debug_print_message("live_game_unit_before: no unit found for gap %d\n", gap);
 	    }
     }
 
@@ -1718,12 +1726,12 @@ live_game_reset(LiveGame *live_game, Fixture *fix, gboolean free_variable)
 #ifdef DEBUG
     printf("live_game_reset\n");
 #endif
-
     gint i;
 
     if(free_variable)
 	free_live_game(live_game);
 
+    live_game->started_game = -1;
     live_game->units = g_array_new(FALSE, FALSE, sizeof(LiveGameUnit));
     live_game->action_ids[0] = g_array_new(FALSE, FALSE, sizeof(gint));
     live_game->action_ids[1] = g_array_new(FALSE, FALSE, sizeof(gint));
@@ -1733,7 +1741,7 @@ live_game_reset(LiveGame *live_game, Fixture *fix, gboolean free_variable)
 	live_game->stats.players[0][i] = g_ptr_array_new();
 	live_game->stats.players[1][i] = g_ptr_array_new();
     }
-
+    live_game->stats.possession = 0;
     for(i=0;i<LIVE_GAME_STAT_VALUE_END;i++)
 	live_game->stats.values[0][i] =
 	    live_game->stats.values[1][i] = 0;

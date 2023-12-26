@@ -61,6 +61,14 @@
 #include "window.h"
 #include "xml_strategy.h"
 
+#define DEBUG_LEVEL_DEFAULT 0
+
+#if defined(MAC_BUILD) || defined(G_OS_WIN32)
+#define DEBUG_OUTPUT_DEFAULT 2
+#else
+#define DEBUG_OUTPUT_DEFAULT 0
+#endif
+
 /** Whether the last save gets loaded at startup
     (cl switch -l). */
 gboolean load_last_save;
@@ -76,10 +84,9 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
     gboolean testcom = FALSE, calodds = FALSE;
     gchar *support_dir = NULL, *lang = NULL,
 	*testcom_file = NULL, *token_file = NULL, 
-	*event_name = NULL, *debug_text = NULL,
+	*event_name = NULL,
         *country_sid = NULL;
-    gint deb_level = -1, number_of_passes = 1,
-	deb_writer = -1,
+    gint number_of_passes = 1,
 	num_matches = 100, skilldiffmax = 20;
     GError *error = NULL;
     GOptionContext *context = NULL;
@@ -92,10 +99,6 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 	 { "country", 'c', 0, G_OPTION_ARG_STRING, &country_sid, _("String id of the country to load"), "SID" },
 
 	 { "lang", 'L', 0, G_OPTION_ARG_STRING, &lang, _("Language to use (a code like 'de')"), "CODE" },
-
-	 { "debug-level", 'd', 0, G_OPTION_ARG_INT, &deb_level, "[developer] Debug level to use", "N" },
-
-	 { "debug-writer", 'w', 0, G_OPTION_ARG_INT, &deb_writer, "[developer] Debug writer level to use", "N" },
 
 	 { "testcom", 't', 0, G_OPTION_ARG_NONE, &testcom, _("Test an XML commentary file"), NULL },
 
@@ -114,7 +117,7 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 	 { "num-passes", 'n', 0, G_OPTION_ARG_INT, &number_of_passes,
 	   _("How many commentaries to generate per event"), "N" },
 
-	 { "calodds", 'o', 0, G_OPTION_ARG_NONE, &calodds,
+	 { "calodds", 'O', 0, G_OPTION_ARG_NONE, &calodds,
 	   "[developer] Calibrate the betting odds by simulating a lot of matches", NULL },
 
 	 { "num-matches", 'm', 0, G_OPTION_ARG_INT, &num_matches,
@@ -122,9 +125,6 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 
 	 { "num-skilldiff", 'S', 0, G_OPTION_ARG_INT, &skilldiffmax,
 	   "[developer] How many skill diff steps to take", "N" },
-
-	 { "deb", 'D', 0, G_OPTION_ARG_STRING, &debug_text,
-	   "[developer] A debug command like 'deb100 to set the debug level'; see the debug window and debug.c", "STRING" },
 
 	 {NULL}};
 
@@ -137,7 +137,11 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
     g_option_context_parse(context, argc, argv, &error);
     g_option_context_free(context);
 
-    misc_print_error(&error, TRUE);
+    if(error != NULL)
+    {
+        misc_print_error(&error, FALSE);
+        return;
+    }
 
     if(calodds)
     {
@@ -162,15 +166,6 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 	g_free(support_dir);
     }
 
-    if(deb_level != -1)
-    {
-	option_set_int("int_debug", &constants, deb_level);
-        window_create(WINDOW_DEBUG);
-    }
-
-    if(deb_writer != -1)
-	option_set_int("int_debug_writer", &constants, deb_writer);
-
     if(lang != NULL)
     {
 	language_set(language_get_code_index(lang) + 1);
@@ -178,14 +173,63 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
         g_free(lang);
     }
 
-    if(debug_text != NULL)
-	statp = debug_text;
-
     if(country_sid != NULL)
     {
         country.sid = g_strdup(country_sid);
         g_free(country_sid);
     }
+}
+
+/** Parse the command line arguments given by the user. */
+void
+main_parse_debug_cl_arguments(gint *argc, gchar ***argv)
+{
+#ifdef DEBUG
+    printf("main_parse_debug_cl_arguments\n");
+#endif
+
+    gint deb_level = -1,
+	deb_output = -1;
+    gchar *debug_text = NULL;
+    GError *error = NULL;
+    GOptionContext *context = NULL;
+    GOptionEntry entries[] =
+	{{ "debug-level", 'd', 0, G_OPTION_ARG_INT, &deb_level, "[developer] Debug level to use", "N" },
+	 { "debug-output", 'o', 0, G_OPTION_ARG_INT, &deb_output, "[developer] Debug output to use", "0, 1 or 2" },	 
+	 { "deb", 'D', 0, G_OPTION_ARG_STRING, &debug_text, 
+           "[developer] A debug command like 'deb100 to set the debug level'; see the debug window and debug.c", "STRING" },
+	 {NULL}};
+
+    debug_level = DEBUG_LEVEL_DEFAULT;
+    debug_output = DEBUG_OUTPUT_DEFAULT;
+
+    if(argc == NULL || argv == NULL)
+	return;
+
+    context = g_option_context_new(_("- a simple and addictive GTK2 football manager"));
+    g_option_context_set_ignore_unknown_options(context, TRUE);
+    g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
+    g_option_context_add_group(context, gtk_get_option_group (TRUE));
+    g_option_context_parse(context, argc, argv, &error);
+    g_option_context_free(context);
+
+    if(error != NULL)
+    {
+        misc_print_error(&error, FALSE);
+        return;
+    }
+
+    if(deb_level != -1)
+    {
+        debug_level = deb_level;
+        window_create(WINDOW_DEBUG);
+    }
+
+    if(deb_output != -1)
+	debug_output = deb_output;
+
+    if(debug_text != NULL)
+	statp = debug_text;
 }
 
 /**
@@ -294,28 +338,36 @@ main_init(gint *argc, gchar ***argv)
 #endif
 
     gchar buf[SMALL];
-    gchar *pwd = g_get_current_dir();
+    gchar *dir;
+
+    support_directories = NULL;
+    rand_generator = g_rand_new();
+    main_parse_debug_cl_arguments(argc, argv);
+
 #ifdef G_OS_WIN32
     os_is_unix = FALSE;
 #else
     os_is_unix = TRUE;
 #endif
 
-    support_directories = NULL;
-#ifdef G_OS_UNIX
+#if defined(G_OS_UNIX) && !defined(MAC_BUILD)
     file_add_support_directory_recursive(PACKAGE_DATA_DIR "/" PACKAGE "/support_files");
     sprintf(buf, "%s%s%s", g_get_home_dir(), G_DIR_SEPARATOR_S, HOMEDIRNAME);
     file_add_support_directory_recursive(buf);
 #endif
 
-    sprintf(buf, "%s%ssupport_files", pwd, G_DIR_SEPARATOR_S);
+#ifndef MAC_BUILD
+    dir = g_get_current_dir();
+    sprintf(buf, "%s%ssupport_files", dir, G_DIR_SEPARATOR_S);
     file_add_support_directory_recursive(buf);
-    sprintf(buf, "%s%ssaves", pwd, G_DIR_SEPARATOR_S);
-    file_add_support_directory_recursive(buf);
-    g_free(pwd);
 
-    /* initialize the random nr generator */
-    rand_generator = g_rand_new();
+    sprintf(buf, "%s%ssaves", dir, G_DIR_SEPARATOR_S);
+    file_add_support_directory_recursive(buf);
+    g_free(dir);
+#else    
+    dir = file_get_mac_resource_path("support_files");    
+    file_add_support_directory_recursive(dir);
+#endif
 
     main_init_variables();
 
@@ -336,7 +388,7 @@ main (gint argc, gchar *argv[])
     printf("main\n");
 #endif
 
-#ifdef ENABLE_NLS
+#if defined(ENABLE_NLS) && !defined(MAC_BUILD)
     bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
     bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
     textdomain (GETTEXT_PACKAGE);
@@ -347,7 +399,6 @@ main (gint argc, gchar *argv[])
     int fd2 = open ("stderr.log", O_CREAT|O_WRONLY|O_TRUNC, 0666);
     dup2 (fd2, 2);
 #endif
-    gtk_set_locale ();
     gtk_init (&argc, &argv);
 
     main_init(&argc, &argv);
@@ -398,7 +449,7 @@ main_exit_program(gint exit_code, gchar *format, ...)
 	va_start (args, format);
 	g_vsprintf(text, format, args);
 	va_end (args);
-	g_warning(text);
+	debug_print_message(text, NULL);
     }
 
     if(gtk_main_level() > 0)
@@ -408,7 +459,7 @@ main_exit_program(gint exit_code, gchar *format, ...)
 
     if(!os_is_unix && exit_code != EXIT_OK)
     {
-	g_warning("Press RETURN. Program will exit.");
+	debug_print_message("Press RETURN. Program will exit.");
 	getchar();
     }
     

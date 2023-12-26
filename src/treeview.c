@@ -137,7 +137,7 @@ treeview_set_up_team_selection_treeview(GtkTreeView *treeview)
 
     gtk_tree_view_set_search_column(treeview, 2);
     gtk_tree_view_set_search_equal_func(treeview,
-					treeview_helper_search_equal,
+					treeview_helper_search_equal_teams,
 					NULL, NULL);
 
     /* Numbering the teams */
@@ -290,7 +290,8 @@ treeview_create_player_list(GPtrArray *players, gint *attributes, gint max,
 /** Set up the tree view for a player list */
 void
 treeview_set_up_player_list(GtkTreeView *treeview, gint *attributes, gint max,
-			    gboolean show_separator, gboolean sortable)
+			    gboolean show_separator, gboolean transfer_list, 
+                            gboolean sortable)
 {
 #ifdef DEBUG
     printf("treeview_set_up_player_list\n");
@@ -356,6 +357,23 @@ treeview_set_up_player_list(GtkTreeView *treeview, gint *attributes, gint max,
 						GINT_TO_POINTER(attributes[i]),
 						NULL);
 
+        if(transfer_list && attributes[i] == PLAYER_LIST_ATTRIBUTE_NAME)
+        {
+            g_object_set(renderer, "editable", TRUE, NULL);
+            g_signal_connect (renderer,
+                              "editing-started",
+                              G_CALLBACK (treeview_helper_player_name_editing_started),
+                              NULL);
+            g_signal_connect (renderer,
+                              "editing-canceled",
+                              G_CALLBACK (treeview_helper_player_name_editing_canceled),
+                              NULL);
+            g_signal_connect (renderer,
+                              "edited",
+                              G_CALLBACK (treeview_helper_player_name_editing_done),
+                              NULL);
+        }
+
 	if(attributes[i] != PLAYER_LIST_ATTRIBUTE_NAME &&
 	   attributes[i] != PLAYER_LIST_ATTRIBUTE_TEAM &&
 	   attributes[i] != PLAYER_LIST_ATTRIBUTE_LEAGUE_CUP)
@@ -404,11 +422,12 @@ treeview_set_up_player_list(GtkTreeView *treeview, gint *attributes, gint max,
     @param treeview The treeview we fill.
     @param players The pointer array with the players. We free it afterwards.
     @param attrib The #PlayerListAttribute that determines which attributes to show.
-    @param show_separator Whether we draw a blank line after the 11th player. */
+    @param show_separator Whether we draw a blank line after the 11th player.
+    @param transfer_list Whether we show the second player list used for transfer view. */
 void
 treeview_show_player_list(GtkTreeView *treeview, GPtrArray *players, 
 			  PlayerListAttribute attribute,
-			  gboolean show_separator)
+			  gboolean show_separator, gboolean transfer_list)
 {
 #ifdef DEBUG
     printf("treeview_show_player_list\n");
@@ -424,12 +443,10 @@ treeview_show_player_list(GtkTreeView *treeview, GPtrArray *players,
     treeview_helper_clear(treeview);
 
     for(i=0;i<PLAYER_LIST_ATTRIBUTE_END;i++)
-    {
 	if(attribute.on_off[i])
 	    attributes[cnt++] = i;
-    }
 
-    treeview_set_up_player_list(treeview, attributes, columns, show_separator, sortable);
+    treeview_set_up_player_list(treeview, attributes, columns, show_separator, transfer_list, sortable);
 
     model = treeview_create_player_list(players, attributes, 
 					columns, show_separator, 
@@ -461,7 +478,7 @@ treeview_show_user_player_list(void)
     {
 	players = player_get_pointers_from_array(current_user.tm->players);
 	user_set_player_list_attributes(&current_user, &attribute, i + 1);
-	treeview_show_player_list(GTK_TREE_VIEW(treeview[i]), players, attribute, TRUE);
+	treeview_show_player_list(GTK_TREE_VIEW(treeview[i]), players, attribute, TRUE, (i == 1));
     }
 }
 
@@ -477,7 +494,7 @@ treeview_show_player_list_team(GtkTreeView *treeview, const Team *tm, gint scout
     GPtrArray *players = player_get_pointers_from_array(tm->players);
 
     treeview_show_player_list(treeview, players, 
-			      treeview_helper_get_attributes_from_scout(scout), TRUE);
+			      treeview_helper_get_attributes_from_scout(scout), TRUE, FALSE);
 }
 
 /** Show the commentary and the minute belonging to the unit. 
@@ -1072,7 +1089,7 @@ treeview_create_fixture(const Fixture *fix, GtkListStore *ls)
 	if(query_fixture_has_tables(fix))
 	{
 	    if(fix->clid < ID_CUP_START)
-		rank = team_get_league_rank(fix->teams[i]);
+		rank = team_get_league_rank(fix->teams[i], fix->clid);
 	    else
 		rank = team_get_cup_rank(fix->teams[i], 
 					 cup_get_last_tables_round(fix->clid), TRUE);
@@ -1494,7 +1511,7 @@ treeview_create_finances(const User *user)
 
     gint i, balance = 0;
     gchar buf[SMALL], buf2[SMALL], buf3[SMALL];
-    gint *in = user->money_in[0],
+    const gint *in = user->money_in[0],
 	*out = user->money_out[0];
     gchar *in_titles[MON_IN_TRANSFERS] =
 	{_("Prize money"),
@@ -1739,7 +1756,7 @@ treeview_show_transfer_list(GtkTreeView *treeview)
 	g_ptr_array_add(players, player_of_id_team(trans(i).tm, trans(i).id));
 
     treeview_show_player_list(treeview, players, 
-			      treeview_helper_get_attributes_from_scout(current_user.scout), FALSE);
+			      treeview_helper_get_attributes_from_scout(current_user.scout), FALSE, FALSE);
 }
 
 /** Create attack, midfield and defend bars. */
@@ -1796,6 +1813,7 @@ treeview_create_next_opponent(void)
 	fix->teams[fix->teams[0] == current_user.tm];
     GtkListStore *ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
     GtkTreeIter iter;
+    gint rank;
 
     if(opp == NULL)
 	return NULL;
@@ -1839,9 +1857,11 @@ treeview_create_next_opponent(void)
     gtk_list_store_append(ls, &iter);
     gtk_list_store_set(ls, &iter, 0, _("Team"), 1, opp->name, -1);
     
-    if(opp->clid < ID_CUP_START)
+    rank = team_get_league_rank(opp, fix->clid);
+    if(rank != 0)
     {
-	sprintf(buf, "%d (%s)", team_get_league_rank(opp), league_cup_get_name_string(opp->clid));
+	sprintf(buf, "%d (%s)", rank,
+                league_cup_get_name_string(fix->clid));
 	gtk_list_store_append(ls, &iter);
 	gtk_list_store_set(ls, &iter, 0, _("Rank"), 1, buf, -1);
     }
@@ -1879,10 +1899,18 @@ treeview_create_next_opponent(void)
     gtk_list_store_append(ls, &iter);
     gtk_list_store_set(ls, &iter, 0, _("Goals"), 1, buf2, -1);
 
+    team_write_overall_results(opp, fix->clid, buf);
+    gtk_list_store_append(ls, &iter);
+    gtk_list_store_set(ls, &iter, 0, _("Overall results"), 1, buf, -1);
+
     team_write_own_results(opp, buf, FALSE, TRUE);
     gtk_list_store_append(ls, &iter);    
     /* The user's results against a specific team. */
     gtk_list_store_set(ls, &iter, 0, _("Your results"), 1, buf, -1);
+
+    team_write_overall_results(current_user.tm, fix->clid, buf);
+    gtk_list_store_append(ls, &iter);
+    gtk_list_store_set(ls, &iter, 0, _("Your overall results"), 1, buf, -1);
     
     return GTK_TREE_MODEL(ls);
 }
@@ -2056,7 +2084,7 @@ treeview_show_all_players(gint clid)
 	
     treeview_show_player_list(GTK_TREE_VIEW(lookup_widget(window.main, "treeview_right")),
 			      players, 
-			      treeview_helper_get_attributes_from_scout(current_user.scout), FALSE);    
+			      treeview_helper_get_attributes_from_scout(current_user.scout), FALSE, FALSE);    
 }
 
 GtkTreeModel*
@@ -2648,6 +2676,7 @@ treeview_create_country_list(const GPtrArray *country_list)
     // This variable will be used to lookup 
     gchar* previous_element;
     gchar* current_country;
+    gchar* buf2;
     
     for(i=0;i<country_list->len;i++)
     {
@@ -2658,7 +2687,9 @@ treeview_create_country_list(const GPtrArray *country_list)
         if (g_str_has_prefix(current_country,G_DIR_SEPARATOR_S))
         {
             // Strip leading directory delimiter
-            sprintf(current_country, "%.*s", (gint)strlen(current_country) - 1, &current_country[1]);
+            buf2 = g_strdup((gchar*)current_country);
+            sprintf(current_country, "%.*s", (gint)strlen(current_country) - 1, &buf2[1]);
+            g_free(buf2);
         }
         dir_split_up = g_strsplit_set (current_country, G_DIR_SEPARATOR_S, -1);
         // We only go up to the before last column.  We don't want to show the
@@ -2677,7 +2708,8 @@ treeview_create_country_list(const GPtrArray *country_list)
                 if (strcmp(previous_element,dir_split_up[j])!=0) 
                 {
                     create_new_line=TRUE;
-                } 
+                }
+                g_free(previous_element); 
              }
              // Do we need to create a new element or not 
              if (create_new_line)
@@ -2708,6 +2740,7 @@ treeview_create_country_list(const GPtrArray *country_list)
              }
 	}
         g_strfreev(dir_split_up);
+        g_free(current_country);
     }
 
     return GTK_TREE_MODEL(ls);
@@ -2739,7 +2772,7 @@ treeview_show_contributors(GtkTreeView *treeview)
 
     help_list.list = NULL;
     help_list.datalist = NULL;
-    file_load_opt_file(help_file, &help_list);
+    file_load_opt_file(help_file, &help_list, FALSE);
 
     gtk_tree_selection_set_mode(gtk_tree_view_get_selection(treeview),
 				GTK_SELECTION_NONE);
