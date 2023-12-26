@@ -1,6 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-AM_CFLAGS = -Wall #-fprofile-arcs -ftest-coverage -pg
+AM_CFLAGS = -Wall -fcommon #-fprofile-arcs -ftest-coverage -pg
+
+AM_LDFLAGS = -lm
 
 SUBDIRS = src po
 

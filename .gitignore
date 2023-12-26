@@ -50,3 +50,23 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# bygfoot generated files
+autom4te.cache/
+.deps/
+aclocal.m4
+compile
+config.h
+config.h.in
+config.log
+config.status
+configure
+depcomp
+install-sh
+*.gmo
+POTFILES
+Makefile
+Makefile.in
+missing
+stamp-h1
+src/bygfoot
