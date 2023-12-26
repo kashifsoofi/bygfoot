@@ -25,9 +25,11 @@
 
 #include "callbacks.h"
 #include "finance.h"
+#include "fixture.h"
 #include "game_gui.h"
 #include "league.h"
 #include "maths.h"
+#include "misc.h"
 #include "option.h"
 #include "player.h"
 #include "team.h"
@@ -120,7 +122,17 @@ finance_update_user_weekly(User *user)
 	user->money -=  (gint)(finance_wage_unit(tm) * yc_factor[user->youth_academy.coach % 10]);
     }
 
-    user->debt = (gint)rint((gfloat)user->debt * (1 + const_float("float_finance_interest")));
+    user->debt = (gint)rint((gfloat)user->debt * (1 + user->debt_interest));
+
+    if(user->alr_start_week != 0 && week >= user->alr_start_week)
+    {
+        finance_pay_loan(user, user->alr_weekly_installment);
+        if(user->debt == 0)
+        {
+            user->alr_start_week = 
+                user->alr_weekly_installment = 0;
+        }
+    }
 
     if(user->money < -finance_team_drawing_credit_loan(user->tm, FALSE) &&
        user->counters[COUNT_USER_POSITIVE] == -1 && debug < 50)
@@ -199,46 +211,63 @@ finance_team_drawing_credit_loan(const Team *tm, gboolean loan)
 void
 finance_get_loan(gint value)
 {
+    gfloat debt_old = current_user.debt;
+    gfloat debt_new = -value;
+    
     current_user.money += value;
     current_user.debt -= value;
 
-    current_user.counters[COUNT_USER_LOAN] = (current_user.counters[COUNT_USER_LOAN] == -1) ?
-	const_int("int_finance_payback_weeks") : 
-	current_user.counters[COUNT_USER_LOAN];    
+    if(current_user.counters[COUNT_USER_LOAN] == -1)
+        {
+            current_user.counters[COUNT_USER_LOAN] = const_int("int_finance_payback_weeks");
+            current_user.debt_interest = current_interest;
+        }
+    else
+        {
+            /** Calculate new interest in a way that the user can't take unfair advantage of new market interest. */
+            if(current_interest != current_user.debt_interest)
+                {
+                    current_user.debt_interest = 
+                        powf((debt_old * powf(1 + current_user.debt_interest, (gfloat)current_user.counters[COUNT_USER_LOAN]) +
+                              debt_new * powf(1 + current_interest, (gfloat)current_user.counters[COUNT_USER_LOAN])) / (gfloat)current_user.debt,
+                             1 / (gfloat)current_user.counters[COUNT_USER_LOAN]) - 1;
+                }
+        }
 
     game_gui_print_message(_("You have %d weeks to pay back your loan."),
 			   current_user.counters[COUNT_USER_LOAN]); 
-
-    on_menu_show_finances_activate(NULL, NULL);
 }
 
 
-/** Pay back some loan for the current user.
+/** Pay back some loan for the specified user.
     @param value The amount of money paid back. */
 void
-finance_pay_loan(gint value)
+finance_pay_loan(User *user, gint value)
 {
-    gint add = (gint)rint((gfloat)value / (gfloat)(-current_user.debt) * 
-			  (gfloat)const_int("int_finance_payback_weeks"));    
+    gint add = (gint)rint((gfloat)value / (gfloat)(-user->debt) * 
+                          (gfloat)const_int("int_finance_payback_weeks"));
 
-    current_user.money -= value;
-    current_user.debt += value;
+    if(value > -user->debt)
+        value = -user->debt;
 
-    if(current_user.debt == 0)
+    user->money -= value;
+    user->debt += value;
+
+    if(user->debt == 0)
     {
-	current_user.counters[COUNT_USER_LOAN] = -1;
+	user->counters[COUNT_USER_LOAN] = -1;
+        user->alr_start_week = 0;
+        user->alr_weekly_installment = 0;
 	game_gui_print_message(_("You are free from debt."));
     }
     else
     {
-	current_user.counters[COUNT_USER_LOAN] = 
-	    MIN(current_user.counters[COUNT_USER_LOAN] + add,
+	user->counters[COUNT_USER_LOAN] = 
+	    MIN(user->counters[COUNT_USER_LOAN] + add,
 		const_int("int_finance_payback_weeks"));
 	game_gui_print_message(_("You have %d weeks to pay back the rest of your loan."),
-			       current_user.counters[COUNT_USER_LOAN]);
+			       user->counters[COUNT_USER_LOAN]);
     }
-
-    on_menu_show_finances_activate(NULL, NULL);
 }
 
 /** Return the cost of a stadium improvement.
@@ -300,4 +329,116 @@ finance_get_stadium_improvement_duration(gfloat value, gboolean capacity)
 		   (gint)rint(const_float("float_stadium_improvement_base_safety") * 100)) + 1;
 
     return return_value;
+}
+
+/** Update the user's accounts depending on match type and attendance.
+    @fix The fixture being examined. */
+void
+finance_assign_game_money(const Fixture *fix)
+{
+    gint i;
+    gint user_idx[2] = {team_is_user(fix->teams[0]), team_is_user(fix->teams[1])};
+    gfloat journey_factor =
+	(fix->clid < ID_CUP_START ||
+	 (fix->clid >= ID_CUP_START && 
+	  query_cup_is_national(fix->clid))) ?
+	const_float("float_game_finance_journey_factor_national") :
+	const_float("float_game_finance_journey_factor_international");    
+    gint ticket_income[2] = {0, 0};
+
+    if (fix->clid >= ID_CUP_START && 
+	! g_array_index(cup_from_clid(fix->clid)->rounds, CupRound, fix->round).home_away)
+    {
+	ticket_income[0] = 
+	    ticket_income[1] = fix->attendance * fix->teams[0]->stadium.ticket_price / 2;
+    }
+    else
+	ticket_income[0] = fix->attendance * fix->teams[0]->stadium.ticket_price;
+
+    for(i = 0; i < 2; i++)
+    {
+	if(user_idx[i] != -1)
+	{
+	    usr(user_idx[i]).money += ticket_income[i];
+	    usr(user_idx[i]).money_in[1][MON_IN_TICKET] += ticket_income[i];
+
+	    usr(user_idx[i]).money -= 
+		(gint)rint((gfloat)ticket_income[i] * (gfloat)usr(user_idx[i]).youth_academy.percentage / 100);
+	    usr(user_idx[i]).money_out[1][MON_OUT_YA] -=
+		(gint)rint((gfloat)ticket_income[i] * (gfloat)usr(user_idx[i]).youth_academy.percentage / 100);
+
+	    if(i == 0 && debug < 50)
+	    {
+		fix->teams[0]->stadium.safety -= 
+		    math_rnd(const_float("float_game_stadium_safety_deterioration_lower"),
+			     const_float("float_game_stadium_safety_deterioration_upper"));
+		fix->teams[0]->stadium.safety = CLAMP(fix->teams[0]->stadium.safety, 0, 1);
+	    }
+
+	    if(i == 1 || !fix->home_advantage)
+	    {
+		usr(user_idx[i]).money_out[1][MON_OUT_JOURNEY] -= 
+		    (gint)(finance_wage_unit(fix->teams[i]) * journey_factor);
+		usr(user_idx[i]).money -= (gint)(finance_wage_unit(fix->teams[i]) * journey_factor);
+	    }
+	}
+    }
+}
+
+/** Change the current interest on the market (random walk with three possibilities). */
+void
+finance_update_current_interest(void)
+{
+    current_interest += math_rndi(-1, 1) * const_float("float_finance_interest_step");
+    
+    if(current_interest < const_float("float_finance_interest_lower"))
+        current_interest = const_float("float_finance_interest_lower");
+    else if(current_interest > const_float("float_finance_interest_upper"))
+        current_interest = const_float("float_finance_interest_upper"); 
+}
+
+/** Calculate the weekly installment for an automatic loan repayment
+    depending on the start week. */
+gint
+finance_calculate_alr_weekly_installment(gint start_week)
+{
+    gfloat debt_end;
+    gfloat interest_factor;
+    gfloat max_start_week;
+    gfloat installment;
+    gint weekly_installment;
+
+    max_start_week = MIN(week + current_user.counters[COUNT_USER_LOAN], fixture_get_last_scheduled_week());
+    debt_end = current_user.debt * powf(1 + current_user.debt_interest, max_start_week - 1);
+    interest_factor =
+        (powf(1 + current_user.debt_interest, (gfloat)(max_start_week - start_week + 1)) - 1) /
+        current_user.debt_interest;
+
+    installment = -debt_end / interest_factor;
+    weekly_installment = (gint)rint(installment);
+
+    return (weekly_installment > installment) ? weekly_installment : weekly_installment + 1;
+}
+
+/** Calculate the start week for an automatic loan repayment
+    depending on the weekly installment. */
+gint
+finance_calculate_alr_start_week(gint weekly_installment)
+{
+    gint upper;
+    gint start_week;
+    gint installment;
+
+    upper = MIN(week + current_user.counters[COUNT_USER_LOAN], fixture_get_last_scheduled_week());
+    
+    for(start_week = week + 1; start_week <= upper; start_week++)
+    {
+        installment = finance_calculate_alr_weekly_installment(start_week);
+        if(installment > weekly_installment)
+            return start_week - 1;
+        else if(installment == weekly_installment)
+            return start_week;
+    }
+
+    return start_week;
 }

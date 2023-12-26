@@ -1473,13 +1473,31 @@ treeview_create_finances(const User* user)
     misc_print_grouped_int(finance_team_drawing_credit_loan(user->tm, FALSE), buf);
     gtk_list_store_append(ls, &iter);
     gtk_list_store_set(ls, &iter, 0, _("Drawing credit"), 1, buf, 2, "", -1);
+
+    sprintf(buf, "%.2f%%", current_interest * 100);
+    gtk_list_store_append(ls, &iter);
+    gtk_list_store_set(ls, &iter, 0, _("Current market interest"), 1, buf, 2, "", -1);
     
     if(user->debt != 0)
     {
 	misc_print_grouped_int(user->debt, buf);
-	sprintf(buf2, "<span foreground='%s'>%s</span>",
-		const_app("string_treeview_finances_expenses_fg"), buf);
+	sprintf(buf2, "<span foreground='%s'>%s (%.2f%% %s)</span>",
+		const_app("string_treeview_finances_expenses_fg"), buf, 
+                user->debt_interest * 100, _("interest rate"));
 	sprintf(buf, _("Debt (repay in %d weeks)"), user->counters[COUNT_USER_LOAN]);
+	gtk_list_store_append(ls, &iter);
+	gtk_list_store_set(ls, &iter, 0, buf, 1, "", 2, buf2, -1);
+    }
+
+    if(user->alr_start_week != 0)
+    {
+        gtk_list_store_append(ls, &iter);
+        gtk_list_store_set(ls, &iter, 0, _("Automatic repayment"), 1, "", 2, "", -1);
+
+        misc_print_grouped_int(user->alr_weekly_installment, buf);
+	sprintf(buf2, "<span foreground='%s'>%s</span>",
+                const_app("string_treeview_finances_expenses_fg"), buf);
+        sprintf(buf, _("(starting week %d)"), user->alr_start_week);
 	gtk_list_store_append(ls, &iter);
 	gtk_list_store_set(ls, &iter, 0, buf, 1, "", 2, buf2, -1);
     }
@@ -2549,6 +2567,46 @@ treeview_show_language_combo(void)
     g_object_unref(model);
 
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo_languages), idx + 1);
+}
+
+GtkTreeModel*
+treeview_create_training_hotel_list(void)
+{
+    GtkListStore *ls = gtk_list_store_new(1, G_TYPE_STRING);
+    GtkTreeIter iter;
+
+    gtk_list_store_append(ls, &iter);
+    gtk_list_store_set(ls, &iter, 0, _("Good Hotel"), -1);
+
+    gtk_list_store_append(ls, &iter);
+    gtk_list_store_set(ls, &iter, 0, _("First-Class Hotel"), -1);
+
+    gtk_list_store_append(ls, &iter);
+    gtk_list_store_set(ls, &iter, 0, _("Premium Hotel"), -1);
+
+    return GTK_TREE_MODEL(ls);
+}
+
+/** Show the list of training camp hotels. */
+void
+treeview_show_training_hotels_combo(void)
+{
+    GtkTreeModel *model = treeview_create_training_hotel_list();
+    GtkComboBox *combo_hotel =
+	GTK_COMBO_BOX(lookup_widget(window.options, "combobox_hotel"));
+    GtkCellRenderer *renderer = NULL;
+
+    gtk_cell_layout_clear(GTK_CELL_LAYOUT(combo_hotel));
+
+    renderer = treeview_helper_cell_renderer_text_new();
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo_hotel), renderer, FALSE);
+    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_hotel), renderer, "text", 0, NULL);
+
+    gtk_combo_box_set_model(combo_hotel, model);
+    g_object_unref(model);
+
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo_hotel), 
+			     opt_user_int("int_opt_user_training_camp_hotel") - 1);
 }
 
 GtkTreeModel*

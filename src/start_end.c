@@ -71,7 +71,8 @@ WeekFunc start_week_round_funcs[] =
 WeekFunc start_week_funcs[] = 
 {start_week_add_cups, start_week_update_users,
  start_week_update_teams, start_week_update_user_finances,
- youth_academy_update_weekly, transfer_update, job_update, NULL};
+ youth_academy_update_weekly, transfer_update, job_update,
+ finance_update_current_interest, NULL};
 
 WeekFunc end_week_funcs[] = {stat_update_leagues, end_week_hide_cups, NULL};
 
@@ -121,6 +122,9 @@ start_new_season(void)
 			     usr(i).tm->name, 
 			     league_cup_get_name_string(usr(i).tm->clid), 
 			     buf, NULL);
+
+	    usr(i).counters[COUNT_USER_TRAININGS_LEFT_SEASON] =
+		const_int("int_training_camps_per_season");
 	}
 
 	start_new_season_league_changes();

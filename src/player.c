@@ -698,13 +698,17 @@ player_is_banned(const Player *pl)
     streak.
     @return A float value representing the player's contribution. */
 gfloat
-player_get_game_skill(const Player *pl, gboolean skill, gboolean count_special)
+player_get_game_skill(Player *pl, gboolean skill, gboolean count_special)
 {
     gfloat boost = (count_special) ? 
 	1 + const_float("float_player_boost_skill_effect") * pl->team->boost : 1;
     gfloat streak = (count_special) ?
 	1 + (gfloat)pl->streak * const_float("float_player_streak_influence_skill") : 1;
     
+    // workaround
+    if(pl->fitness < 0)
+	pl->fitness = const_float("float_player_fitness_lower");
+
     return (skill) ? pl->skill * boost * streak *
 	powf(pl->fitness, const_float("float_player_fitness_exponent"))	:
 	pl->cskill * boost * streak *
@@ -1401,6 +1405,8 @@ player_move_from_ya(gint idx)
     Player *pl = &g_array_index(current_user.youth_academy.players, Player, idx);
     Player player = *pl;
 
+    player.contract = const_float("float_player_contract_youth");
+
     g_array_remove_index(current_user.youth_academy.players, idx);
     g_array_append_val(current_user.tm->players, player);
 }
@@ -1425,4 +1431,57 @@ query_player_is_in_ya(const Player *pl)
 	    return FALSE;
 
     return TRUE;
+}
+
+/** Find out if a star balks when offered a new or a renewed contract
+    because there are already enough stars on the prospective new team. */
+gboolean
+query_player_star_balks(const Player *pl, const Team *tm, gboolean transfer)
+{
+    gint i;
+    gint number_of_stars_field;
+    gint number_of_stars_goal;
+    gfloat skill_limit;
+
+    /* Weak players never balk. */
+    if(pl->skill < const_float("float_transfer_star_skill_limit"))
+	return FALSE;
+
+    /* There is some chance that the new star doesn't balk at all. */
+    if((transfer && math_rnd(0, 1) < const_float("float_transfer_star_no_balk")) ||
+       (!transfer && math_rnd(0, 1) < const_float("float_contract_star_no_balk")))
+	return FALSE;
+
+    /* Find out if there are any stars at all on the team. */
+    number_of_stars_field = 
+	number_of_stars_goal = 0;
+    skill_limit = (transfer ? 
+		   const_float("float_transfer_star_skill_limit") :
+		   const_float("float_contract_star_skill_limit"));
+    for(i = 0; i < tm->players->len; i++)
+    {
+	if(g_array_index(tm->players, Player, i).skill > skill_limit)
+	{
+	    if(g_array_index(tm->players, Player, i).pos == PLAYER_POS_GOALIE)
+		number_of_stars_goal++;
+	    else
+		number_of_stars_field++;
+	}
+    }
+    
+    if(pl->pos == PLAYER_POS_GOALIE)
+    {
+	if(number_of_stars_goal == 0)
+	    return FALSE;
+	else
+	    return (math_rnd(0, 1) > const_float("float_transfer_star_goalie_accepts"));
+    }
+    else
+    {
+	if(number_of_stars_field == 0)
+	    return FALSE;
+	else
+	    return (math_rnd(0, 1) > 1 - number_of_stars_field * 
+		    const_float("float_transfer_star_prob_decrease"));
+    }
 }

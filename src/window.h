@@ -55,7 +55,7 @@ enum Windows
     WINDOW_SPLASH,
     WINDOW_END,
     WINDOW_TRAINING_CAMP,
-    WINDOW_LEAGUE_TABLE
+    WINDOW_ALR
 };
 
 void
@@ -72,7 +72,7 @@ window_destroy(GtkWidget **wind);
 
 void
 window_show_digits(const gchar *text_main, const gchar* text1,
-		   gint value1, const gchar* text2, gint value2);
+		   gint value1, const gchar* text2, gint value2, gboolean show_alr);
 
 void
 window_show_file_sel(void);
@@ -129,6 +129,6 @@ void
 window_show_training_camp(void);
 
 void
-window_show_league_table(void);
+window_show_alr(void);
 
 #endif

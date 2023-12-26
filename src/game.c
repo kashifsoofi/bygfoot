@@ -1,26 +1,26 @@
 /*
-   game.c
+  game.c
 
-   Bygfoot Football Manager -- a small and simple GTK2-based
-   football management game.
+  Bygfoot Football Manager -- a small and simple GTK2-based
+  football management game.
 
-   http://bygfoot.sourceforge.net
+  http://bygfoot.sourceforge.net
 
-   Copyright (C) 2005  Gyözö Both (gyboth@bygfoot.com)
+  Copyright (C) 2005  Gyözö Both (gyboth@bygfoot.com)
 
-   This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License
-   as published by the Free Software Foundation; either version 2
-   of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "cup.h"
@@ -64,7 +64,7 @@ game_get_values(const Fixture *fix, gfloat team_values[][GAME_TEAM_VALUE_END],
 	style_factor = (gfloat)tm[i]->style * const_float("float_game_style_factor");
 
 	team_values[i][GAME_TEAM_VALUE_GOALIE] = 
-	    game_get_player_contribution(player_of_idx_team(tm[i], 0), FALSE, TRUE) * 
+	    player_get_game_skill(player_of_idx_team(tm[i], 0), FALSE, TRUE) * 
 	    (1 + home_advantage * (i == 0));
 
 	for(j=1;j<11;j++)
@@ -186,7 +186,7 @@ game_get_player(const Team *tm, gint player_type,
 	    if(i < 10)
 		g_print("prob %.3f  ", probs[i]);
 	    g_print("%d %20s health %d cskill %.2f\n", i, player_of_idx_team(tm, i)->name,
-		   player_of_idx_team(tm, i)->health, player_of_idx_team(tm, i)->cskill);
+		    player_of_idx_team(tm, i)->health, player_of_idx_team(tm, i)->cskill);
 	}
 
 	main_exit_program(EXIT_INT_NOT_FOUND, NULL);
@@ -272,61 +272,15 @@ void
 game_initialize(Fixture *fix)
 {
     gint i, j;
-    gboolean income_cup = FALSE;
-    gfloat journey_factor =
-	(fix->clid < ID_CUP_START ||
-	 (fix->clid >= ID_CUP_START && 
-	  query_cup_is_national(fix->clid))) ?
-	const_float("float_game_finance_journey_factor_national") :
-	const_float("float_game_finance_journey_factor_international");    
     gint user_idx[2] = {team_is_user(fix->teams[0]), team_is_user(fix->teams[1])};
-    gint ticket_income = 0;
 
     if(fix->home_advantage)
 	game_assign_attendance(fix);
     else
 	game_assign_attendance_neutral(fix);
 
-	if (fix->clid >= ID_CUP_START)
-	{
-		if (! g_array_index(cup_from_clid(fix->clid)->rounds, CupRound, fix->round).home_away)
-		{
-			ticket_income = fix->attendance * const_int("int_team_stadium_ticket_price") / 2;
-			income_cup = TRUE;
-		}
-	}
-	else
-		ticket_income = fix->attendance * const_int("int_team_stadium_ticket_price");
-
-    if(!sett_int("int_opt_disable_finances") && user_idx[0] != -1 && fix->home_advantage)
-    {
-		usr(user_idx[0]).money += ticket_income;
-		usr(user_idx[0]).money_in[1][MON_IN_TICKET] += ticket_income;
-
-		usr(user_idx[0]).money -= 
-	    	(gint)rint((gfloat)ticket_income * (gfloat)usr(user_idx[0]).youth_academy.percentage / 100);
-		usr(user_idx[0]).money_out[1][MON_OUT_YA] -=
-			(gint)rint((gfloat)ticket_income * (gfloat)usr(user_idx[0]).youth_academy.percentage / 100);
-
-		if(debug < 50)
-		{
-    		fix->teams[0]->stadium.safety -= 
-				math_rnd(const_float("float_game_stadium_safety_deterioration_lower"),
-				const_float("float_game_stadium_safety_deterioration_upper"));
-    		fix->teams[0]->stadium.safety = CLAMP(fix->teams[0]->stadium.safety, 0, 1);
-		}
-    }
-    
-    if(!sett_int("int_opt_disable_finances") && user_idx[1] != -1 && income_cup)
-    {
-		usr(user_idx[1]).money += ticket_income;
-		usr(user_idx[1]).money_in[1][MON_IN_TICKET] += ticket_income;
-
-		usr(user_idx[1]).money -= 
-	    	(gint)rint((gfloat)ticket_income * (gfloat)usr(user_idx[1]).youth_academy.percentage / 100);
-		usr(user_idx[1]).money_out[1][MON_OUT_YA] -=
-			(gint)rint((gfloat)ticket_income * (gfloat)usr(user_idx[1]).youth_academy.percentage / 100);
-    }
+    if(!sett_int("int_opt_disable_finances"))
+	finance_assign_game_money(fix);
 
     for(i=0;i<2;i++)
     {
@@ -363,19 +317,6 @@ game_initialize(Fixture *fix)
 
 	if(user_idx[i] != -1)
 	{
-	    if(i == 1 || !fix->home_advantage)
-	    {
-		usr(user_idx[i]).money_out[1][MON_OUT_JOURNEY] -= 
-		    (gint)(finance_wage_unit(fix->teams[i]) * journey_factor);
-		usr(user_idx[i]).money -= (gint)(finance_wage_unit(fix->teams[i]) * journey_factor);
-	    }
-
-	    if(!fix->home_advantage)
-	    {
-		usr(user_idx[i]).money_in[1][MON_IN_TICKET] += (gint)rint((gfloat)ticket_income / 2);
-		usr(user_idx[i]).money += (gint)rint((gfloat)ticket_income / 2);
-	    }
-
 	    usr(user_idx[i]).counters[COUNT_USER_SHOW_RES] = 1;
 	}
     }
@@ -415,7 +356,11 @@ game_assign_attendance(Fixture *fix)
 	    factor *= const_float("float_game_stadium_attendance_cup_international_factor");
     }
 
-    factor = MIN(factor, 1);
+    /* calculate the differnce in ticket prices has on attendance */
+    gfloat delta_price = tm[0]->stadium.ticket_price - const_int("int_team_stadium_ticket_price");
+    gfloat price_factor = math_gauss_dist(0.92, 1.08) * 1/(1+const_float("float_team_stadium_price_attendance_factor")*delta_price);
+
+    factor = MIN(factor * price_factor, 1);
     fix->attendance = MIN(MIN((gint)rint((gfloat)tm[0]->stadium.capacity * factor),
 			      max_att * factor), max_att);
 
@@ -1032,8 +977,8 @@ game_post_match(Fixture *fix)
     if((debug > 100 && fixture_user_team_involved(fix) != -1) ||
        debug > 130)
 	g_print("game_post_match: %s - %s\n", 
-	       fix->teams[0]->name,
-	       fix->teams[1]->name);
+		fix->teams[0]->name,
+		fix->teams[1]->name);
 
     if(query_fixture_has_tables(fix))
 	table_update(fix);

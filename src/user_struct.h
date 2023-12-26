@@ -80,6 +80,8 @@ enum CounterValue
     COUNT_USER_SHOW_RES, /**< Whether the latest result is shown when the main window gets refreshed. */
     COUNT_USER_TOOK_TURN, /**< Whether the user took his turn in a week round. */
     COUNT_USER_NEW_SPONSOR, /**< A new sponsor offer has to be shown. */
+    COUNT_USER_TRAININGS_WEEK, /**< Whether the user has already had a training camp this week. */
+    COUNT_USER_TRAININGS_LEFT_SEASON, /**< How many training camps left for the season. */
     COUNT_USER_END
 };
 
@@ -163,7 +165,11 @@ typedef struct
 	We have double arrays to store information about
 	the current and the past week. */
     gint money, debt, money_in[2][MON_IN_END],
-	money_out[2][MON_OUT_END];
+      money_out[2][MON_OUT_END];
+    /** Interest the debt was taken at. */
+    gfloat debt_interest;
+    /** Information about the automatic loan repayment. */
+    gint alr_start_week, alr_weekly_installment;
     /** The user's scout and physio qualities.
 	@see #Quality */
     gint scout, physio;
@@ -196,6 +202,7 @@ enum EventType
     EVENT_TYPE_TRANSFER_OFFER_REJECTED_FEE_WAGE,
     EVENT_TYPE_TRANSFER_OFFER_REJECTED_FEE,
     EVENT_TYPE_TRANSFER_OFFER_REJECTED_WAGE,
+    EVENT_TYPE_TRANSFER_OFFER_REJECTED_STARS,
     EVENT_TYPE_TRANSFER_OFFER_MONEY,
     EVENT_TYPE_TRANSFER_OFFER_ROSTER,
     EVENT_TYPE_PLAYER_CAREER_STOP,

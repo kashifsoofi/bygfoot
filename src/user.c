@@ -76,7 +76,6 @@ user_new(void)
 
     new.bets[0] = g_array_new(FALSE, FALSE, sizeof(BetUser));
     new.bets[1] = g_array_new(FALSE, FALSE, sizeof(BetUser));
-
     return new;
 }
 
@@ -174,6 +173,8 @@ user_set_up_counters(User *user)
 
     user->counters[COUNT_USER_LOAN] =
 	user->counters[COUNT_USER_POSITIVE] = -1;
+    user->counters[COUNT_USER_TRAININGS_LEFT_SEASON] = 
+	const_int("int_training_camps_per_season");
 }
 
 /** Set up the user's finances when he's got a new team.
@@ -188,7 +189,9 @@ user_set_up_finances(User *user)
     for(i=0; i<MON_IN_END;i++)
 	user->money_in[0][i] = user->money_in[1][i] = 0;
     
-    user->debt = 0;
+    user->debt = 
+        user->alr_start_week =
+        user->alr_weekly_installment = 0;
     user->money = 
 	math_round_integer(user->tm->stadium.capacity * 
 			   math_rndi(const_int("int_initial_money_lower"),
@@ -353,6 +356,8 @@ user_weekly_update_counters(User *user)
     gint *cnts = user->counters;
     gint increase_capacity;
     gfloat increase_safety;
+
+    cnts[COUNT_USER_TRAININGS_WEEK] = 0;
 
     if(cnts[COUNT_USER_STADIUM_CAPACITY] > 0)
     {
@@ -525,6 +530,12 @@ user_event_show_next(void)
 		    event->value_string,
 		    ((Team*)event->value_pointer)->name, buf2, buf3);
 	    break;
+	case EVENT_TYPE_TRANSFER_OFFER_REJECTED_STARS:
+	    /* A player from a team has rejected a transfer offer. */
+	    game_gui_show_warning(_("%s of %s has rejected your offer because your team has too many star players already. 'A player of my caliber doesn't play second fiddle,' he was quoted."),
+				  event->value_string,
+				  ((Team*)event->value_pointer)->name);
+	    break;
 	case EVENT_TYPE_TRANSFER_OFFER_MONEY:
 	    /* Buy a player from a team. */
 	    game_gui_show_warning(_("You didn't have enough money to buy %s from %s."),
@@ -561,6 +572,9 @@ user_change_team(User *user, Team *tm)
 {
     gint i;
     gint success = user->counters[COUNT_USER_SUCCESS];
+
+    /* Reset the ticketprice of the old team to the default value */
+    user->tm->stadium.ticket_price = const_int("int_team_stadium_ticket_price");
 
     user->tm = tm;
     user->team_id = tm->id;

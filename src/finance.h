@@ -42,7 +42,7 @@ gint
 finance_team_drawing_credit_loan(const Team *tm, gboolean loan);
 
 void
-finance_pay_loan(gint value);
+finance_pay_loan(User *user, gint value);
 
 void
 finance_get_loan(gint value);
@@ -52,5 +52,17 @@ finance_get_stadium_improvement_cost(gfloat value, gboolean capacity);
 
 gint
 finance_get_stadium_improvement_duration(gfloat value, gboolean capacity);
+
+void
+finance_assign_game_money(const Fixture *fix);
+
+void
+finance_update_current_interest(void);
+
+gint
+finance_calculate_alr_weekly_installment(gint start_week);
+
+gint
+finance_calculate_alr_start_week(gint weekly_installment);
 
 #endif

@@ -28,6 +28,7 @@
 #include "callbacks.h"
 #include "callback_func.h"
 #include "debug.h"
+#include "fixture.h"
 #include "free.h"
 #include "game.h"
 #include "game_gui.h"
@@ -69,6 +70,7 @@ on_menu_new_activate                   (GtkMenuItem     *menuitem,
     main_init(NULL, NULL);
     window_show_startup();
     stat0 = STATUS_TEAM_SELECTION;
+    statp = NULL;
 }
 
 
@@ -747,7 +749,7 @@ on_menu_custom_structure_activate      (GtkMenuItem     *menuitem,
 {
     stat1 = STATUS_CUSTOM_STRUCTURE;
     window_show_digits(_("Enter a structure. The digits must sum up to 10."),
-		       NULL, -1, _("Structure"), current_user.tm->structure);
+		       NULL, -1, _("Structure"), current_user.tm->structure, FALSE);
 }
 
 
@@ -1150,7 +1152,7 @@ on_menu_set_investment_activate        (GtkMenuItem     *menuitem,
     stat1 = STATUS_SET_YA_PERCENTAGE;
     window_show_digits(
 	_("Set the percentage of your income you want to devote to your youth academy."),
-	NULL, -1, "%", current_user.youth_academy.percentage);
+	NULL, -1, "%", current_user.youth_academy.percentage, FALSE);
 }
 
 void
@@ -1283,6 +1285,43 @@ on_training_camp_activate              (GtkMenuItem     *menuitem,
 	return;
     }
 
-    window_show_training_camp();
+   if(current_user.counters[COUNT_USER_TRAININGS_WEEK] == 
+      const_int("int_training_camps_week"))
+   {
+       game_gui_print_message(_("Your team has already had enough training camps this week."));
+       return;
+   }
 
+   if(current_user.counters[COUNT_USER_TRAININGS_LEFT_SEASON] == 0)
+   {
+       game_gui_print_message(_("You've reached the limit of %d training camps for the season."),
+			      const_int("int_training_camps_per_season"));
+       return;
+   }
+
+   window_show_training_camp();
+}
+
+void
+on_automatic_loan_repayment_activate   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if(sett_int("int_opt_disable_finances"))
+    {
+	game_gui_print_message(_("Finances are disabled in this country definition."));
+	return;
+    }
+
+    if(current_user.debt == 0)
+    {
+        game_gui_print_message(_("You are not in debt."));
+        return;
+    }
+    else if(week >= fixture_get_last_scheduled_week() - 1)
+    {
+        game_gui_print_message(_("It's too late in the season for automatic loan repayment."));
+        return;            
+    }
+    
+    window_show_alr();
 }

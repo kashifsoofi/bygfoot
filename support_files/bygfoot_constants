@@ -83,6 +83,9 @@ float_player_fitness_upper 100000
 float_player_contract_lower 100000
 float_player_contract_upper 400000
 
+# default contract value for youths
+float_player_contract_youth 400000
+
 # bounds for the last skill update at player generation. 
 float_player_lsu_lower 200000
 float_player_lsu_upper 1000000
@@ -93,8 +96,13 @@ float_team_stadium_safety_upper 100000
 
 # ticket price; this determines together with
 # the player wages the size of the stadium at
-# generation
+# generation. Also used in attendance
+# calculation
 int_team_stadium_ticket_price 25
+
+# price vs attendace. This determines together
+# with the prices how high the attedace will be
+float_team_stadium_price_attendance_factor 4000
 
 # factor for stadium size; this determines the income
 # of the user teams
@@ -226,7 +234,6 @@ int_treeview_max_pipes 50
 float_player_pos_bound1 37550
 float_player_pos_bound2 75100
 
-
 # minimum number of players in a user team.
 int_team_min_players 11
 # maximum number of players in a user team.
@@ -331,6 +338,12 @@ float_finance_credit_factor_loan    70000
 # number of weeks to pay back a loan
 int_finance_payback_weeks 15
 
+# lower and upper limit for the current interest
+# and the change step between weeks
+float_finance_interest_lower 500
+float_finance_interest_upper 5000
+float_finance_interest_step 250
+
 # live game scale configuration
 float_game_gui_live_game_scale_attack	30000
 float_game_gui_live_game_scale_chance	45000
@@ -405,13 +418,13 @@ int_season_end_user_champ_best_teams_limit 5
 
 # how much the user's luck deteriorates if he
 # becomes champion
-float_season_end_user_champ_luck_factor 95000
+float_season_end_user_champ_luck_factor 97500
 
 # how much it regenerates if he's not champ
-float_season_end_user_champ_luck_factor_regen 103000
+float_season_end_user_champ_luck_factor_regen 101000
 
 # lower limit for the user's luck
-float_luck_limit  50000
+float_luck_limit  90000
 
 float_season_end_league_above_talent_factor 103000
 
@@ -951,3 +964,36 @@ int_job_application_points_international 200
 
 # how many points a country rating difference is worth
 int_job_application_points_per_rating 80
+
+# the chance that a new star player to be bought doesn't
+# balk because of other star players already on the team
+float_transfer_star_no_balk 12000
+
+# the chance that a star player doesn't balk because
+# at contract renewal time
+float_contract_star_no_balk 25000
+
+# skill limit for transfers defining what we call a star
+float_transfer_star_skill_limit 9000000
+
+# skill limit for contract renewal defining what we call a star
+float_contract_star_skill_limit 9250000
+
+# how much the presence of a star player decreases the
+# probability that a new one accepts an offer
+float_transfer_star_prob_decrease 15000
+
+# probability of a star goalie accepting if there's
+# already one present
+float_transfer_star_goalie_accepts 12000
+
+# wage unit factors for training camp hotel
+float_training_camp_factor1 500000
+float_training_camp_factor2 1000000
+float_training_camp_factor3 1500000
+
+# number of training camps allowed for one season
+int_training_camps_per_season 12
+
+# number of training camps allowed per week
+int_training_camps_week 2
