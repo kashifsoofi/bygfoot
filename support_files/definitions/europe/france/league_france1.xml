@@ -3,7 +3,7 @@
   <sid>france1</sid>
   <name>Ligue 1</name>
   <short_name>L1</short_name>
-  <symbol>flag_france.png</symbol>
+  <symbol>ligue1.png</symbol>
   <first_week>6</first_week>
   <week_gap>1</week_gap>
   <break_in length="1">10</break_in>
@@ -25,64 +25,84 @@
 
   <teams>
     <team>
-      <team_name>Auxerre</team_name>
-    </team>
-    <team>
-      <team_name>Bordeaux</team_name>
-    </team>
-    <team>
-      <team_name>Caen</team_name>
-    </team>
-    <team>
-      <team_name>Grenoble</team_name>
-    </team>
-    <team>
-      <team_name>Le Havre</team_name>
-    </team>
-    <team>
-      <team_name>Le Mans</team_name>
-    </team>
-    <team>
-      <team_name>Lille</team_name>
-    </team>
-    <team>
-      <team_name>Lorient</team_name>
-    </team>
-    <team>
       <team_name>Lyon</team_name>
+<def_file>france_lyon</def_file>
     </team>
     <team>
       <team_name>Marseille</team_name>
+<def_file>france_marseille</def_file>
     </team>
     <team>
-      <team_name>Monaco</team_name>
+      <team_name>Lille</team_name>
+<def_file>france_lille</def_file>
     </team>
     <team>
-      <team_name>Nancy</team_name>
+      <team_name>Bordeaux</team_name>
+<def_file>france_bordeaux</def_file>
     </team>
     <team>
-      <team_name>Nantes</team_name>
-    </team>
-    <team>
-      <team_name>Nice</team_name>
-    </team>
-    <team>
-      <team_name>Paris SG</team_name>
+      <team_name>Paris Saint-Germain</team_name>
+<def_file>france_psg</def_file>
     </team>
     <team>
       <team_name>Rennes</team_name>
+<def_file>france_rennes</def_file>
     </team>
     <team>
-      <team_name>Saint-Etienne</team_name>
+      <team_name>Monaco</team_name>
+<def_file>france_monaco</def_file>
     </team>
     <team>
-      <team_name>Sochaux</team_name>
+      <team_name>Auxerre</team_name>
+<def_file>france_auxerre</def_file>
     </team>
     <team>
       <team_name>Toulouse</team_name>
+<def_file>france_toulouse</def_file>
     </team>
     <team>
-     <team_name>Valenciennes</team_name>
+      <team_name>Saint-Étienne</team_name>
+<def_file>france_etienne</def_file>
+    </team>
+    <team>
+      <team_name>Lorient</team_name>
+<def_file>france_lorient</def_file>
+    </team>
+    <team>
+      <team_name>Nancy</team_name>
+<def_file>france_nancy</def_file>
+    </team>
+    <team>
+      <team_name>Montpellier</team_name>
+<def_file>france_montpellier</def_file>
+    </team>
+    <team>
+      <team_name>Nice</team_name>
+<def_file>france_nice</def_file>
+    </team>
+    <team>
+      <team_name>Sochaux</team_name>
+<def_file>france_sochaux</def_file>
+    </team>
+    <team>
+      <team_name>Valenciennes</team_name>
+<def_file>france_valenciennes</def_file>
+    </team>
+    <team>
+      <team_name>Lens</team_name>
+<def_file>france_lens</def_file>
+    </team>
+    <team>
+      <team_name>Caen</team_name>
+<def_file>france_caen</def_file>
+    </team>
+    <team>
+      <team_name>Brest</team_name>
+<def_file>france_brest</def_file>
+    </team>
+    <team>
+     <team_name>Arles-Avignon</team_name>
+<def_file>france_arles</def_file>
     </team>
   </teams>
 </league>

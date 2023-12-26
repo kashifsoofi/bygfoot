@@ -26,41 +26,22 @@
   </prom_rel>
 
   <teams>
+      <team>
+      <team_name>Slovan Bratislava</team_name>
+      <def_file>slovakia_slovan</def_file>
+    </team>
+
     <team>
-      <team_name>A. Petržalka</team_name>
+      <team_name>Spartak Trnava</team_name>
+      <def_file>slovakia_trnava</def_file>
     </team>
     <team>
-      <team_name>D. Banska Bystrica</team_name>
+      <team_name>Tatran Prešov</team_name>
+      <def_file>slovakia_tatran</def_file>
     </team>
     <team>
-      <team_name>D. Streda</team_name>
-    </team>
-    <team>
-      <team_name>Dubnica</team_name>
-    </team>
-    <team>
-      <team_name>Košice</team_name>
-    </team>
-    <team>
-      <team_name>Nitra</team_name>
-    </team>
-    <team>
-      <team_name>Ružomberok</team_name>
-    </team>
-    <team>
-      <team_name>S. Bratislava</team_name>
-    </team>
-    <team>
-      <team_name>S. Trnava</team_name>
-    </team>
-    <team>
-      <team_name>T. Prešov</team_name>
-    </team>
-    <team>
-      <team_name>V. Z. Moravce</team_name>
-    </team>
-    <team>
-      <team_name>Žilina</team_name>
+      <team_name>MŠK Žilina</team_name>
+      <def_file>slovakia_zilina</def_file>
     </team>
   </teams>
 </league>

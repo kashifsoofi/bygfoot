@@ -16,43 +16,24 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>10</rank_start>
-      <rank_end>10</rank_end>
+      <rank_start>3</rank_start>
+      <rank_end>3</rank_end>
       <dest_sid>malta2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
-
   <teams>
+       <team>
+      <team_name>Valletta</team_name>
+      <def_file>malta_valletta</def_file>
+    </team>
     <team>
-      <team_name>Birkirkara</team_name>
+      <team_name>Sliema Wanderers</team_name>
+      <def_file>malta_sliema</def_file>
     </team>
     <team>
       <team_name>Floriana</team_name>
-    </team>
-    <team>
-      <team_name>Hamrun S.</team_name>
-    </team>
-    <team>
-      <team_name>H. Paola</team_name>
-    </team>
-    <team>
-      <team_name>Marsaxlokk</team_name>
-    </team>
-    <team>
-      <team_name>Msida S. J.</team_name>
-    </team>
-    <team>
-      <team_name>Qormi</team_name>
-    </team>
-    <team>
-      <team_name>Sliema W.</team_name>
-    </team>
-    <team>
-      <team_name>Tarxien R.</team_name>
-    </team>
-    <team>
-      <team_name>Valletta</team_name>
+      <def_file>malta_floriana</def_file>
     </team>
   </teams>
 </league>

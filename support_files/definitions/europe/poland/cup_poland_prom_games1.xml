@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cup>
-  <name>Baraże o I ligę</name>
+  <name>Baraże o 1 ligę</name>
   <symbol>flag_poland.png</symbol>
   <sid>poland_prom_games1</sid>
   <add_week>1000</add_week>

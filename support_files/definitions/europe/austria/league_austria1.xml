@@ -19,43 +19,26 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>10</rank_start>
-      <rank_end>10</rank_end>
+      <rank_start>3</rank_start>
+      <rank_end>3</rank_end>
       <dest_sid>austria2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
 
   <teams>
-    <team>
-      <team_name>A. Wien</team_name>
+      <team>
+      <team_name>Red Bull Salzburg</team_name>
+<def_file>austria_redbull</def_file>
     </team>
-    <team>
-      <team_name>R. B. Salzburg</team_name>
+      <team>
+      <team_name>Austria Vienna</team_name>
+<def_file>austria_vienna</def_file>
     </team>
+
     <team>
-      <team_name>R. Wien</team_name>
-    </team>
-    <team>
-      <team_name>Linz</team_name>
-    </team>
-    <team>
-      <team_name>S. Graz</team_name>
-    </team>
-    <team>
-      <team_name>Ried</team_name>
-    </team>
-    <team>
-      <team_name>A. Kärnten</team_name>
-    </team>
-    <team>
-      <team_name>Mattersburg</team_name>
-    </team>
-    <team>
-      <team_name>Kapfenberg</team_name>
-    </team>
-    <team>
-      <team_name>Altach</team_name>
+      <team_name>Rapid Vienna</team_name>
+<def_file>austria_rapidv</def_file>
     </team>
   </teams>
 </league>

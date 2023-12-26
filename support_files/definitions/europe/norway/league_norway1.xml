@@ -12,8 +12,8 @@
   
   <prom_rel>
     <prom_rel_element>
-      <rank_start>14</rank_start>
-      <rank_end>14</rank_end>
+      <rank_start>5</rank_start>
+      <rank_end>5</rank_end>
       <dest_sid>norway2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -21,46 +21,25 @@
   
   <teams>
     <team>
-      <team_name>Aalesund</team_name>
+      <team_name>Rosenborg</team_name>
+<def_file>norway_rosenborg</def_file>
     </team>
     <team>
-      <team_name>Bodø/Glimt</team_name>
-    </team>
-    <team>
-      <team_name>B. Bergen</team_name>
-    </team>
-    <team>
-      <team_name>Fredrikstad</team_name>
-    </team> 
-    <team>
-      <team_name>Ham-Kam</team_name>
-    </team>
-   <team>
-      <team_name>Lillestrøm</team_name>
-    </team>
-    <team>
-      <team_name>L. Oslo</team_name>
-    </team>
-    <team>
-      <team_name>Molde</team_name>
-    </team>
-    <team>
-      <team_name>R. Trondheim</team_name>
-    </team>
-    <team>
-      <team_name>S. Bærum</team_name>
-    </team>
-    <team>
-      <team_name>S. Drammen</team_name>
+      <team_name>Vålerenga</team_name>
+<team_average_talent>6500</team_average_talent>
     </team>
     <team>
       <team_name>Tromsø</team_name>
+<team_average_talent>6300</team_average_talent>
     </team>
     <team>
-      <team_name>V. Oslo</team_name>
+      <team_name>Molde</team_name>
+<team_average_talent>6200</team_average_talent>
     </team>
     <team>
-      <team_name>V. Stavanger</team_name>
-    </team>
+      <team_name>Lillestrøm</team_name>
+<team_average_talent>6000</team_average_talent>
+    </team> 
+   
   </teams>
 </league>

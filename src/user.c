@@ -81,6 +81,8 @@ user_new(void)
     new.bets[0] = g_array_new(FALSE, FALSE, sizeof(BetUser));
     new.bets[1] = g_array_new(FALSE, FALSE, sizeof(BetUser));
     new.default_team = g_array_new(FALSE, FALSE, sizeof(gint));
+    new.default_style = 0;
+    new.default_boost = 0;
     return new;
 }
 
@@ -634,7 +636,7 @@ user_event_show_next(void)
 		player_replace_by_new(player_of_id_team(event->user->tm, event->value1), TRUE);
 	    }
 	    else
-		player_remove_from_team(event->user->tm, player_id_index(event->user->tm, event->value1));
+		player_remove_from_team(event->user->tm, player_id_index(event->user->tm, event->value1, TRUE));
 	    treeview_show_user_player_list();
 	    game_gui_show_warning(buf,NULL);
 	    break;
@@ -1145,7 +1147,7 @@ user_mm_load_file(const gchar *filename, GArray *mmatches)
     GString *prefix = g_string_new(""); 
     gchar filename_local[SMALL],
 	matches_file[SMALL];
-    GArray *mm_array = (mmatches == NULL) ?
+    GArray *mm_array = (mmatches != NULL) ?
 	current_user.mmatches : mmatches;
     
     strcpy(filename_local, filename);
@@ -1157,17 +1159,32 @@ user_mm_load_file(const gchar *filename, GArray *mmatches)
     file_decompress(filename_local);
     
     if(mmatches == NULL)
+    {
 	free_mmatches(&mm_array, TRUE);
+        mm_array = g_array_new(FALSE, FALSE, sizeof(MemMatch));
+    }
 
     xml_mmatches_read(matches_file, mm_array);
 
-    g_string_append(prefix, "___*");
-    file_remove_files(prefix);
+    gchar* dirname = g_get_current_dir();
+    GPtrArray *files = file_dir_get_contents(dirname, prefix->str, "");
+    // Remove the zipfile from the list
+    gint i;  
+    for(i=0;i<files->len;i++)
+    {
+      if (g_strcmp0((gchar*)g_ptr_array_index(files, i),filename_local)==0){
+         g_ptr_array_remove_index_fast(files, i);
+      }
+    }
+    file_remove_files(files);
+    g_free(dirname);
+    free_gchar_array(&files);
 
     if(mmatches == NULL)
 	misc_string_assign(&current_user.mmatches_file, filename_local);
 	
 	g_string_free(prefix, TRUE);
+    current_user.mmatches = mm_array;
 }
 
 /** Add the last match to the MM file.
@@ -1328,6 +1345,8 @@ store_default_team(User *user)
        g_array_append_val(user->default_team, g_array_index(user->tm->players, Player, i).id);
     }
     user->default_structure = user->tm->structure;
+    user->default_style = user->tm->style;
+    user->default_boost = user->tm->boost;
 }
 
 /**
@@ -1340,16 +1359,23 @@ restore_default_team(User *user)
     printf("restore_player_order\n");
 #endif
 
-    gint i, player1, player2;
+    gint i, player1, player2, player1_index, player2_index;
     for (i=0;i<user->tm->players->len; i++){
         player1 = g_array_index(user->default_team, gint, i);
         player2 = g_array_index(user->tm->players, Player, i).id;
         if (player1 != player2) {
-            player_swap(user->tm,player_id_index(user->tm,player1), user->tm, player_id_index(user->tm,player2)); 
+            // We don't want to stop because a player has been removed from your team
+            player1_index = player_id_index(user->tm,player1, FALSE);
+            player2_index = player_id_index(user->tm,player2, FALSE);
+            if (player1_index==-1 || player2_index==-1) {
+                return;
+            }
+            player_swap(user->tm,player1_index, user->tm, player2_index); 
         }
     }
     team_change_structure(user->tm, user->default_structure);
-    user->default_structure=-1;
-    g_array_free(user->default_team, TRUE);
-    user->default_team = g_array_new(FALSE, FALSE, sizeof(gint));
+    team_change_attribute_with_message(user->tm, TEAM_ATTRIBUTE_STYLE, user->default_style);
+    team_change_attribute_with_message(user->tm, TEAM_ATTRIBUTE_BOOST, user->default_boost);
+    game_gui_write_meters(current_user.tm);
+    game_gui_write_radio_items();
 }

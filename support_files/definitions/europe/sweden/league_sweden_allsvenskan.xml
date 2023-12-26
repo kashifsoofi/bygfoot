@@ -12,61 +12,34 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>15</rank_start>
-      <rank_end>16</rank_end>
+      <rank_start>4</rank_start>
+      <rank_end>5</rank_end>
       <dest_sid>sweden_superettan</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
 
   <teams>
+      <team>
+      <team_name>Malmö FF</team_name>
+      <def_file>sweden_malmo</def_file>
+    </team>
+
     <team>
-      <team_name>A. Solna</team_name>
+      <team_name>IFK Göteborg</team_name>
+<team_average_talent>6550</team_average_talent>
     </team>
     <team>
-      <team_name>D. Stockholm</team_name>
+      <team_name>IF Elfsborg</team_name>
+<team_average_talent>6400</team_average_talent>
     </team>
     <team>
-      <team_name>Elfsborg</team_name>
+      <team_name>Helsingborgs IF</team_name>
+<team_average_talent>6300</team_average_talent>
     </team>
     <team>
-      <team_name>G. Göteborg</team_name>
-    </team>
-    <team>
-      <team_name>Gefle</team_name>
-    </team>
-    <team>
-      <team_name>I. Göteborg</team_name>
-    </team>
-    <team>
-      <team_name>Halmstad</team_name>
-    </team>
-    <team>
-      <team_name>H. Stockholm</team_name>
-    </team>
-    <team>
-      <team_name>Helsingborg</team_name>
-    </team>
-    <team>
-      <team_name>Kalmar</team_name>
-    </team>
-    <team>
-      <team_name>Ljungskile</team_name>
-    </team>
-    <team>
-      <team_name>Malmö</team_name>
-    </team>
-    <team>
-      <team_name>Norrköping</team_name>
-    </team>
-    <team>
-      <team_name>Sundsvall</team_name>
-    </team>
-    <team>
-      <team_name>Trelleborg</team_name>
-    </team>
-    <team>
-      <team_name>Örebro</team_name>
+      <team_name>Kalmar FF</team_name>
+<team_average_talent>6100</team_average_talent>
     </team>
   </teams>
 </league>

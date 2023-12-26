@@ -13,8 +13,8 @@
 
  <prom_rel>
     <prom_rel_element>
-      <rank_start>12</rank_start>
-      <rank_end>12</rank_end>
+      <rank_start>3</rank_start>
+      <rank_end>3</rank_end>
       <dest_sid>n_ireland2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -22,40 +22,16 @@
 
   <teams>
     <team>
-      <team_name>Ballymena</team_name>
-    </team>
-    <team>
-      <team_name>Bangor</team_name>
-    </team>
-    <team>
       <team_name>Cliftonville</team_name>
-    </team>
-    <team>
-      <team_name>Coleraine</team_name>
-    </team>
-    <team>
-      <team_name>Crusaders</team_name>
-    </team>
-    <team>
-      <team_name>Dungannon</team_name>
-    </team>
-    <team>
-      <team_name>Glenavon</team_name>
+<def_file>n_ireland_cliftonville</def_file>
     </team>
     <team>
       <team_name>Glentoran</team_name>
-    </team>
-    <team>
-      <team_name>Institute</team_name>
+<def_file>n_ireland_glentoran</def_file>
     </team>
     <team>
       <team_name>Linfield</team_name>
-    </team>
-    <team>
-      <team_name>Lisburn D.</team_name>
-    </team>
-    <team>
-      <team_name>Newry C.</team_name>
+<def_file>n_ireland_linfield</def_file>
     </team>
    </teams>
 </league>

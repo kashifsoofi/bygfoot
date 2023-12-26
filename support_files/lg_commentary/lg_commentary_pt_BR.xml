@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lg_commentary>
+  <event>
+    <name>general</name>
+    <commentary xml:lang="pt_BR">_P1_ passa</commentary>
+    <commentary xml:lang="pt_BR">_P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ para _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ faz dá um [maravilhoso|brilhante|lindo|grande] passe para _P0_</commentary>
+    <commentary xml:lang="pt_BR">[Um bela bola|Um belo passe] encontra _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ tabelando a bola</commentary>
+    <commentary xml:lang="pt_BR">Um belo passe e arrancada</commentary>
+    <commentary xml:lang="pt_BR">Grande habilidade com a bola, um passe inteligente</commentary>
+    <commentary xml:lang="pt_BR">_P1_ deixa a bola nos pés de _P0_</commentary>
+    <commentary xml:lang="pt_BR">O passe alto de _P1_ deixa sua marca</commentary>
+    <commentary xml:lang="pt_BR">_T_POSS__ estão no ataque</commentary>
+    <commentary xml:lang="pt_BR">O _T_NPOSS__ está [na defesa|com o pé atrás]</commentary>
+    <commentary xml:lang="pt_BR">Um cruzamento preciso encontra _P0_</commentary>
+    <commentary xml:lang="pt_BR">Agora o _T_POSS__ prepara-se para atacar com _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ toca a bola para _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ dá um [grande|passe] para _P0_</commentary>
+    <commentary xml:lang="pt_BR">Um [lindo|excelente|longo] lançamentos de _P1_ para _P0_</commentary>
+    <commentary xml:lang="pt_BR">Um [longo|curto] passe de _P1_ encontra _P0_</commentary>
+    <commentary xml:lang="pt_BR">Um [bom|inteligente|grande] passe cruzado pela [direita|esquerda]</commentary>
+    <commentary xml:lang="pt_BR">Um [rápido|oportuno] passe pela [esquerda|direita]</commentary>
+    <commentary xml:lang="pt_BR">_P0_ desmarca-se e faz um [cruzamento|lançamento] [perfeito|excelente] para _P1_.</commentary>
+    <commentary xml:lang="pt_BR">Outro [inteligente|brilhante|bonito|lindo] passe [pela lateral|pelo meio|por cima]</commentary>
+    <commentary xml:lang="pt_BR">_P0_ recebe [a bola|o passe] de_P1_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ [toca|passa] a bola para _P0_ entre as pernas do [adversário|oponente]</commentary>
+    <commentary xml:lang="pt_BR">_P1_ [domina|controla] [ela|a bola] com [os pés|a cabeça|o peito|a coxa] e [manda|passa|toca] para _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ [lança|cabeceia] a bola para _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P0_ tenta se desmarcar</commentary>
+    <commentary xml:lang="pt_BR">_P0_ tenta desesperadamente desmarcar-se</commentary>
+	 <commentary xml:lang="pt_BR">_P0_ escapa [pelo meio-campo|pela lateral]</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [finta|dribla|humilha] o [homem|adversário|oponente|marcador]</commentary>
+    <commentary pri="10" cond="_MI_&gt;80 and _GD_ ==0 and _TAVSKILLDIFF_ &gt;= 4" xml:lang="pt_BR">Um empate seria um bom resultado para o _T[_TAVSKILL0_ GE _TAVSKILL1_]_</commentary>
+    <commentary pri="10" cond="_MI_&gt;80 and _GD_ ==1" xml:lang="pt_BR">O _TW_ precisa segurar o jogo e apenas esperar por mais alguns minutos</commentary>
+    <commentary cond="_MI_&gt;20 and _SHOTS_POSS__ &lt; 2" xml:lang="pt_BR">O _T_POSS__ necessita [levar a bola mais a frente|criar mais chances|mostrar um pouco mais de criatividade no ataque]</commentary>
+    <commentary cond="_MI_>20 and _GOALS0_ + _GOALS1_ &lt; 1  and _SHOTS0_ + _SHOTS1_ &gt; 1 and _SHOTS0_ + _SHOTS1_ &lt; 8" xml:lang="pt_BR">Apenas [ _SHOTS0_+ _SHOTS1_] chute(s) ao gol: [a bola só está no meio de campo|os clubes estão acomodados]</commentary>
+    <commentary cond="_MI_&gt;20 and _GOALS0_ + _GOALS1_ &lt; 1 and _SHOTS0_ + _SHOTS1_ = 1" xml:lang="pt_BR">Apenas um chute: [é uma batalha somente no meio-campo|nenhum dos lados está realmente tentando]</commentary>
+    <commentary cond="_MI_&lt;20 and _SHOTS0_ + _SHOTS1_ &gt; 2" xml:lang="pt_BR">_MI_ minutos, e ainda há chances para ambas as equipas</commentary>
+    <commentary cond="_SHOTS0_ + _SHOTS1_ &lt; 4" xml:lang="pt_BR">Muitos jogadores habilidosos em campo</commentary>
+    <commentary cond="_MI_ &gt; 75" xml:lang="pt_BR">Entramos no momentos finais do tempo normal</commentary>
+    <commentary cond="_FOULS0_ + _FOULS1_ &gt;= 7" xml:lang="pt_BR">Rapaz, são [muitas|[_FOULS0_ + _FOULS1_]] faltas. Acho que o árbitro vai precisar de um [lápis|cartão] novo!</commentary>
+    <commentary cond="_MI_&gt;85" xml:lang="pt_BR">Claro, o jogo ainda não acabou, mas parece que o placar não irá mudar</commentary>
+  </event>
+  <event>
+    <name>lost_possession</name>
+	 <commentary xml:lang="pt_BR">A bola é chutada pra fora por _P1_. _P0_ com o arremesso.</commentary>
+	 <commentary xml:lang="pt_BR">_P1_ perde a bola</commentary>
+	 <commentary xml:lang="pt_BR">_P1_ perde a bola para _P0_</commentary>
+	 <commentary xml:lang="pt_BR">[_P1_ perde a bola|A bola é perdida] [por puro descuido|por puro vacilo|muito facilmente] pro adversário</commentary>
+	 <commentary xml:lang="pt_BR">_P1_ ultrapassa a linha de campo. Lateral para o _T_POSS__</commentary>
+	 <commentary xml:lang="pt_BR">Um passe [ruim|péssimo|horroroso] de _P1_. Lateral para o _T_POSS__</commentary>
+	 <commentary xml:lang="pt_BR">_P0_ cobra rápido o lateral</commentary>
+	 <commentary xml:lang="pt_BR">Uma longa cobrança de lateral de _P0_</commentary>
+    <commentary xml:lang="pt_BR">Um carrinho de _P0_ digno de boliche profissional.</commentary>
+	 <commentary xml:lang="pt_BR">_P1_ perde o domínio da bola</commentary>
+    <commentary xml:lang="pt_BR">_P0_ ganha a bola com um [perfeitamente cronometrado|excelente] desarme</commentary>
+    <commentary xml:lang="pt_BR">O _T_NPOSS__ [dá a bola para longe|perde a bola muito rapidamente]</commentary>
+    <commentary xml:lang="pt_BR">Mau domínio de bola de _P1_ permite que _P0_ roube a bola dele</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [rouba|toma|arrebata] a bola de _P1_ com um carrinho</commentary>
+    <commentary xml:lang="pt_BR">A bola perdida [sobra para|fica com] _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P0_ dá um carrinho e [fica com|ganha] a bola</commentary>
+    <commentary xml:lang="pt_BR">_P1_ é travado por _P0_, que fica com a bola</commentary>
+    <commentary xml:lang="pt_BR">_P0_ faz uma grande interceptação</commentary>
+    <commentary xml:lang="pt_BR">_P0_ trava _P1_ e fica com o bola</commentary>
+    <commentary xml:lang="pt_BR">Não foi um bom passe de _P1_, pois _P0_ ficou com a bola</commentary>
+  </event>
+  <event>
+    <name>foul</name>
+    <commentary xml:lang="pt_BR">[Uii!!|Aii!!!|Rapaz!!!] que falta feia sobre _P0_</commentary>
+    <commentary xml:lang="pt_BR">[Com certeza deve levar um cartão|Será que _P1_ vai ser punido?]</commentary>
+    <commentary xml:lang="pt_BR">_P1_ [bate em|derruba|trava|se choca com] _P0_</commentary>
+    <commentary xml:lang="pt_BR">Uma entrada [feia|horrorosa] em _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P0_ é travado por _P1_</commentary>
+    <commentary xml:lang="pt_BR">Uma falta [feia|horrorosa] de _P1_ em _P0_</commentary>
+    <commentary xml:lang="pt_BR">Uma entrada [maldosa|dura] de _P1_ deixa _P0_ estendido no gramado em agonia</commentary>
+    <commentary xml:lang="pt_BR">_P1_ dá uma pancada em _P0_, que fica em agonia no gramado</commentary>
+    <commentary xml:lang="pt_BR">Eles não chamam _P1_ de [matador|assassino|exterminador|destruidor] por nada. Ele [dizimou|atropelou] [o cara|_P0_]!</commentary>
+	 <commentary xml:lang="pt_BR">AI!!!! Essa vai doer</commentary>
+    <commentary xml:lang="pt_BR">_P0_ está no chão e não está sorrindo</commentary>
+    <commentary xml:lang="pt_BR">Eu não sei o que _P0_ está sentindo, mas esta falta, trouxe lágrimas aos meus olhos</commentary>
+    <commentary xml:lang="pt_BR">Um pé alto de _P1_ leva _P0_ ao chão</commentary>
+    <commentary xml:lang="pt_BR">Uii!! _P1_ acerta _P0_ com um belo golpe de [Karatê|Taekwondo|Jujitsu]</commentary>
+	 <commentary xml:lang="pt_BR">_P1_ perde a cabeça e lança _P0_ para ao chão.</commentary>
+	 <commentary xml:lang="pt_BR">_P0_ leva está sendo caçado por _P1_.</commentary>
+	 <commentary xml:lang="pt_BR">O árbitro deu vantagem, mas teve que marcar a falta sobre _P0_</commentary>
+	 <commentary xml:lang="pt_BR">O árbitro deu a vantagem, mas teve que marcar a falta sobre _P0_</commentary>
+	 <commentary xml:lang="pt_BR">Frustração é o que você sente quando começa a ver faltas como essa.</commentary>
+	 <commentary xml:lang="pt_BR">Isso é que é uma falta profissional</commentary>
+	 <commentary xml:lang="pt_BR">_P0_ tenta escapar da falta</commentary>
+	 <commentary xml:lang="pt_BR">_P1_ sofre uma fratura. Certamente, vai ser substituído.</commentary>
+  </event>
+  <event>
+    <name>scoring_chance</name>
+    <commentary xml:lang="pt_BR">_P0_ [se infiltrada|passa] pela defesa e [chuta|fuzila]</commentary>
+    <commentary xml:lang="pt_BR">Um belo cruzamento de _P1_ para _P0_, que [chuta|fuzila] em direção ao gol</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [dispara|chuta|atira|fuzila] em direção ao gol</commentary>
+    <commentary xml:lang="pt_BR">_P0_ gira e chuta</commentary>
+    <commentary xml:lang="pt_BR">Um espetacular [chute|lance] de _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P0_ encontra algum espaço e tenta a sorte.</commentary>
+    <commentary xml:lang="pt_BR">Uma maravilhosa oportunidade se abre pro _T_POSS__</commentary>
+    <commentary xml:lang="pt_BR">Uma bola longa de _P1_ encontra _P0_ [próximo a|longe da] trave</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [não domina a|não consegue controlar a|perde o controle da] bola e dá um horroroso chute em direção ao gol</commentary>
+    <commentary xml:lang="pt_BR">Uma [grande|excelente] cabeçada para o gol</commentary>
+    <commentary xml:lang="pt_BR">_P0_ toma a bola e [lança|dispara|chuta] em direção ao gol</commentary>
+	 <commentary xml:lang="pt_BR">_P0_ toma a bola de _P1_ e corre em direção ao gol</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [fuzila|dispara|chuta] dos [40|35|30|25|20] metros; parece que vai [no canto|onde a coruja dorme|entrar].</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [dribla|corre|passa|avança] pela grande área e chuta</commentary>
+    <commentary xml:lang="pt_BR">_P0_ entra pelo lado [direito|esquerdo] e [chuta|fuzila|dispara]</commentary>
+    <commentary xml:lang="pt_BR">_P0_ tenta a sorte dos [27|23] metros</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [chuta|acerta um tiro|fuzila] em direção ao canto [superior|inferior] [direito|esquerdo]</commentary>
+    <commentary xml:lang="pt_BR">_P0_ chuta da grande área</commentary>
+    <commentary xml:lang="pt_BR">Um [brilhante|grande] passe de _P1_ para _P0_ na cara do goleiro</commentary>
+    <commentary xml:lang="pt_BR">_P0_  cabeceia para o canto [superior|inferior] [esquerdo|direito]</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [dribla|humilha|finta|envergonha] dois [defensores|zagueiros], [engana|dribla|curta] o goleiro e  chuta...</commentary>
+    <commentary xml:lang="pt_BR">_P1_ toca para _P0_, que [envia um foguete|dispara um míssil] em direção ao gol</commentary>
+    <commentary xml:lang="pt_BR">_P0_ cobra a falta</commentary>
+    <commentary xml:lang="pt_BR">O vacilo de _P1_ deixa o _T_POSS__ com uma chance</commentary>
+    <commentary xml:lang="pt_BR">_P0_ dribla a defesa e chuta</commentary>
+  </event>
+  <event>
+    <name>goal</name>
+    <commentary xml:lang="pt_BR">Gol!!!</commentary>
+    <commentary xml:lang="pt_BR">E a bola bate no fundo da rede!</commentary>
+    <commentary xml:lang="pt_BR">_P0_ marca!!!</commentary>
+    <commentary xml:lang="pt_BR">Gol!! Que maravilha!! [O goleiro|_P1_] não viu nada.</commentary>
+    <commentary xml:lang="pt_BR">E a bola de _P1_ [voa|desliza|caminha|vai] para o fundo da rede!!!!</commentary>
+    <commentary xml:lang="pt_BR">A bola [passa por|voa por|ultrapassa] _P1_, e é gol!</commentary>
+    <commentary xml:lang="pt_BR">_P0_ salta e comemora!!</commentary>
+	 <commentary xml:lang="pt_BR">Que gol [espetacular|maravilhoso|fantástico]!</commentary>
+    <commentary xml:lang="pt_BR">Gol! _P1_ se [desespera|estende|estica] mas não pode defender o chute de _P0_</commentary>
+	 <commentary xml:lang="pt_BR">A bola está no fundo da rede!!!</commentary>
+    <commentary xml:lang="pt_BR">A torcida delira!!! Eles não vão esquecer [lindo|belo] gol</commentary>
+	 <commentary xml:lang="pt_BR">A dança de _P0_ [inflama|alegra] os torcedores. Ele faz sua [conhecida|peculiar|especial|exclusiva] comemoração</commentary>
+    <commentary xml:lang="pt_BR">Goal! Uma bola de _P0_ atordoa o [goleiro|_P1_|_T_NPOSS__]</commentary>
+    <commentary xml:lang="pt_BR">Um gol extraordinário!</commentary>
+    <commentary xml:lang="pt_BR">Goal! A sorte está obviamente com o _T_TT__</commentary>
+    <commentary xml:lang="pt_BR">Um belo chute de _P1_ à meta. Goal!</commentary>
+	 <commentary cond="_GOALS0_ + _GOALS1_ ==1" xml:lang="pt_BR">O _T_TT_ [tira sangue primeiro|é o primeiro a abrir a conta] hoje</commentary>
+	 <commentary cond="_GD_ &lt;=2 and _T_TT_ == _TLN_" xml:lang="pt_BR">Este [chute|gol] deixou os torcedores do _T_TT_ [extasiados|em frenesi|loucos]</commentary>
+	 <commentary cond="_GD_ == 0 " xml:lang="pt_BR">Este [chute|gol] igualou a placar</commentary>
+	 <commentary cond="_GD_ &lt;=2" xml:lang="pt_BR">O _T_POSS__ golpeado. Que belo gol!</commentary>
+    <commentary cond="_T_TT__ == _TLN_ and _GD_ &lt;=2 " xml:lang="pt_BR">Pode o _T_TT__ [surpreender|reverter este resultado] na volta?</commentary>
+    <commentary cond="_T_TT__ == _TLN_" xml:lang="pt_BR">A sorte está sorrindo pro _T_TT__ agora</commentary>
+    <commentary cond="_POSS_POSS__ &lt; 45" xml:lang="pt_BR">O _T_POSS__ corre contra o placar do jogo</commentary>
+    <commentary cond="_T_TT__ == _TWN_ and _GD_ &gt;3" xml:lang="pt_BR">É apenas mais um prego no caixão</commentary>
+  </event>
+  <event>
+    <name>corner</name>
+    <commentary xml:lang="pt_BR">_P0_ cobra o escanteio</commentary>
+  </event>
+  <event>
+    <name>keeper_pushed_in_corner</name>
+    <commentary xml:lang="pt_BR">O goleiro manda para escanteio</commentary>
+    <commentary xml:lang="pt_BR">_P1_ desvia a bola com a ponta dos dedos!</commentary>
+    <commentary xml:lang="pt_BR">_P1_ espalma a bola de _P0_ por de cima da trave!</commentary>
+    <commentary xml:lang="pt_BR">_P1_ faz uma [excelente|magnífica|fantástica] defesa no susto!</commentary>
+  </event>
+  <event>
+    <name>player_pushed_in_corner</name>
+    <commentary xml:lang="pt_BR">_P1_ manda pra escanteio</commentary>
+  </event>
+  <event>
+    <name>miss</name>
+    <commentary xml:lang="pt_BR">[Ele|_P0_] [fuzila|chuta] pro lado!</commentary>
+    <commentary xml:lang="pt_BR">A bola passa pelas cabeças e se perde</commentary>
+    <commentary xml:lang="pt_BR">_P0_ procura uma lugar pra esconder a cara depois desta [chocante|terrível|desastrosa|péssima|horrorosa] finalização</commentary>
+    <commentary xml:lang="pt_BR">[Ele|_P0_] estava sozinho, mas manda a bola pra fora</commentary>
+    <commentary xml:lang="pt_BR">[_P1_|O zagueiro] tira</commentary>
+    <commentary xml:lang="pt_BR">_P0_ [chuta|manda] a bola pra cima</commentary>
+    <commentary xml:lang="pt_BR">O defensor volta a bloquear, mandando a bola pro alto</commentary>
+    <commentary xml:lang="pt_BR">A bola de _P0_ [roça a|bate na|explode na] trave</commentary>
+    <commentary xml:lang="pt_BR">E [a bola|o chute] raspa a trave!</commentary>
+    <commentary xml:lang="pt_BR">Isto parece não estar acontecendo</commentary>
+    <commentary xml:lang="pt_BR">Ahh!, que grande oportunidade perdida!</commentary>
+    <commentary xml:lang="pt_BR">As oportunidades perdidas, podem custar o jogo ao _T_POSS__.</commentary>
+    <commentary xml:lang="pt_BR">Parecia um lance promissor para _P0_.</commentary>
+    <commentary xml:lang="pt_BR">Ele tinha feito todo o trabalho, mas ele não pôde finalizar</commentary>
+    <commentary xml:lang="pt_BR">Tão perto mas tão longe</commentary>
+    <commentary xml:lang="pt_BR">Passou próximo ao gol</commentary>
+    <commentary xml:lang="pt_BR">O _T_POSS__ esbanjam [um grande|uma ótima] chance.</commentary>
+    <commentary xml:lang="pt_BR">Uma grande corrida e finalização, pena que foi pra fora</commentary>
+    <commentary xml:lang="pt_BR">A sorte virou as costas pro [_P0_|_T_POSS__]</commentary>
+    <commentary xml:lang="pt_BR">Os jogadores do _T_NPOSS__ estão desapontados</commentary>
+    <commentary xml:lang="pt_BR">Uma tentativa ousada, digna, mas sem sucesso</commentary>
+    <commentary xml:lang="pt_BR">Não há ouro no fim do arco-íris</commentary>
+    <commentary xml:lang="pt_BR">A bola passa pela grande área, mas não encontra ninguém</commentary>
+    <commentary xml:lang="pt_BR">Isso chute vai para qualquer lugar, menos pra rede</commentary>
+    <commentary xml:lang="pt_BR">A bola está na rede, mas valeu. O bandeira marcou impedimento.</commentary>    
+    <commentary cond="_SHOTS_POSS__ &gt; 3 and _GOALS_POSS__ &lt; 1" xml:lang="pt_BR">_P0_ está imaginando o que precisa fazer para marcar</commentary>
+    <commentary cond="_SHOTS_POSS__ &gt; 3 and _GOALS_POSS__ &lt; 1" xml:lang="pt_BR">O _T_POSS__ se perguntam de que eles têm de fazer para marcar</commentary> </event>
+  <event>
+    <name>save</name>
+	 <commentary xml:lang="pt_BR">[Um chute|Uma bola] forte, mas [o goleiro||_P1_] [tem cola nas luvas|faz grande defesa]</commentary>
+    <commentary xml:lang="pt_BR">Há uma parede lá fora, com o nome de _P1_. Que [linda|sensacional] defesa!</commentary>
+    <commentary xml:lang="pt_BR">Fácil defesa para _P1_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ respira novamente, [com|ao ter] a bola em seus braços.</commentary>
+	 <commentary xml:lang="pt_BR">O _T_NPOSS__ tenta, mas _P1_ realiza uma grande defesa</commentary> 
+	 <commentary xml:lang="pt_BR">_T_POSS__ Negado por um [grande|brilhante|espetacular] defesa de _P1_</commentary>
+    <commentary xml:lang="pt_BR">Uma presa fácil para _P1_. Ele recolhe a bola</commentary>
+    <commentary xml:lang="pt_BR">Grande [velocidade|corrida|habilidade|pique] de _P0_, mas _P1_ realiza um [impressionante|excelente|belo] desarme</commentary>
+    <commentary xml:lang="pt_BR">Um chute rasteiro bem a [direita|esquerda] defendido por _P1_</commentary>
+	<commentary xml:lang="pt_BR">_P1_ defende com facilidade</commentary>
+    <commentary xml:lang="pt_BR">_P1_ [corre|se joga|investe] em direção a _P0_ e bloqueia o chute com [o tornozelo|o corpo|a cabeça|o tronco|o pé|a perna]</commentary>
+    <commentary xml:lang="pt_BR">Uma [grande|brilhante|sensacional|bastante fácil] defesa do goleiro</commentary>
+    <commentary xml:lang="pt_BR">[Salva|Segura|Parada|Apanhada] por _P1_</commentary>
+    <commentary xml:lang="pt_BR">Uhh!, [o goleiro|_P1_] se antecipa ao movimento de _P0_ e faz uma bela defesa</commentary>
+    <commentary xml:lang="pt_BR">De uma coisa temos certeza: _P1_ salvou o dia</commentary>
+    <commentary xml:lang="pt_BR">_P0_ é facilmente desarmado por _P1_</commentary>
+	 <commentary xml:lang="pt_BR">Uma [boa defesa|defesa fácil] [de _P1_|do goleiro]</commentary>
+	 <commentary cond="_GD_ ==1" xml:lang="pt_BR">[_P1_|O goleiro] mantém o _TL_ no jogo</commentary> 
+  </event>
+  <event>
+    <name>start_match</name>
+    <commentary xml:lang="pt_BR">Uma multidão de _AT_ espectadores aqui no estádio</commentary>
+    <commentary xml:lang="pt_BR">Começa o jogo</commentary>
+    <commentary xml:lang="pt_BR">As duas equipes são recebidas pelos cânticos de suas torcidas</commentary>
+    <commentary xml:lang="pt_BR">[A multidão recebe|_AT_ espectadores recebem] com bastante entusiasmo os jogadores que emergem do túnel</commentary>
+    <commentary xml:lang="pt_BR">Um belo dia de sol. Tem-se a impressão que teremos um bom jogo</commentary>
+    <commentary xml:lang="pt_BR">_AT_ espectadores não podem estar errados. Este é o jogo que todos nós queremos assistir</commentary>
+    <commentary xml:lang="pt_BR">O árbitro recebe sinal verde do assistente, e vamos ao jogo</commentary>
+	 <commentary xml:lang="pt_BR">A [batalha|luta|labuta] começa</commentary>
+    <commentary xml:lang="pt_BR">Os auxiliares estão prontos, os jogadores também; apita o árbitro</commentary>
+    <commentary xml:lang="pt_BR">A neblina, mas o jogo começa</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &lt;= 2" xml:lang="pt_BR">As equipes estão bem entrosados. Estamos [num belo jogo|numa bela labuta|num campo de batalha]</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &lt; 5 and _TAVGSKILLDIFF_ &gt;2" xml:lang="pt_BR">O _T[_TAVSKILL0_ LE _TAVSKILL1_]_ tem uma leve ajuda.</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &gt;=8" xml:lang="pt_BR">Há uma [clara|inegável|óbvia] diferença entre os times. Vai ser um longo caminho para o _T[_TAVSKILL1_ GE _TAVSKILL0_]_</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &gt;=5" xml:lang="pt_BR">O _T[_TAVSKILL0_ GE _TAVSKILL1_]_ entra neste jogo como azarão.</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &gt;=8" xml:lang="pt_BR">O _T[_TAVSKILL0_ LE _TAVSKILL1_]_ começa a partida como favorito com certeza.</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &lt;= 1 and [_TAVSKILL0_ + _TAVSKILL1_] &gt;=85" xml:lang="pt_BR">O confronto de [gladiadores|titãs] [começa|se inicia]</commentary>
+  </event>
+  <event>
+    <name>half_time</name>
+    <commentary xml:lang="pt_BR">Intervalo</commentary>
+    <commentary xml:lang="pt_BR">Intervalo e o jogo está _RE_.</commentary>
+    <commentary xml:lang="pt_BR">Intervalo e o jogo está _RE_. O técnico do _TL_ deve tentar alguma coisa para estimular o seu time.</commentary>
+    <commentary xml:lang="pt_BR">Jogos como este fazem treinadores. O _TL_ precisa de inspiração de para reagir.</commentary>
+    <commentary xml:lang="pt_BR">As cabeças baixas confirmam que tem sido um jogo muito difícil pro _TL_.</commentary>
+    <commentary xml:lang="pt_BR">A polícia tem que proteger o técnico do _TL_ de seus torcedores</commentary>
+    <commentary xml:lang="pt_BR">Até agora, o _TW_ e seu técnico estão fazendo tudo certo.</commentary>
+	 <commentary xml:lang="pt_BR">O técnico do _TL_ deve estar [desapontado|furioso] com [sua equipe|seus jogadores|seu time] devido a esta pífia performance</commentary>
+	 <commentary xml:lang="pt_BR">Tem-se a sensação que o técnico do _TL_ enfrentará um motim</commentary>
+	 <commentary xml:lang="pt_BR">O técnico do _TL_ deve estar [na bronca|irado|coberto de vergonha]</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &gt;=8 and _GD_ &lt;=1 and _TAVSKILL_TLN__ &lt; _TAVSKILL_TWN__" xml:lang="pt_BR">O _TW_ está a [apenas|meros] 45 minutos de uma vitória impressionante</commentary>
+    <commentary cond="_GD_ &gt;0" xml:lang="pt_BR">Os jogadores do _TL_ [vão de cabeça baixa|arrastam-se|caminham] para o túnel à espera bronca do técnico</commentary>
+	 <commentary cond="_GD_&gt;0" xml:lang="pt_BR">O _TL_ vai querer esquecer rapidamente o 1º tempo</commentary>
+    <commentary cond="_POSS0_ &gt;= 70 or _POSS1_ &gt;= 70" xml:lang="pt_BR">_T [_POSS1_ GE 70] _ está dominando a jogo</commentary>
+    <commentary cond="_POSS0_ &gt;= 60 or _POSS1_ &gt;= 60" xml:lang="pt_BR">_T [_POSS1_ GE 60] _ tiveram mais posse de bola neste tempo</commentary>
+    <commentary cond="_POSS0_ &gt; 50 and _GOALS1_ &gt; _GOALS0_" xml:lang="pt_BR">O _T1_ pode ter tido mais posse de bola, mas o _T0_ utilizou melhor suas chances</commentary>
+    <commentary cond="_POSS1_ &gt; 50 and _GOALS0_ &gt; _GOALS1_" xml:lang="pt_BR">O _T1_ pode ter tido mais posse de bola, mas o _T0_ utilizou melhor suas chances</commentary>
+    <commentary cond="_POSS0_ &gt;= 75 or _POSS1_ &gt;= 75" xml:lang="pt_BR">O _T [_POSS1_ GE 75] _ parece ser a única equipe em campo</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ = 0 " xml:lang="pt_BR">Bem, [uma perda de tempo|a maré está brava|o saco está vazio]: [sem gols neste período|ninguém conseguiu marcar]</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ = 1 and _SHOTS0_ + _SHOTS1_ &lt; 2" xml:lang="pt_BR">Nesta altura, somente um gol [pode|parece] não ser o suficiente</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ = 1 and _SHOTS0_ + _SHOTS1_ &lt; 2" xml:lang="pt_BR">Com o número de finalizações até agora, um gol pode não ser suficiente</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ &lt; 2 and _SHOTS0_ + _SHOTS1_ &lt; 8" xml:lang="pt_BR">Certo, é um jogo de poucos gols, mas tivemos muitas finalizações</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ &lt; 1 and _SHOTS0_ + _SHOTS1_ &lt; 4" xml:lang="pt_BR">O _T[_SHOTS0_ LE _SHOTS1_]_ teve [bastante|várias] chances de [marcar|finalizar] neste jogo</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ &lt; 2 and _SHOTS0_ + _SHOTS1_ &lt; 3" xml:lang="pt_BR">O _T[_SHOTS0_ LE _SHOTS1_]_ teve _SHOTS[_SHOTS0_ LE _SHOTS1_]_ chances para [finalizar neste|marcar neste|selar este] jogo</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ = 0 and _SHOTS0_ + _SHOTS1_ &lt; 2" xml:lang="pt_BR">Nenhum biscoito no pacote. [Parece que o padeiro está em greve|Para ser honesto, o fermento deve ter acabado]</commentary>
+	 <commentary cond="_GOALS0_ + _GOALS1_ &lt;= 6" xml:lang="pt_BR">Está chovendo gols. São [_GOALS0_ + _GOALS1_] até agora, e é só o primeiro tempo!</commentary>
+    <commentary cond="_FOULS0_ - _FOULS1_ &lt;= 4 or _FOULS1_ - _FOULS0_ &lt;=4" xml:lang="pt_BR">Existem dois times em campo, mas apenas o [_T[_FOULS0_ GE _FOULS1_] _ | um deles] está jogando</commentary>
+    <commentary cond="_FOULS0_ + _FOULS1_ &gt;= 8" xml:lang="pt_BR">Isto não é um jogo de futebol. É um banho de sangue!</commentary>
+    <commentary cond="_FOULS0_ + _FOULS1_ &gt;= 10" xml:lang="pt_BR">O que é isso, são [muitas|[_FOULS0_ + _FOULS1_]] faltas. O árbitro vai precisar de cartões novos para terminar o jogo!</commentary>
+    <commentary cond="_FOULS0_ + _FOULS1_ &gt;= 10" xml:lang="pt_BR">Rapaz, são [muitas|[_FOULS0_ + _FOULS1_]] faltas. Acho que o árbitro vai precisar de um [lápis|cartão] novo!</commentary>
+    <commentary cond="_PEN0_ + _PEN1_ &gt; 1" xml:lang="pt_BR">[_PEN0_ + _PEN1_] pênaltis batidos</commentary>
+  </event>
+  <event>
+    <name>extra_time</name>
+    <commentary xml:lang="pt_BR">Após o tempo normal, as equipes vão para a prorrogação</commentary>
+    <commentary xml:lang="pt_BR">O jogo termina em _RE_: vamos para a prorrogação</commentary>
+    <commentary xml:lang="pt_BR">Após _MI_ minutos, ainda temos _RE_: vamos a prorrogação</commentary>
+    <commentary xml:lang="pt_BR">Quem vai marcar primeiro? Vamos a prorrogação</commentary>
+    <commentary xml:lang="pt_BR">Na prorrogação o que conta é a determinação e a forma física</commentary>
+  </event>
+  <event>
+    <name>penalties</name>
+    <commentary xml:lang="pt_BR">Quem teria pensado que a _MI_ minutos ainda estaríamos aqui?</commentary>
+    <commentary xml:lang="pt_BR">Agora temos o drama de uma tensa disputa de pênaltis</commentary>
+    <commentary xml:lang="pt_BR">As duas equipes, foram iguais até agora em todos os aspectos, assim, vamos a disputa de pênaltis</commentary>
+    <commentary xml:lang="pt_BR">Vamos para a disputa de pênaltis. Agora é um contra um. O batedor contra o goleiro</commentary>
+    <commentary cond="_GOALS0_ + _GOALS1_ &lt; 1" xml:lang="pt_BR">Não houve gols até agora, mas agora vamos ver [alguns|nem que seja um] na disputa de pênaltis</commentary>
+  </event>
+  <event>
+    <name>end_match</name>
+    <commentary xml:lang="pt_BR">Acaba o jogo !</commentary>
+    <commentary xml:lang="pt_BR">_TW_ triunfam!</commentary>
+    <commentary xml:lang="pt_BR">A torcida vaia o _TL_ na saída do campo</commentary>
+    <commentary xml:lang="pt_BR">Após _MI_ minutos, o jogo termina _RE_</commentary>
+    <commentary xml:lang="pt_BR">O árbitro olha para o relógio e apita o fim do jogo</commentary>
+    <commentary xml:lang="pt_BR">Bem, é isso. Termina em _RE_</commentary>
+    <commentary xml:lang="pt_BR">O técnico do _TW_ está [encantado|emocionado] com o resultado</commentary>
+    <commentary pri="10" cond="_TAVSKILLDIFF_ &lt;=4 and _TWN_ = _T[_TAVSKILL0_ GE _TAVSKILL1_]_" xml:lang="pt_BR">_RE_, um resultado surpreendente para o _TW_</commentary>
+    <commentary pri="10" cond="_GD_ = 0 " xml:lang="pt_BR">Acabou empatado. Ainda assim, um ponto é um ponto.</commentary>
+    <commentary pri="10" cond="_GD_ &lt; 0 " xml:lang="pt_BR">Bem, é isso. Termina em _RE_ para o _TW_</commentary>
+    <commentary pri="10" cond="_GOALS0_ + _GOALS1_ &lt;= 6" xml:lang="pt_BR">Um jogo para recordar. Cheio de ação com [_GOALS0_ + _GOALS1_] gols!</commentary>
+    <commentary pri="10" cond="_GD_ &lt;= 4" xml:lang="pt_BR">_TL_ foram abatidos com _GD_ gols.</commentary>
+    <commentary pri="10" cond="_GD_ >= 2" xml:lang="pt_BR">Os jogadores do _TW_ irão comemorar pela madrugada esta vitória</commentary>
+    <commentary pri="10" cond="[_TLAYER0_ - _TLAYER1_]&gt; 1 or [_TLAYER1_ - _TLAYER0_] &gt;1 and _TLAYER_TWN__ &gt; _TLAYER_TLN__" xml:lang="pt_BR">Uma [grande vitória|incrível vitória] para _TW_</commentary>
+    <commentary pri="10" cond="_GD_ &gt; 3 and _TLAYER[_GOALS1_ &gt; _GOALS0_]_ &gt;= _TLAYER[_GOALS1_ &lt; _GOALS0_]_" xml:lang="pt_BR">O _TL_ foi contra um gigante, como mostra o placar de _RE_</commentary>
+  </event>
+  <event>
+    <name>own_goal</name>
+    <commentary xml:lang="pt_BR">Ah não!! a bola [bate|desvia] em _P0_ e vai pra rede</commentary>
+    <commentary xml:lang="pt_BR">Uma bela bola na grande área ... , ela bate em _P0_ e atravessa a linha do gol</commentary>
+    <commentary xml:lang="pt_BR">Foi um chute [forte|poderoso]. É desviado por _P0_ e vai pro fundo da rede</commentary>
+    <commentary xml:lang="pt_BR">_P0_ toca de volta pro goleiro. Ah, não, o goleiro furou! Gol contra de _P0_!</commentary>
+    <commentary xml:lang="pt_BR">Este pequeno mal-entendido custou um gol ao _T_TT__</commentary>
+  </event>
+  <event>
+    <name>header</name>
+    <commentary xml:lang="pt_BR">_P1_ lança a bola para _P0_, que cabeceia em direção ao gol</commentary>
+    <commentary xml:lang="pt_BR">_P0_ mergulha de cabeça </commentary>
+    <commentary xml:lang="pt_BR">Ele parecia flutuar no ar, quando cabeceou ao gol</commentary>
+    <commentary xml:lang="pt_BR">Cabeceio de _P0_!</commentary>
+    <commentary xml:lang="pt_BR">Um cabeceio [forte|maravilhoso|no ângulo] de _P0_ para a rede </commentary>
+    <commentary xml:lang="pt_BR">_P0_ cabeceia a bola no fim do longo cruzamento</commentary>
+  </event>
+  <event>
+    <name>post</name>
+    <commentary xml:lang="pt_BR">O chute de _P0_ acerta a trave</commentary>
+    <commentary xml:lang="pt_BR">E o chute bate na trave</commentary>
+    <commentary xml:lang="pt_BR">Estou surpreso que a trave esteja de pé após este chute</commentary>
+  </event>
+  <event>
+    <name>cross_bar</name>
+    <commentary xml:lang="pt_BR">_P1_ dá um chapéu e chuta, mas a bola bate na trave e [é defendida pelo goleiro|volta ao jogo|vai pra fora]</commentary>
+    <commentary xml:lang="pt_BR">A bola bate na trave! _P1_ nem viu a bola</commentary>
+    <commentary xml:lang="pt_BR">_P1_ se movimentou bem neste lance, mas manda a bola por cima da trave</commentary>
+  </event>
+  <event>
+    <name>penalty</name>
+    <commentary xml:lang="pt_BR">_P0_ a um passo de converter o pênalti</commentary>
+    <commentary xml:lang="pt_BR">_P0_ tem a chance de marcar se converter este pênalti</commentary>
+    <commentary xml:lang="pt_BR">Se _P0_ converter este pênalti, as preocupações do _T_POSS__ vão [desaparecer|sumir|deixar de existir]</commentary>
+	 <commentary xml:lang="pt_BR">Será que [_P0_ | _T_POSS__] vai converter o pênalti?</commentary>
+    <commentary xml:lang="pt_BR">É preciso controlar os nervos, engolir seco e se concentrar, quando se está na disputa de pênaltis</commentary>
+    <commentary cond="_PEN_POSS__ &gt; 1" xml:lang="pt_BR">O _T_POSS__ parece estar jogando para decidir nos pênaltis.</commentary>
+    <commentary cond="_GD_ = 0" xml:lang="pt_BR">O _T_POSS__ pode [pular a frente|assumir a liderança] se converter este</commentary>
+    <commentary cond="_GD_=1 and _GOALS_POSS__ &lt; _GOALS_NPOSS__" xml:lang="pt_BR">_P0_ pode [igualar|empatar] a partida com esta cobrança</commentary>
+    <commentary cond="_MI_&gt;85 and _GD_=1 and _GOALS_POSS__ &lt; _GOALS_NPOSS__" xml:lang="pt_BR">Este pênalti de _P0_ no fim do jogo pode acabar forçando um empate</commentary>
+    <commentary cond="_MI_&gt;85 and _GD_=1 and _GOALS_POSS__ &lt; _GOALS_NPOSS__" xml:lang="pt_BR">O _T_NPOSS__ está dando uma chance fácil para o _T_POSS__ para virar este jogo</commentary>
+    <commentary cond="_MI_&gt;85 and _GD_=1 and _GOALS_POSS__ &gt; _GOALS_NPOSS__" xml:lang="pt_BR">_P0_ pode selar a partida com um gol aqui</commentary>
+  </event>
+  <event>
+    <name>free_kick</name>
+    <commentary xml:lang="pt_BR">Uma curta cobrança de _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P0_ faz uma cobrança rasteira e forte</commentary>
+    <commentary xml:lang="pt_BR">_P0_ cobra a falta rapidamente ao lado da barreira</commentary>
+    <commentary xml:lang="pt_BR">_P0_ cobra a falta por cima da barreira</commentary>
+    <commentary xml:lang="pt_BR">Cobrança de falta: _P0_ manda a bola para lateral</commentary>
+    <commentary xml:lang="pt_BR">Cobrança de falta: _P0_ faz um lançamento longo</commentary>
+    <commentary xml:lang="pt_BR">Uma falta batida por _P0_ na cara do gol </commentary>
+  </event>
+  <event>
+    <name>foul_yellow</name>
+    <commentary xml:lang="pt_BR">_P1_ por falta [perigosa|desnecessária|bruta] em _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ faz falta em _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ por [chutar|jogar|lançar] a bola pra longe após o apito</commentary>
+    <commentary xml:lang="pt_BR">_P1_ demorar de repor a bola</commentary>
+    <commentary xml:lang="pt_BR">Bola na mão de _P1_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ por parar _P0_, que cobra a falta rapidamente</commentary>
+    <commentary xml:lang="pt_BR">_P1_ é advertido por reclamação</commentary>
+  </event>
+  <event>
+    <name>foul_red</name>
+    <commentary xml:lang="pt_BR">_P1_ é repreendido por chutes altos</commentary>
+    <commentary xml:lang="pt_BR">_P1_ é advertido por indisciplina</commentary>
+    <commentary xml:lang="pt_BR">_P1_ por exibir a genitália</commentary>
+    <commentary xml:lang="pt_BR">_P1_ põe a mão na bola intencionalmente</commentary>
+    <commentary xml:lang="pt_BR">_P1_ é expulso por impedir uma oportunidade clara de gol</commentary>
+    <commentary xml:lang="pt_BR">_P1_ recebe cartão vermelho por [dar um soco em|dar um tapa em|empurrar|dar uma cabeçada em] _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ por desrespeito a torcida adversária</commentary>
+  </event>
+  <event>
+    <name>foul_red_injury</name>
+    <commentary xml:lang="pt_BR">Falta de _P1_. Os maqueiros estão vindo buscar _P0_ para atendimento médico</commentary>
+    <commentary xml:lang="pt_BR">Falta de _P1_; _P0_ parece estar machucado ... ele deve ser substituído</commentary>
+  </event>
+  <event>
+    <name>send_off</name>
+    <commentary xml:lang="pt_BR">_P0_ está expulso!</commentary>
+    <commentary xml:lang="pt_BR">_P0_ É expulso. O _T_TT__ agora está com um homem a menos</commentary>
+  </event>
+  <event>
+    <name>injury</name>
+    <commentary xml:lang="pt_BR">_P0_ tem que [sair de|ser retirado do|deixar o] campo, pois está com dores [no tornozelo|no joelho|no braço|no pulso|no ombro|nas costas|na coxa|na virilha]</commentary>
+    <commentary xml:lang="pt_BR">Parece que a lesão sofrida por _P0_é [grave|séria]</commentary>
+    <commentary xml:lang="pt_BR">O fisioterapeuta recomenda e _P0_ deve ser substituído</commentary>
+  </event>
+  <event>
+    <name>temp_injury</name>
+    <commentary xml:lang="pt_BR">_P0_ parece que teve uma distensão muscular, mas quer continuar em campo</commentary>
+    <commentary xml:lang="pt_BR">_P0_ sofre uma leve falta</commentary>
+    <commentary xml:lang="pt_BR">_P0_ sente uma fisgada da virilha, mas afirma que quer continuar jogando</commentary>
+    <commentary xml:lang="pt_BR">_P0_ estende o músculo: parece ok</commentary>
+    <commentary xml:lang="pt_BR">Após o atendimento, _P0_ volta ao jogo</commentary>
+    <commentary xml:lang="pt_BR">_P0_ está com um grande corte acima do olho [esquerdo|direito], mas é rapidamente atendido, e vai continuar no jogo</commentary>
+  </event>
+  <event>
+    <name>stadium_breakdown</name>
+    <commentary xml:lang="pt_BR">O _T0_ está passando por problemas em seu estádio</commentary>
+    <commentary xml:lang="pt_BR">[Os refletores apagaram-se|Falta luz no estádio]</commentary>
+    <commentary xml:lang="pt_BR">Uma névoa pesada está causando problemas no estádio do _T0_</commentary>
+  </event>
+  <event>
+    <name>stadium_riots</name>
+    <commentary xml:lang="pt_BR">Os torcedores estão revoltados</commentary>
+    <commentary xml:lang="pt_BR">E os torcedores estão jogando [objetos|garrafas] em campo</commentary>
+    <commentary xml:lang="pt_BR">Os policiais se deslocaram para parar a briga entre as torcidas</commentary>
+    <commentary xml:lang="pt_BR">Um torcedor invade o campo e começou a [discutir|bater boca|brigar] com o árbitro</commentary>
+    <commentary xml:lang="pt_BR">Os torcedores invadem o campo</commentary>
+  </event>
+  <event>
+    <name>stadium_fire</name>
+    <commentary xml:lang="pt_BR">Um incêndio está consumindo o estádio _T_TT__</commentary>
+    <commentary xml:lang="pt_BR">Alguns torcedores incendiaram o setor [norte|sul|leste|oeste] do estádio</commentary>
+    <commentary xml:lang="pt_BR">Um rojão atirado pelos torcedores inicia um [enorme|perigoso|horrível] incêndio</commentary>
+    <commentary xml:lang="pt_BR">Um alto-falante entrou em curto-circuito, e o fogo está se espalhando pelo interior do estádio</commentary>
+  </event>
+  <event>
+    <name>substitution</name>
+    <commentary xml:lang="pt_BR">O _T_TT__ faz uma substituição: _P0_ entra no lugar de _P1_</commentary>
+    <commentary cond="_MI_&gt;60" xml:lang="pt_BR">O _T_TT__ vai ter sangue novo. _P0_ substitui _P1_</commentary>
+    <commentary xml:lang="pt_BR">_P1_ sai sob os aplausos dos torcedores. _P0_ substitui-o</commentary>
+    <commentary xml:lang="pt_BR">_P1_ não parece muito feliz ao ser substituído por _P0_</commentary>
+    <commentary xml:lang="pt_BR">_P0_ vai substituir _P1_</commentary>
+    <commentary xml:lang="pt_BR">_P0_ entra no lugar de _P1_</commentary>
+  </event>
+  <event>
+    <name>structure_change</name>
+    <commentary xml:lang="pt_BR">_T_TT__ jogam agora no _EX_</commentary>
+    <commentary xml:lang="pt_BR">O _T_TT__ reestrutura-se na formação _EX_</commentary>
+  </event>
+  <event>
+    <name>style_change</name>
+    <commentary xml:lang="pt_BR">O _T_TT__ muda o estilo para _EX_</commentary>
+    <commentary xml:lang="pt_BR">_T_TT__ mudam o estilo _EX_</commentary>
+    <commentary cond="_EX_ == 'ATTACK'" xml:lang="pt_BR">O _T_TT__ tenta criar uma abertura, atacando</commentary>
+    <commentary cond="_MI_&gt;75 and _EX_ == 'BALANCED'" xml:lang="pt_BR">O _T_TT__ muda o estilo para _EX_ e aguarda o fim do jogo</commentary>
+    <commentary cond="_MI_&gt;75 and _EX_ == 'ATTACK'" xml:lang="pt_BR">Um último esforço:  _T_TT__ muda o estilo para _EX_</commentary>
+    <commentary cond="_MI_&gt;75" xml:lang="pt_BR">Faltam _MR_ minutos. O _T_TT__ muda a formação tática para _EX_</commentary>
+    <commentary cond="_TIME_=1 and _MR_ &gt;= 44" xml:lang="pt_BR">O _T_TT__ jogará no estilo _EX_ no 2º tempo</commentary>
+  </event>
+  <event>
+    <name>boost_change</name>
+    <commentary xml:lang="pt_BR">O _T_TT__ muda a motivação para _EX_</commentary>
+    <commentary cond="_MI_&gt;75 and _EX_ == 'ANTI' and _TT_ == _TLN_" xml:lang="pt_BR">_T_TT__ parece ter desistido</commentary>
+    <commentary cond="_MI_&gt;75 and _EX_ == 'ANTI' and _TT_ == _TWN_" xml:lang="pt_BR">O _T_TT__ deve pensar que o jogo já está ganho</commentary>
+    <commentary cond="_EX_ = 'ON'" xml:lang="pt_BR">O _T_TT__ domina e vai todo pro ataque</commentary>
+    <commentary pri="10" cond="_EX_ = 'ON' and _MI_ &gt;75" xml:lang="pt_BR">"Motivação" ativada. O _T_TT__ está dando tudo o que tem</commentary>
+  </event>
+</lg_commentary>

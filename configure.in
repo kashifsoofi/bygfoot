@@ -9,8 +9,10 @@ AC_ISC_POSIX
 AC_PROG_CC
 AM_PROG_CC_STDC
 AC_HEADER_STDC
-
-pkg_modules="gtk+-2.0 >= 2.6 glib-2.0 >= 2.12"
+AM_CONDITIONAL(HAVE_WINDRES, which windres > /dev/null)
+IT_PROG_INTLTOOL(0.35.0,1)
+AC_PROG_LIBTOOL
+pkg_modules="gtk+-2.0 >= 2.16 glib-2.0 >= 2.12 gmodule-2.0"
 
 dnl echo -n "checking for  gthread-2.0 ... "
 dnl if pkg-config --exists  gthread-2.0 ; then
@@ -20,17 +22,21 @@ dnl else
 dnl 	echo "no"
 dnl 	AC_MSG_ERROR(gthread-2.0 not found)
 dnl fi
+AM_CONDITIONAL(HAVE_WINDRES, which windres > /dev/null)
+AC_CHECK_TOOL(WINDRES, windres, )
+AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
+AC_SUBST(ZLIB_LIBS)
 
 GETTEXT_PACKAGE=bygfoot
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
 
 dnl Add the languages which your application supports here.
-ALL_LINGUAS="de nl fr pl pt_PT pt_BR ro bg zh es da sv it"
+ALL_LINGUAS="de nl fr pl pt_PT pt_BR ro bg zh es da sv it el"
 AM_GLIB_GNU_GETTEXT
 
 dnl gstreamer checking
@@ -80,5 +86,6 @@ ifdef(`__unix__', `AC_MSG_RESULT([OK]'')')
 AC_OUTPUT([
 Makefile
 src/Makefile
+src/zip/Makefile
 po/Makefile.in
 ])
