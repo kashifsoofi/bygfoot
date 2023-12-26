@@ -7,6 +7,11 @@
 # debug level
 int_debug 0
 
+# write debug messages to console debug_writer=1
+# write debug messages to file debug_writer=2 (not implemented)
+# write debug messages to file console+file debug_writer=2 (not implemented)
+int_debug_writer 0
+
 #### float constants get divided by 100000 and loaded as floats
 #### so we write 50000 if we'd like to have 0.5
 
@@ -221,6 +226,9 @@ int_treeview_max_pipes 50
 float_player_pos_bound1 37550
 float_player_pos_bound2 75100
 
+
+# minimum number of players in a user team.
+int_team_min_players 11
 # maximum number of players in a user team.
 int_team_max_players 22
 # number of players in cpu teams. should be
@@ -397,10 +405,10 @@ int_season_end_user_champ_best_teams_limit 5
 
 # how much the user's luck deteriorates if he
 # becomes champion
-float_season_end_user_champ_luck_factor 90000
+float_season_end_user_champ_luck_factor 95000
 
 # how much it regenerates if he's not champ
-float_season_end_user_champ_luck_factor_regen 105000
+float_season_end_user_champ_luck_factor_regen 103000
 
 # lower limit for the user's luck
 float_luck_limit  50000
@@ -746,10 +754,10 @@ int_name_max_product 2000
 # list instead of the specified one
 float_name_random_list_prob 20000
 
-string_language_names English Deutsch Français Spanish Nederlands Polski Svenska Danish Romanian Bulgarian Chinese
-string_language_codes C de fr es nl pl sv da ro bg zh
-string_language_symbols flag_england.png flag_germany.png flag_france.png flag_spain.png flag_netherlands.png flag_poland.png flag_sweden.png flag_dk.png flag_romania.png flag_bulgaria.png flag_china.png
-string_language_defs country_england.xml country_germany.xml country_france.xml country_spain.xml country_netherlands.xml country_poland.xml country_sweden.xml NONE country_romania.xml country_bulgaria.xml NONE
+string_language_names English Deutsch Français Spanish Nederlands Polski Svenska Danish Romanian Bulgarian Chinese Italian
+string_language_codes C de fr es nl pl sv da ro bg zh it
+string_language_symbols flag_england.png flag_germany.png flag_france.png flag_spain.png flag_netherlands.png flag_poland.png flag_sweden.png flag_dk.png flag_romania.png flag_bulgaria.png flag_china.png flag_italy.png
+string_language_defs country_england.xml country_germany.xml country_france.xml country_spain.xml country_netherlands.xml country_poland.xml country_sweden.xml NONE country_romania.xml country_bulgaria.xml NONE country_italy.xml
 
 # lower and upper limits of which percentage
 # of the player wages a sponsor pays; the actual

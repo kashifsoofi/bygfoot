@@ -1,6 +1,59 @@
-9/6/2006: v2.1.0
+5/18/2007: v2.2.0
+	- added updated definitions for Mexico (thanks to Christopher Hunter) 
+	- added updated definitions for USA (thanks to Christopher Hunter) 
+	- added updated definitions for Japan (thanks to Christopher Hunter) 
 	- fixed some minor bugs
+
+
+3/4/2007: v2.1.1
+	- added Polish translation for the training camp 
+	(thanks to Michal Rudolf)
+	- added French translation for the training camp 
+	(thanks to Alexandre Coutherez and Forjan Frédéric)
+	- changes in gui to make bygfoot usable for blind users. Added 
+	possibility to swap players using the RETURN key.
+	(thanks to Roberto Burceni for the input)
+	- added new definitions for USA (thanks to Christopher Hunter)
+	- added new definitions for Argentina (thanks to Christopher Hunter)
+	- added new definitions for Mexico (thanks to Christopher Hunter)
+	- added new definitions for Japan (thanks to Christopher Hunter)
+	- added definitions and names for Turkey (thanks to Onur Aydin)
+	- corrected a bug in training camp. The counting of the training
+	points now works correct.
+	- changed the costs of the training camps
+	- added a couple of new tags to the XML definition system related
+	to weeks with two matchdays of the same competition
+	- changed the ticket income of cup matches without a second leg.
+	The ticket income is subdivided. 50% for each team.
+	- fixed some minor bugs
+	
+
+1/27/2007: v2.1.0
+	- added new feature training camp
 	- updated German definition
+	- added "luck"-feature to make long-lasting success even harder
+	for the user
+	- added new definitions for USA (thanks to Christopher Hunter)
+	- added Dutch translation for the training camp 
+	(thanks to Tobe Deprez)
+	- added Romanian translation for the training camp
+	(thanks to Spoială Cristian)
+	- added Danish translation for the training camp
+	(thanks to Kristian Poul Herkild)
+	- added Swedish translation for the training camp
+	(thanks to Daniel Nylander)
+	- added Spanish translation for the training camp
+	(thanks to Carlos Garces)
+	- added German translation for the training camp
+		
+
+12/11/2006: v2.0.1
+	- fixed some minor bugs
+	- updated German definition and team def files (thanks to Michael)
+	- added (new) definitions for USA, Japan, Mexico and Argentina
+	(thanks to Christopher)
+	- added French live game commentary (thanks to Alexandre Coutherez) 
+
 
 6/4/2006: v2.0.0
 	- updated English, Scottish and Irish definitions (thanks to Mark)

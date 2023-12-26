@@ -343,4 +343,12 @@ gboolean
 on_hpaned2_button_release_event        (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
+void
+on_training_camp_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
 #endif
+
+gboolean
+on_player_list1_key_press_event        (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);

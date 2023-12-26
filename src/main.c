@@ -66,6 +66,7 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 	*testcom_file = NULL, *token_file = NULL, 
 	*event_name = NULL, *debug_text = NULL;
     gint deb_level = -1, number_of_passes = 1,
+	deb_writer = -1,
 	num_matches = 100, skilldiffmax = 20;
     GError *error = NULL;
     GOptionContext *context = NULL;
@@ -74,6 +75,8 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 	   _("Specify additional support directory (takes priority over default ones)"), "DIR" },
 
 	 { "debug-level", 'd', 0, G_OPTION_ARG_INT, &deb_level, "[developer] Debug level to use", "N" },
+
+	 { "debug-writer", 'w', 0, G_OPTION_ARG_INT, &deb_writer, "[developer] Debug writer level to use", "N" },
 
 	 { "lang", 'L', 0, G_OPTION_ARG_STRING, &lang, _("Language to use (a code like 'de')"), "CODE" },
 
@@ -145,6 +148,9 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
     if(deb_level != -1)
 	option_set_int("int_debug", &constants, deb_level);
 
+    if(deb_writer != -1)
+	option_set_int("int_debug_writer", &constants, deb_writer);
+
     if(lang != NULL)
     {
 	language_set(language_get_code_index(lang) + 1);
@@ -168,7 +174,7 @@ main_init_variables(void)
     acps = g_ptr_array_new();
     country.name = NULL;
     country.symbol = NULL;
-    country.sid = NULL;;
+    country.sid = g_strdup("NONAME");
 
     season = week = week_round = 1;
 
@@ -185,7 +191,8 @@ main_init_variables(void)
 	window.options = window.font_sel =
 	window.file_chooser = window.contract = 
 	window.menu_player = window.user_management = 
-	window.mmatches = window.bets = window.splash = NULL;
+	window.mmatches = window.bets = window.splash =
+	window.training_camp = NULL;
     
     live_game_reset(&live_game_temp, NULL, FALSE);
 
@@ -230,6 +237,7 @@ main_init_variables(void)
     option_add(&settings, "int_opt_disable_contracts", 0, NULL);
     option_add(&settings, "int_opt_disable_boost_on", 0, NULL);
     option_add(&settings, "int_opt_disable_ya", 0, NULL);
+    option_add(&settings, "int_opt_disable_training_camp", 0, NULL);
 }
 
 /**
