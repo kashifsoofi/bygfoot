@@ -15,61 +15,33 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>15</rank_start>
-      <rank_end>16</rank_end>
+      <rank_start>4</rank_start>
+      <rank_end>5</rank_end>
       <dest_sid>bosnia_herzegovina2a bosnia_herzegovina2b</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel> 
 
   <teams>
-    <team>
-      <team_name>B. Banja Luka</team_name>
+      <team>
+      <team_name>Željezničar</team_name>
+<def_file>bosnia_herzegovina_zeljeznicar</def_file>
     </team>
     <team>
-      <team_name>Č. Zenica</team_name>
-    </team>
-    <team>
-      <team_name>Laktaši</team_name>
-    </team>
-    <team>
-      <team_name>L. Trebinje</team_name>
-    </team>
-    <team>
-      <team_name>M. Maxima</team_name>
-    </team>
-    <team>
-      <team_name>Orašje</team_name>
-    </team>
-    <team>
-      <team_name>Posušje</team_name>
+      <team_name>Borac Banja Luka</team_name>
+<def_file>bosnia_herzegovina_banja</def_file>
     </team>
     <team>
       <team_name>Sarajevo</team_name>
+<def_file>bosnia_herzegovina_sarajevo</def_file>
     </team>
     <team>
-      <team_name>S. Lukavica</team_name>
+      <team_name>Široki Brijeg</team_name>
+<def_file>bosnia_herzegovina_siroki</def_file>
     </team>
     <team>
-      <team_name>S. Tuzla</team_name>
-    </team>
-    <team>
-      <team_name>Š. Brijeg</team_name>
-    </team>
-    <team>
-      <team_name>V. Mostar</team_name>
-    </team>
-    <team>
-      <team_name>Z. Mostar</team_name>
-    </team>
-    <team>
-      <team_name>Travnik</team_name>
-    </team>
-   <team>
-      <team_name>Z. Sarajevo</team_name>
-    </team>
-    <team>
-      <team_name>Z. Gradačac</team_name>
+      <team_name>Zrinjski Mostar</team_name>
+<def_file>bosnia_herzegovina_zrinjski</def_file>
     </team>
    </teams>
 </league>

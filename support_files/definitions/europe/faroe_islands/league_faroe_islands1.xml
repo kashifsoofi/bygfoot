@@ -13,43 +13,25 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>9</rank_start>
-      <rank_end>10</rank_end>
+      <rank_start>2</rank_start>
+      <rank_end>3</rank_end>
       <dest_sid>faroe_islands2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
 
   <teams>
-    <team>
-      <team_name>B. Tórshavn</team_name>
-    </team>
-    <team>
-      <team_name>B. Toftir</team_name>
-    </team>
-    <team>
-      <team_name>B. Sandur</team_name>
+     <team>
+      <team_name>Torshavn</team_name>
+<def_file>faroe_islands_torshavn</def_file>
     </team>
     <team>
       <team_name>Streymur</team_name>
+<def_file>faroe_islands_streymur</def_file>
     </team>
-    <team>
-      <team_name>H. Tórshavn</team_name>
-    </team>
-    <team>
-      <team_name>Fuglafjørdur</team_name>
-    </team>
-    <team>
-      <team_name>K. Klaksvík</team_name>
-    </team>
-    <team>
-      <team_name>N. Runavík</team_name>
-    </team>
-    <team>
-      <team_name>Skála I.</team_name>
-    </team>
-    <team>
-      <team_name>V. Gotu</team_name>
+      <team>
+      <team_name>Runavik</team_name>
+<def_file>faroe_islands_runavik</def_file>
     </team>
   </teams>
 </league>

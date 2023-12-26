@@ -17,8 +17,8 @@
   
   <prom_rel>
     <prom_rel_element>
-      <rank_start>15</rank_start>
-      <rank_end>16</rank_end>
+      <rank_start>5</rank_start>
+      <rank_end>6</rank_end>
       <dest_sid>portugal2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -26,52 +26,28 @@
   
   <teams>
     <team>
-      <team_name>Porto</team_name>
+      <team_name>FC Porto</team_name>
+<def_file>portugal_porto</def_file>
     </team>
     <team>
-      <team_name>S. Lisboa</team_name>
+      <team_name>Benfica</team_name>
+<def_file>portugal_benfica</def_file>
     </team>
     <team>
-      <team_name>B. Lisboa</team_name>
+      <team_name>Sporting CP</team_name>
+<def_file>portugal_sportingcp</def_file>
     </team>
     <team>
-      <team_name>N. da Madeira</team_name>
+      <team_name>Braga</team_name>
+<def_file>portugal_braga</def_file>
     </team>
     <team>
-      <team_name>E. Amadora</team_name>
+      <team_name>Vitória Guimarães</team_name>
+<def_file>portugal_vitoria</def_file>
     </team>
-    <team>
-      <team_name>Leixões</team_name>
-    </team>
-    <team>
-      <team_name>Naval</team_name>
-    </team>
-    <team>
-      <team_name>V. Guimarães</team_name>
-    </team>
-    <team>
-      <team_name>V. Setúbal</team_name>
-    </team>
-    <team>
-      <team_name>A. de Coimbra</team_name>
-    </team>
-    <team>
-      <team_name>Rio Ave</team_name>
-    </team>
-    <team>
-      <team_name>Maritimo</team_name>
-    </team>
-    <team>
-      <team_name>S. Braga</team_name>
-    </team>
-    <team>
-      <team_name>Belenenses</team_name>
-    </team>
-    <team>
-      <team_name>Paços Ferreira</team_name>
-    </team>
-    <team>
-      <team_name>Trofense</team_name>
+<team>
+      <team_name>Marítimo</team_name>
+<def_file>portugal_maritimo</def_file>
     </team>
   </teams>
 </league>

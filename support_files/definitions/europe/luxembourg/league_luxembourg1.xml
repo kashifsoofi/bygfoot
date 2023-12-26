@@ -16,55 +16,34 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>12</rank_start>
-      <rank_end>14</rank_end>
+      <rank_start>3</rank_start>
+      <rank_end>5</rank_end>
       <dest_sid>luxembourg2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
 
   <teams>
-    <team>
-      <team_name>A. Beggen</team_name>
+      <team>
+      <team_name>F91 Dudelange</team_name>
+      <def_file>luxembourg_dudelange</def_file>
     </team>
     <team>
-      <team_name>Differdange</team_name>
+      <team_name>CS Fola</team_name>
+<team_average_talent>4500</team_average_talent>
     </team>
     <team>
-      <team_name>Dudelange</team_name>
+      <team_name>Differdange 03</team_name>
+<team_average_talent>4500</team_average_talent>
+    </team>
+
+    <team>
+      <team_name>Jeunesse</team_name>
+<team_average_talent>4300</team_average_talent>
     </team>
     <team>
-      <team_name>E. Ettelbrück</team_name>
-    </team>
-    <team>
-      <team_name>F. Esch</team_name>
-    </team>
-    <team>
-      <team_name>Grevenmacher</team_name>
-    </team>
-    <team>
-      <team_name>J. Esch</team_name>
-    </team>
-    <team>
-      <team_name>K. Bascharage</team_name>
-    </team>
-    <team>
-      <team_name>P. Niedercorn</team_name>
-    </team>
-    <team>
-      <team_name>R. U. Luxembourg</team_name>
-    </team>
-    <team>
-      <team_name>R. H. B. Luxembourg</team_name>
-    </team>
-    <team>
-      <team_name>Rumelange</team_name>
-    </team>
-    <team>
-      <team_name>S. Steinfort</team_name>
-    </team>
-    <team>
-      <team_name>S. Hesperange</team_name>
+      <team_name>CS Petange</team_name>
+<team_average_talent>4300</team_average_talent>
     </team>
   </teams>
 </league>

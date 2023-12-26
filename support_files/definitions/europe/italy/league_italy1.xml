@@ -3,7 +3,7 @@
   <sid>italy1</sid>
   <name>Serie A</name>
   <short_name>Serie A</short_name>
-  <symbol>flag_italy.png</symbol>
+  <symbol>seriea.png</symbol>
   <first_week>9</first_week>
   <week_gap>1</week_gap>
   <break_in length="1">10</break_in>
@@ -31,64 +31,85 @@
 
   <teams>
     <team>
+      <team_name>Inter</team_name>
+<def_file>italy_inter</def_file>
+    </team>
+    <team>
+      <team_name>Milan</team_name>
+<def_file>italy_milan</def_file>
+    </team>
+
+    <team>
+      <team_name>Juventus</team_name>
+<def_file>italy_juventus</def_file>
+    </team>
+    <team>
       <team_name>Roma</team_name>
+<def_file>italy_roma</def_file>
     </team>
     <team>
-      <team_name>A. Milano</team_name>
+      <team_name>Fiorentina</team_name>
+<def_file>italy_fiorentina</def_file>
     </team>
     <team>
-      <team_name>I. Milano</team_name>
-    </team>
-    <team>
-      <team_name>J. Torino</team_name>
-    </team>
-    <team>
-      <team_name>L. Roma</team_name>
-    </team>
-    <team>
-      <team_name>A. Bergamo</team_name>
-    </team>
-    <team>
-      <team_name>Bologna</team_name>
-    </team>
-    <team>
-      <team_name>Catania</team_name>
-    </team>
-    <team>
-      <team_name>Cagliari</team_name>
-    </team>
-    <team>
-      <team_name>C. Verona</team_name>
-    </team>
-    <team>
-      <team_name>F. Firenze</team_name>
+      <team_name>Napoli</team_name>
+<def_file>italy_napoli</def_file>
     </team>
     <team>
       <team_name>Genoa</team_name>
+<def_file>italy_genoa</def_file>
     </team>
     <team>
-      <team_name>Lecce</team_name>
-    </team>
-     <team>
-      <team_name>Napoli</team_name>
+      <team_name>Lazio</team_name>
+<def_file>italy_lazio</def_file>
     </team>
     <team>
       <team_name>Palermo</team_name>
+<def_file>italy_palermo</def_file>
     </team>
     <team>
-      <team_name>Reggina</team_name>
+      <team_name>Udinese</team_name>
+<def_file>italy_udinese</def_file>
     </team>
     <team>
-      <team_name>S. Genoa</team_name>
+      <team_name>Sampdoria</team_name>
+<def_file>italy_sampdoria</def_file>
     </team>
     <team>
-      <team_name>Siena</team_name>
+      <team_name>Parma</team_name>
+<def_file>italy_parma</def_file>
     </team>
     <team>
-      <team_name>Torino</team_name>
+      <team_name>Cagliari</team_name>
+<def_file>italy_cagliari</def_file>
+    </team>
+     <team>
+      <team_name>Bari</team_name>
+<def_file>italy_bari</def_file>
     </team>
     <team>
-      <team_name>U. Udine</team_name>
+      <team_name>Bologna</team_name>
+<def_file>italy_bologna</def_file>
+    </team>
+    <team>
+      <team_name>Catania</team_name>
+<def_file>italy_catania</def_file>
+    </team>
+    <team>
+      <team_name>Chievo Verona</team_name>
+<def_file>italy_chievo</def_file>
+    </team>
+    <team>
+      <team_name>Cesena</team_name>
+<def_file>italy_cesena</def_file>
+    </team>
+    <team>
+      <team_name>Brescia</team_name>
+<def_file>italy_brescia</def_file>
+    </team>
+    <team>
+      <team_name>Lecce</team_name>
+<def_file>italy_lecce</def_file>
     </team>
   </teams>
 </league>

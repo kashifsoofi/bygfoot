@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <league>
   <sid>germany1</sid>
-  <name>Bundesliga</name>
+  <name>1.Bundesliga</name>
   <short_name>BL</short_name>
-  <symbol>flag_germany.png</symbol>
+  <symbol>bundesliga.png</symbol>
   <first_week>7</first_week>
   <week_gap>1</week_gap>
   <break_in length="1">10</break_in>
@@ -35,58 +35,76 @@
 
   <teams>
     <team>
-      <team_name>Schalke</team_name>
+      <team_name>Bayern Munich</team_name>
+<def_file>germany_bayern</def_file>
     </team>
     <team>
-      <team_name>W. Bremen</team_name>
+      <team_name>Borussia Dortmund</team_name>
+<def_file>germany_borussia</def_file>
     </team>
     <team>
-      <team_name>B. München</team_name>
+      <team_name>Bayer Leverkusen</team_name>
+<def_file>germany_bayer</def_file>
     </team>
     <team>
-      <team_name>B. Leverkusen</team_name>
+      <team_name>Schalke 04</team_name>
+<def_file>germany_schalke</def_file>
     </team>
     <team>
-      <team_name>Bielefeld</team_name>
+      <team_name>Hamburger SV</team_name>
+<def_file>germany_hamburger</def_file>
     </team>
     <team>
-      <team_name>Stuttgart</team_name>
+      <team_name>VfL Wolfsburg</team_name>
+<def_file>germany_wolfsburg</def_file>
     </team>
     <team>
-      <team_name>Hamburg</team_name>
+      <team_name>Werder Bremen</team_name>
+<def_file>germany_werder</def_file>
     </team>
     <team>
-      <team_name>Bochum</team_name>
+      <team_name>VfB Stuttgart</team_name>
+<def_file>germany_stuttgart</def_file>
     </team>
     <team>
-      <team_name>M'gladbach</team_name>
+      <team_name>1899 Hoffenheim</team_name>
+<def_file>germany_hoffenheim</def_file>
     </team>
     <team>
-      <team_name>B. Dortmund</team_name>
+      <team_name>1.FC Köln</team_name>
+<def_file>germany_koln</def_file>
     </team>
     <team>
-      <team_name>Wolfsburg</team_name>
+      <team_name>1.FC Nürnberg</team_name>
+<def_file>germany_nurnberg</def_file>
     </team>
     <team>
-      <team_name>H. Berlin</team_name>
+      <team_name>Hannover 96</team_name>
+<def_file>germany_hannover</def_file>
+    </team>
+<team>
+      <team_name>Eintracht Frankfurt</team_name>
+<def_file>germany_eintracht</def_file>
     </team>
     <team>
-     <team_name>Köln</team_name>
+     <team_name>SC Freiburg</team_name>
+<def_file>germany_freiburg</def_file>
     </team>
     <team>
-      <team_name>E. Frankfurt</team_name>
+      <team_name>Borussia Mönchengladbach</team_name>
+<def_file>germany_gladbach</def_file>
     </team>
     <team>
-      <team_name>Hannover</team_name>
+      <team_name>FSV Mainz 05</team_name>
+<def_file>germany_mainz</def_file>
     </team>
     <team>
-      <team_name>Cottbus</team_name>
+      <team_name>1.FC Kaiserslautern</team_name>
+<def_file>germany_kaiserslautern</def_file>
     </team>
     <team>
-      <team_name>Karlsruhe</team_name>
-    </team>
-    <team>
-      <team_name>Hoffenheim</team_name>
+      <team_name>St Pauli</team_name>
+<def_file>germany_stpauli</def_file>
     </team>
   </teams>
 </league>

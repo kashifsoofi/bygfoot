@@ -13,8 +13,8 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>10</rank_start>
-      <rank_end>10</rank_end>
+      <rank_start>3</rank_start>
+      <rank_end>3</rank_end>
       <dest_sid>estonia2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -22,34 +22,16 @@
 
   <teams>
     <team>
-      <team_name>F. Tallinn</team_name>
+      <team_name>FC Flora</team_name>
+      <def_file>estonia_flora</def_file>
     </team>
     <team>
-      <team_name>L. Tallinn</team_name>
+      <team_name>Levadia</team_name>
+      <def_file>estonia_levadia</def_file>
     </team>
     <team>
-      <team_name>M. T. Tartu</team_name>
-    </team>
-    <team>
-      <team_name>N. Kalju</team_name>
-    </team>
-    <team>
-      <team_name>K. Sillamäe</team_name>
-    </team>
-    <team>
-      <team_name>K. Tallinn</team_name>
-    </team>
-    <team>
-      <team_name>T. Narva</team_name>
-    </team>
-    <team>
-      <team_name>T. Viljandi</team_name>
-    </team>
-    <team>
-      <team_name>T. Tallinn</team_name>
-    </team>
-    <team>
-      <team_name>V. Pärnu</team_name>
+      <team_name>Kalju</team_name>
+      <def_file>estonia_kalju</def_file>
     </team>
    </teams>
 </league>

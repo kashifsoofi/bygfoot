@@ -22,8 +22,8 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>10</rank_start>
-      <rank_end>11</rank_end>
+      <rank_start>4</rank_start>
+      <rank_end>5</rank_end>
       <dest_sid>fyr_macedonia2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -31,37 +31,24 @@
 
   <teams>
     <team>
-      <team_name>Ma. Skopje</team_name>
+      <team_name>Rabotnički</team_name>
+<team_average_talent>5100</team_average_talent>
     </team>
     <team>
-      <team_name>Me. Skopje</team_name>
+      <team_name>Pobeda</team_name>
+<team_average_talent>4000</team_average_talent>
     </team>
     <team>
-      <team_name>Milano</team_name>
+      <team_name>Vardar</team_name>
+<team_average_talent>4400</team_average_talent>
     </team>
     <team>
-      <team_name>N. Kicevo</team_name>
+      <team_name>Teteks</team_name>
+<team_average_talent>4500</team_average_talent>
     </team>
     <team>
-      <team_name>P. Bitola</team_name>
-    </team>
-    <team>
-      <team_name>P. Prilep</team_name>
-    </team>
-    <team>
-      <team_name>R. Skopje</team_name>
-    </team>
-    <team>
-      <team_name>R. Cepciste</team_name>
-    </team>
-    <team>
-      <team_name>S. Kratovo</team_name>
-    </team>
-    <team>
-      <team_name>Turnovo</team_name>
-    </team>
-    <team>
-      <team_name>V. Skopje</team_name>
+      <team_name>Bregalnica</team_name>
+<team_average_talent>4000</team_average_talent>
     </team>
    </teams>
 </league>

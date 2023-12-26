@@ -29,6 +29,8 @@
 #include "bygfoot.h"
 #include "player_struct.h"
 #include "user_struct.h"
+#include "zip/unzip.h"
+#include "zip/zip.h"
 
 #ifdef G_OS_UNIX
 #define file_mkdir(dirname) mkdir(dirname, (S_IRUSR | S_IWUSR | S_IXUSR))
@@ -98,7 +100,7 @@ void
 file_decompress(const gchar *filename);
 
 void
-file_remove_files(const GString *files);
+file_remove_files(const GPtrArray *files);
 
 void
 file_copy_file(const gchar *source_file, const gchar *dest_file);
@@ -115,7 +117,16 @@ file_load_text_from_saves(const gchar *filename);
 void
 file_store_text_in_saves(const gchar *filename, const gchar *text);
 
+int
+do_extract_currentfile(unzFile uf, gchar *extracted_file);
+
+int
+do_compress_currentfile(zipFile zf, char* fileToZip);
+
 gchar*
 file_get_mac_resource_path(const gchar *resource);
+
+uLong
+file_time(char *f, tm_zip *tmzip, uLong *dt);
 
 #endif

@@ -17,61 +17,25 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>15</rank_start>
-      <rank_end>16</rank_end>
+      <rank_start>2</rank_start>
+      <rank_end>3</rank_end>
       <dest_sid>hungary2a hungary2b</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
 
   <teams>
-    <team>
-      <team_name>M. H. Budapest</team_name>
-    </team>
-    <team>
-      <team_name>H. Budapest</team_name>
-    </team>
-    <team>
-      <team_name>R. Budapest</team_name>
-    </team>
-    <team>
-      <team_name>Ú. Budapest</team_name>
-    </team>
-    <team>
-      <team_name>V. Budapest</team_name>
+     <team>
+      <team_name>Videoton</team_name>
+<def_file>hungary_videoton</def_file>
     </team>
     <team>
       <team_name>Debrecen</team_name>
+<def_file>hungary_debrecen</def_file>
     </team>
     <team>
       <team_name>Győr</team_name>
-    </team>
-    <team>
-      <team_name>Kaposvár</team_name>
-    </team>
-    <team>
-      <team_name>D. Miskolc</team_name>
-    </team>
-    <team>
-      <team_name>Paks</team_name>
-    </team>
-    <team>
-      <team_name>S. Haladás</team_name>
-    </team>
-    <team>
-      <team_name>F. Székesfehérvár</team_name>
-    </team>
-    <team>
-      <team_name>Kecskemét</team_name>
-    </team>
-    <team>
-      <team_name>Zalaegerszeg</team_name>
-    </team>
-    <team>
-      <team_name>N. Spartacus</team_name>
-    </team>
-    <team>
-      <team_name>Siófok</team_name>
+<def_file>hungary_gyor</def_file>
     </team>
   </teams>
 </league>

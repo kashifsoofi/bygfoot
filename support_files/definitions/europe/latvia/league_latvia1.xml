@@ -13,8 +13,8 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>10</rank_start>
-      <rank_end>10</rank_end>
+      <rank_start>4</rank_start>
+      <rank_end>4</rank_end>
       <dest_sid>latvia2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -22,34 +22,20 @@
 
   <teams>
     <team>
-      <team_name>B. Rezekne</team_name>
+      <team_name>Skonto</team_name>
+<team_average_talent>5200</team_average_talent>
     </team>
     <team>
       <team_name>Daugava</team_name>
+<team_average_talent>4800</team_average_talent>
     </team>
     <team>
-      <team_name>D. Daugavpils</team_name>
-    </team>
-    <team>
-      <team_name>Jūrmala</team_name>
-    </team>
-    <team>
-      <team_name>Liepājas M.</team_name>
-    </team>
-    <team>
-      <team_name>O. Riga</team_name>
-    </team>
-    <team>
-      <team_name>F. Rīga</team_name>
-    </team>
-    <team>
-      <team_name>S. Riga</team_name>
+      <team_name>Metalurgs</team_name>
+<team_average_talent>4800</team_average_talent>
     </team>
     <team>
       <team_name>Ventspils</team_name>
-    </team>
-    <team>
-      <team_name>V. Ventspils</team_name>
+<team_average_talent>4600</team_average_talent>
     </team>
   </teams>
 </league>
