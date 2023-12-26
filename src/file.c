@@ -37,6 +37,30 @@
 #include "variables.h"
 
 /**
+ * Adds a definition directory
+*/
+void add_definitions_directory(const gchar *directory)
+{
+#ifdef DEBUG
+    printf("add_definitions_directory\n");
+#endif
+    gchar **dir_split_up;
+
+    dir_split_up = g_strsplit_set (directory, G_DIR_SEPARATOR_S, -1);
+    if (strcmp(dir_split_up[g_strv_length(dir_split_up)-1],"definitions")==0)
+    {
+        root_definitions_directories = g_list_prepend (root_definitions_directories,
+                                                  g_strdup(directory));
+    }
+    if (query_misc_string_starts_with(directory, root_definitions_directories))
+    {
+        definitions_directories = g_list_prepend (definitions_directories,
+                                                  g_strdup(directory));
+    }
+    g_strfreev(dir_split_up);
+}
+
+/**
    Add the specified directory to the list of directories file_find_support_file()
    searches for support files.
    Any subdirectories are added recursively.
@@ -47,6 +71,10 @@
 void
 file_add_support_directory_recursive                   (const gchar     *directory)
 {
+#ifdef DEBUG
+    printf("file_add_support_directory_recursive\n");
+#endif
+
     GDir *newdir =
 	g_dir_open(directory, 0, NULL);
     const gchar *file;
@@ -62,6 +90,7 @@ file_add_support_directory_recursive                   (const gchar     *directo
 	return;
     }
 
+    add_definitions_directory(directory);
     add_pixmap_directory(directory);
     support_directories = g_list_prepend (support_directories,
 					  g_strdup (directory));
@@ -76,7 +105,7 @@ file_add_support_directory_recursive                   (const gchar     *directo
 				    G_DIR_SEPARATOR_S, file);
 
 	if(g_file_test(fullpath, G_FILE_TEST_IS_DIR))
-	    file_add_support_directory_recursive(fullpath);
+	    file_add_support_directory_recursive(fullpath);            
     
 	g_free(fullpath);
     }
@@ -98,6 +127,14 @@ file_add_support_directory_recursive                   (const gchar     *directo
 gchar*
 file_find_support_file                       (const gchar     *filename, gboolean warning)
 {
+#ifdef DEBUG
+    printf("file_find_support_file\n");
+#endif
+
+#ifdef DEBUG
+    printf("file_find_support_file\n");
+#endif
+
     GList *elem = support_directories;
 
     while (elem)
@@ -123,6 +160,10 @@ file_find_support_file                       (const gchar     *filename, gboolea
 gboolean
 file_my_system(const GString *command)
 {
+#ifdef DEBUG
+    printf("file_my_system\n");
+#endif
+
     if(system(command->str) != 0)
     {
 	g_warning("file_my_system: system returned -1 when executing '%s'.", command->str);
@@ -148,6 +189,10 @@ file_my_system(const GString *command)
 gboolean
 file_my_fopen(const gchar *filename, gchar *bits, FILE **fil, gboolean abort_program)
 {
+#ifdef DEBUG
+    printf("file_my_fopen\n");
+#endif
+
     gchar *support_file = NULL;
 
     *fil = fopen(filename, bits);
@@ -176,6 +221,10 @@ file_my_fopen(const gchar *filename, gchar *bits, FILE **fil, gboolean abort_pro
 void
 file_check_home_dir_create_dirs(void)
 {
+#ifdef DEBUG
+    printf("file_check_home_dir_create_dirs\n");
+#endif
+
     gint i;
     gchar *dirs[3] =
 	{HOMEDIRNAME,
@@ -197,6 +246,10 @@ file_check_home_dir_create_dirs(void)
 void
 file_check_home_dir_get_conf_files(GPtrArray **files_to_copy)
 {
+#ifdef DEBUG
+    printf("file_check_home_dir_get_conf_files\n");
+#endif
+
     gint i;
     gchar *conf_files[2] =
 	{"bygfoot.conf",
@@ -224,6 +277,10 @@ void
 file_check_home_dir_get_definition_dir(const gchar *dirname, const gchar *basename,
 				       GPtrArray **files_to_copy)
 {
+#ifdef DEBUG
+    printf("file_check_home_dir_get_definition_dir\n");
+#endif
+
     gint i;
     gchar buf[SMALL], buf2[SMALL];
     const gchar *home = g_get_home_dir();
@@ -275,6 +332,10 @@ file_check_home_dir_get_definition_dir(const gchar *dirname, const gchar *basena
 void
 file_check_home_dir_get_definition_files(GPtrArray **files_to_copy)
 {
+#ifdef DEBUG
+    printf("file_check_home_dir_get_definition_files\n");
+#endif
+
     GList *elem = support_directories;
   
     while(elem != NULL)
@@ -292,6 +353,10 @@ file_check_home_dir_get_definition_files(GPtrArray **files_to_copy)
 void
 file_check_home_dir_copy_files(GPtrArray **files_to_copy)
 {
+#ifdef DEBUG
+    printf("file_check_home_dir_copy_files\n");
+#endif
+
     gint i;
     gchar buf[SMALL];
     const gchar *filename = NULL;
@@ -349,6 +414,10 @@ file_check_home_dir_copy_files(GPtrArray **files_to_copy)
 gboolean
 file_check_home_dir(void)
 {
+#ifdef DEBUG
+    printf("file_check_home_dir\n");
+#endif
+
     GPtrArray *files_to_copy[2] = {g_ptr_array_new(),
 				   g_ptr_array_new()};
 
@@ -376,6 +445,10 @@ file_check_home_dir(void)
 GPtrArray*
 file_dir_get_contents(const gchar *dir_name, const gchar *prefix, const gchar *suffix)
 {
+#ifdef DEBUG
+    printf("file_dir_get_contents\n");
+#endif
+
     GError *error = NULL;
     GDir *dir = g_dir_open(dir_name, 0, &error);
     GPtrArray *contents = g_ptr_array_new();
@@ -405,29 +478,53 @@ file_dir_get_contents(const gchar *dir_name, const gchar *prefix, const gchar *s
     return contents;
 }
 
-/** Return the country definition files found in the support dirs. */
+/** Return the country definition files found in the support dirs.
+ *  The files are appended with the directories*/
 GPtrArray*
 file_get_country_files(void)
 {
+#ifdef DEBUG
+    printf("file_get_country_files\n");
+#endif
+
     gint i;
-    GList *elem = support_directories;
+    GList *elem = definitions_directories;
     GPtrArray *country_files = g_ptr_array_new();
     GPtrArray *dir_contents = NULL;
+    GPtrArray *country_files_full_path = g_ptr_array_new();
+    gchar buf[SMALL];
+    const gchar *country_structure;
 
     while(elem != NULL)
     {
 	dir_contents = file_dir_get_contents((gchar*)elem->data, "country_", ".xml");
-
+	country_structure = misc_strip_definitions_root((gchar*)elem->data);
 	for(i=0;i<dir_contents->len;i++)
+        {
 	    if(!query_misc_string_in_array((gchar*)g_ptr_array_index(dir_contents, i),
 					   country_files))
+            {
 		g_ptr_array_add(country_files, 
-				g_strdup((gchar*)g_ptr_array_index(dir_contents, i)));
-
+                       g_strdup((gchar*)g_ptr_array_index(dir_contents, i)));
+                
+                sprintf(buf, "%s%s%s", g_strdup(country_structure),
+                        G_DIR_SEPARATOR_S,
+                        g_strdup((gchar*)g_ptr_array_index(dir_contents, i)));
+                g_ptr_array_add(country_files_full_path,g_strdup(buf));
+            }
+          }
 	free_gchar_array(&dir_contents);
 
 	elem = elem->next;
     }
+
+    free_gchar_array(&country_files);
+    country_files = g_ptr_array_new();
+
+    for(i = country_files_full_path->len - 1; i >= 0; i--)
+        g_ptr_array_add(country_files, g_strdup(g_ptr_array_index(country_files_full_path, i)));
+
+    free_gchar_array(&country_files_full_path);
 
     return country_files;
 }
@@ -443,6 +540,10 @@ file_get_country_files(void)
 gboolean
 file_get_next_opt_line(FILE *fil, gchar *opt_name, gchar *opt_value)
 {
+#ifdef DEBUG
+    printf("file_get_next_opt_line\n");
+#endif
+
     gint i;
     gchar trash[SMALL];
     gchar buf[BIG];
@@ -486,6 +587,10 @@ file_get_next_opt_line(FILE *fil, gchar *opt_name, gchar *opt_value)
 void
 file_save_opt_file(const gchar *filename, OptionList *optionlist)
 {
+#ifdef DEBUG
+    printf("file_save_opt_file\n");
+#endif
+
     gint i;
     FILE *fil = NULL;
 
@@ -507,6 +612,10 @@ file_save_opt_file(const gchar *filename, OptionList *optionlist)
 void
 file_load_opt_file(const gchar *filename, OptionList *optionlist)
 {
+#ifdef DEBUG
+    printf("file_load_opt_file\n");
+#endif
+
     gint i;
     gchar opt_name[SMALL], opt_value[SMALL];
     Option new;
@@ -553,6 +662,10 @@ file_load_opt_file(const gchar *filename, OptionList *optionlist)
 void
 file_load_hints_file(void)
 {
+#ifdef DEBUG
+    printf("file_load_hints_file\n");
+#endif
+
     gchar buf[SMALL], hints_file[SMALL];
     gchar *hints_file_sup = NULL;
 
@@ -574,6 +687,10 @@ file_load_hints_file(void)
 void
 file_load_conf_files(void)
 {
+#ifdef DEBUG
+    printf("file_load_conf_files\n");
+#endif
+
     gint i;
     gchar *conf_file = file_find_support_file("bygfoot.conf", TRUE);
 
@@ -594,6 +711,10 @@ file_load_conf_files(void)
 void
 file_load_user_conf_file(User *user)
 {
+#ifdef DEBUG
+    printf("file_load_user_conf_file\n");
+#endif
+
     FILE *fil = NULL;
     gchar *conf_file = NULL, buf[SMALL];
 
@@ -617,6 +738,14 @@ file_load_user_conf_file(User *user)
 const gchar*
 file_get_first_support_dir(void)
 {
+#ifdef DEBUG
+    printf("file_get_first_support_dir\n");
+#endif
+
+#ifdef DEBUG
+    printf("file_get_first_support_dir\n");
+#endif
+
     GList *elem = support_directories;
   
     while (elem)
@@ -638,6 +767,14 @@ file_get_first_support_dir(void)
 const gchar*
 file_get_first_support_dir_suffix(const gchar *suffix)
 {
+#ifdef DEBUG
+    printf("file_get_first_support_dir_suffix\n");
+#endif
+
+#ifdef DEBUG
+    printf("file_get_first_support_dir_suffix\n");
+#endif
+
     GList *elem = support_directories;
   
     while (elem)
@@ -659,6 +796,10 @@ file_get_first_support_dir_suffix(const gchar *suffix)
 void
 file_compress_files(const gchar *destfile, const gchar *prefix)
 {
+#ifdef DEBUG
+    printf("file_compress_files\n");
+#endif
+
     gint i;
     GString *buf = g_string_new("");
     gchar *basename = g_path_get_basename(prefix),
@@ -706,6 +847,10 @@ file_compress_files(const gchar *destfile, const gchar *prefix)
 void
 file_decompress(const gchar *filename)
 {
+#ifdef DEBUG
+    printf("file_decompress\n");
+#endif
+
     GString *buf = g_string_new("");
     gchar *dirname = g_path_get_dirname(filename),
 	*basename = g_path_get_basename(filename),
@@ -740,6 +885,10 @@ file_decompress(const gchar *filename)
 void
 file_remove_files(const GString *files)
 {
+#ifdef DEBUG
+    printf("file_remove_files\n");
+#endif
+
     GString *buf = g_string_new("");
 
     if(os_is_unix)
@@ -756,6 +905,10 @@ file_remove_files(const GString *files)
 void
 file_copy_file(const gchar *source_file, const gchar *dest_file)
 {
+#ifdef DEBUG
+    printf("file_copy_file\n");
+#endif
+
     GString *buf = g_string_new("");
 
     if(os_is_unix)
@@ -775,6 +928,10 @@ file_copy_file(const gchar *source_file, const gchar *dest_file)
 void
 file_get_bygfoot_dir(gchar *dir)
 {
+#ifdef DEBUG
+    printf("file_get_bygfoot_dir\n");
+#endif
+
     const gchar *home = g_get_home_dir();
     gchar *pwd = g_get_current_dir();
     
@@ -784,4 +941,78 @@ file_get_bygfoot_dir(gchar *dir)
 	sprintf(dir, "%s%s", pwd, G_DIR_SEPARATOR_S);
 
     g_free(pwd);
+}
+
+/** Store text information in a text file in the saves directory.
+ */
+void
+file_store_text_in_saves(const gchar *filename, const gchar *text)
+{
+    #ifdef DEBUG
+    printf("file_store_text_in_saves\n");
+#endif
+
+    gchar buf[SMALL];
+    const gchar *home = g_get_home_dir();
+    FILE *fil = NULL;
+
+    if(os_is_unix)
+	sprintf(buf, "%s%s%s%ssaves%s%s", home, G_DIR_SEPARATOR_S,
+		HOMEDIRNAME, G_DIR_SEPARATOR_S, G_DIR_SEPARATOR_S, 
+                filename);
+    else
+    {
+	gchar *pwd = g_get_current_dir();
+	sprintf(buf, "%s%ssaves%s%s", pwd, G_DIR_SEPARATOR_S,
+		G_DIR_SEPARATOR_S, filename);
+	g_free(pwd);
+    }
+
+    if(!file_my_fopen(buf, "w", &fil, FALSE))
+    {
+        g_warning("file_store_text_in_saves: failed to store '%s' in file '%s'\n", text, buf);
+	return;
+    }
+
+    fprintf(fil, "%s", text);
+
+    fclose(fil);
+}
+
+/** Load the text stored in the file in the saves directory. */
+gchar*
+file_load_text_from_saves(const gchar *filename)
+{
+ #ifdef DEBUG
+    printf("file_load_text_from_saves\n");
+#endif
+
+    gchar buf[SMALL];
+    const gchar *home = g_get_home_dir();
+    FILE *fil = NULL;
+    gint i = 0, c;
+
+    if(os_is_unix)
+	sprintf(buf, "%s%s%s%ssaves%s%s", home, G_DIR_SEPARATOR_S,
+		HOMEDIRNAME, G_DIR_SEPARATOR_S,  G_DIR_SEPARATOR_S,
+                filename);
+    else
+    {
+	gchar *pwd = g_get_current_dir();
+	sprintf(buf, "%s%ssaves%s%s", pwd, G_DIR_SEPARATOR_S,
+		G_DIR_SEPARATOR_S, filename);
+	g_free(pwd);
+    }
+
+    fil = fopen(buf, "r");
+    if(fil == NULL)
+	return NULL;
+
+    while ((c = (gchar)fgetc(fil)) != EOF)
+	buf[i++] = (gchar)c;
+    buf[i] = 0;
+
+    fclose(fil);
+
+    return g_strdup(buf);   
 }

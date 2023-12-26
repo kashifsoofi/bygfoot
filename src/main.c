@@ -30,6 +30,12 @@
 
 #include <time.h>
 #include <glib/gprintf.h>
+#include <glib.h>
+
+#ifdef G_OS_WIN32
+  #include <io.h>
+  #include <fcntl.h>
+#endif
 
 #include "bet_struct.h"
 #include "debug.h"
@@ -45,6 +51,7 @@
 #include "misc.h"
 #include "misc_callbacks.h"
 #include "name_struct.h"
+#include "news_struct.h"
 #include "option.h"
 #include "start_end.h"
 #include "stat_struct.h"
@@ -62,30 +69,37 @@ gboolean load_last_save;
 void
 main_parse_cl_arguments(gint *argc, gchar ***argv)
 {
+#ifdef DEBUG
+    printf("main_parse_cl_arguments\n");
+#endif
+
     gboolean testcom = FALSE, calodds = FALSE;
     gchar *support_dir = NULL, *lang = NULL,
 	*testcom_file = NULL, *token_file = NULL, 
-	*event_name = NULL, *debug_text = NULL;
+	*event_name = NULL, *debug_text = NULL,
+        *country_sid = NULL;
     gint deb_level = -1, number_of_passes = 1,
 	deb_writer = -1,
 	num_matches = 100, skilldiffmax = 20;
     GError *error = NULL;
     GOptionContext *context = NULL;
     GOptionEntry entries[] =
-	{{ "support-dir", 's', 0, G_OPTION_ARG_STRING, &support_dir, 
+	{{ "last-save", 'l', 0, G_OPTION_ARG_NONE, &load_last_save, _("Load last savegame"), NULL },
+
+         { "support-dir", 's', 0, G_OPTION_ARG_STRING, &support_dir, 
 	   _("Specify additional support directory (takes priority over default ones)"), "DIR" },
+         
+	 { "country", 'c', 0, G_OPTION_ARG_STRING, &country_sid, _("String id of the country to load"), "SID" },
+
+	 { "lang", 'L', 0, G_OPTION_ARG_STRING, &lang, _("Language to use (a code like 'de')"), "CODE" },
 
 	 { "debug-level", 'd', 0, G_OPTION_ARG_INT, &deb_level, "[developer] Debug level to use", "N" },
 
 	 { "debug-writer", 'w', 0, G_OPTION_ARG_INT, &deb_writer, "[developer] Debug writer level to use", "N" },
 
-	 { "lang", 'L', 0, G_OPTION_ARG_STRING, &lang, _("Language to use (a code like 'de')"), "CODE" },
-
-	 { "last-save", 'l', 0, G_OPTION_ARG_NONE, &load_last_save, _("Load last savegame"), NULL },
-
 	 { "testcom", 't', 0, G_OPTION_ARG_NONE, &testcom, _("Test an XML commentary file"), NULL },
 
-	 { "commentary-file", 'c', 0, G_OPTION_ARG_STRING, &testcom_file,
+	 { "commentary-file", 'C', 0, G_OPTION_ARG_STRING, &testcom_file,
 	   _("Commentary file name (may be in a support dir)"), "FILE" },
 
 	 { "token-file", 'T', 0, G_OPTION_ARG_STRING, &token_file,
@@ -140,14 +154,19 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 
     if(support_dir != NULL)
     {
-	gchar *fullpath = g_path_get_dirname(support_dir);
+	gchar *fullpath = (support_dir[strlen(support_dir)] == G_DIR_SEPARATOR) ?
+            g_path_get_dirname(support_dir) :
+            g_strdup_printf("%s%s", support_dir, G_DIR_SEPARATOR_S);
 	file_add_support_directory_recursive(fullpath);
 	g_free(fullpath);
 	g_free(support_dir);
     }
 
     if(deb_level != -1)
+    {
 	option_set_int("int_debug", &constants, deb_level);
+        window_create(WINDOW_DEBUG);
+    }
 
     if(deb_writer != -1)
 	option_set_int("int_debug_writer", &constants, deb_writer);
@@ -156,10 +175,17 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
     {
 	language_set(language_get_code_index(lang) + 1);
 	file_load_hints_file();
+        g_free(lang);
     }
 
     if(debug_text != NULL)
 	statp = debug_text;
+
+    if(country_sid != NULL)
+    {
+        country.sid = g_strdup(country_sid);
+        g_free(country_sid);
+    }
 }
 
 /**
@@ -168,6 +194,10 @@ main_parse_cl_arguments(gint *argc, gchar ***argv)
 void
 main_init_variables(void)
 {
+#ifdef DEBUG
+    printf("main_init_variables\n");
+#endif
+
     gint i;
 
     ligs = g_array_new(FALSE, FALSE, sizeof(League));
@@ -175,7 +205,7 @@ main_init_variables(void)
     acps = g_ptr_array_new();
     country.name = NULL;
     country.symbol = NULL;
-    country.sid = g_strdup("NONAME");
+    country.sid = NULL;
 
     season = week = week_round = 1;
 
@@ -195,13 +225,12 @@ main_init_variables(void)
 	window.mmatches = window.bets = window.splash =
 	window.training_camp = NULL;
     
-    live_game_reset(&live_game_temp, NULL, FALSE);
-
     users = g_array_new(FALSE, FALSE, sizeof(User));
     transfer_list = g_array_new(FALSE, FALSE, sizeof(Transfer));
     season_stats = g_array_new(FALSE, FALSE, sizeof(SeasonStat));
     name_lists = g_array_new(FALSE, FALSE, sizeof(NameList));
     strategies = g_array_new(FALSE, FALSE, sizeof(Strategy));
+    live_games = g_array_new(FALSE, FALSE, sizeof(LiveGame));
     bets[0] = g_array_new(FALSE, FALSE, sizeof(BetMatch));
     bets[1] = g_array_new(FALSE, FALSE, sizeof(BetMatch));
     jobs = g_array_new(FALSE, FALSE, sizeof(Job));
@@ -222,6 +251,11 @@ main_init_variables(void)
     for(i=0;i<LIVE_GAME_EVENT_END;i++)
 	lg_commentary[i] = g_array_new(FALSE, FALSE, sizeof(LGCommentary));
 
+    for(i=0;i<NEWS_ARTICLE_TYPE_END;i++)
+	news[i] = g_array_new(FALSE, FALSE, sizeof(NewsArticle));
+
+    newspaper.articles = g_array_new(FALSE, FALSE, sizeof(NewsPaperArticle));
+
     file_load_conf_files();
     xml_strategy_load_strategies();
     
@@ -235,6 +269,7 @@ main_init_variables(void)
 
     /** Some of these (or all) are disabled (set to 1) in supernational
 	country defs. */
+    option_add(&settings, "int_opt_goto_mode", 0, NULL);
     option_add(&settings, "int_opt_disable_finances", 0, NULL);
     option_add(&settings, "int_opt_disable_transfers", 0, NULL);
     option_add(&settings, "int_opt_disable_stadium", 0, NULL);
@@ -254,9 +289,12 @@ main_init_variables(void)
 void
 main_init(gint *argc, gchar ***argv)
 {
+#ifdef DEBUG
+    printf("main_init\n");
+#endif
+
     gchar buf[SMALL];
     gchar *pwd = g_get_current_dir();
-
 #ifdef G_OS_WIN32
     os_is_unix = FALSE;
 #else
@@ -264,7 +302,6 @@ main_init(gint *argc, gchar ***argv)
 #endif
 
     support_directories = NULL;
-
 #ifdef G_OS_UNIX
     file_add_support_directory_recursive(PACKAGE_DATA_DIR "/" PACKAGE "/support_files");
     sprintf(buf, "%s%s%s", g_get_home_dir(), G_DIR_SEPARATOR_S, HOMEDIRNAME);
@@ -276,7 +313,7 @@ main_init(gint *argc, gchar ***argv)
     sprintf(buf, "%s%ssaves", pwd, G_DIR_SEPARATOR_S);
     file_add_support_directory_recursive(buf);
     g_free(pwd);
-    
+
     /* initialize the random nr generator */
     rand_generator = g_rand_new();
 
@@ -295,13 +332,21 @@ main_init(gint *argc, gchar ***argv)
 gint
 main (gint argc, gchar *argv[])
 {
+#ifdef DEBUG
+    printf("main\n");
+#endif
 
 #ifdef ENABLE_NLS
     bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
     bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
     textdomain (GETTEXT_PACKAGE);
 #endif
-
+#ifdef G_OS_WIN32
+    int fd1 = open ("stdout.log", O_CREAT|O_WRONLY|O_TRUNC, 0666);
+    dup2 (fd1, 1);
+    int fd2 = open ("stderr.log", O_CREAT|O_WRONLY|O_TRUNC, 0666);
+    dup2 (fd2, 2);
+#endif
     gtk_set_locale ();
     gtk_init (&argc, &argv);
 
@@ -311,11 +356,19 @@ main (gint argc, gchar *argv[])
        (!load_last_save && (argc == 1 ||
 			    (argc > 1 && !load_game_from_command_line(argv[1])))))
     {
-	stat0 = STATUS_SPLASH;
-	window_show_splash();
-
-	if(os_is_unix)
-	    file_check_home_dir();
+        if(country.sid == NULL)
+        {
+            stat0 = STATUS_SPLASH;
+            window_show_splash();
+            
+            if(os_is_unix)
+                file_check_home_dir();            
+        }
+        else
+        {
+            window_show_startup();
+            stat0 = STATUS_TEAM_SELECTION;
+        }
     }
 
     gtk_main ();
@@ -333,6 +386,10 @@ main (gint argc, gchar *argv[])
 void
 main_exit_program(gint exit_code, gchar *format, ...)
 {
+#ifdef DEBUG
+    printf("main_exit_program\n");
+#endif
+
     gchar text[SMALL];
     va_list args;
      

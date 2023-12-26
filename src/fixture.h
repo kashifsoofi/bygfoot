@@ -43,14 +43,17 @@ enum FixtureCompare
 void
 fixture_write_league_fixtures(League *league);
 
-void
+gboolean
 fixture_write_cup_fixtures(Cup *cup);
 
 void
 fixture_write_cup_round_robin(Cup *cup, gint cup_round, GPtrArray *teams);
 
 void
-fixture_write_round_robin(gpointer league_cup, gint cup_round, GPtrArray *teams, gboolean one_round);
+fixture_write_round_robin(gpointer league_cup, gint cup_round, 
+			  GPtrArray *teams, gboolean one_round, 
+                          gint first_week, GArray *rr_breaks,
+                          gint rr_break_idx);
 
 void
 fixture_write_round_robin_matchday(GArray *fixtures, gint cup_round, GPtrArray *teams,
@@ -103,7 +106,7 @@ gboolean
 query_fixture_in_week_round(gint clid, gint week_number, gint week_round_number);
 
 Fixture*
-fixture_get_first_leg(const Fixture *fix);
+fixture_get_first_leg(const Fixture *fix, gboolean silent);
 
 GPtrArray*
 fixture_get_week_list_clid(gint clid, gint week_number, gint week_round_number);
@@ -124,7 +127,7 @@ Fixture*
 fixture_get_previous(gint clid, gint week_number, gint week_round_number);
 
 GPtrArray*
-fixture_get_latest(const Team *tm);
+fixture_get_latest(const Team *tm, gboolean with_cups);
 
 gint
 fixture_compare_func(gconstpointer a, gconstpointer b, gpointer data);
@@ -161,5 +164,17 @@ fixture_count_matchdays(const GArray *fixtures);
 
 gint
 fixture_get_last_scheduled_week(void);
+
+void
+fixture_remove_rrs(GArray *fixtures, gint clid1, gint clid2, gint to_remove);
+
+void
+fixtures_condense(GArray *fixtures);
+
+void
+fixture_get_cup_round_name(const Fixture *fix, gchar *buf);
+
+void
+fixture_refresh_team_pointers(GArray *fixtures);
 
 #endif

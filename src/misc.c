@@ -41,6 +41,10 @@
 void
 misc_print_error(GError **error, gboolean abort_program)
 {
+#ifdef DEBUG
+    printf("misc_print_error\n");
+#endif
+
     if(*error == NULL)
 	return;
     
@@ -58,6 +62,10 @@ misc_print_error(GError **error, gboolean abort_program)
 void
 misc_swap_int(gint *first, gint *second)
 {
+#ifdef DEBUG
+    printf("misc_swap_int\n");
+#endif
+
     gint swap = *first;
 
     *first = *second;
@@ -70,6 +78,14 @@ misc_swap_int(gint *first, gint *second)
 void
 misc_swap_gpointer(gpointer *first, gpointer *second)
 {
+#ifdef DEBUG
+    printf("\n");
+#endif
+
+#ifdef DEBUG
+    printf("misc_swap_gpointer\n");
+#endif
+
     gpointer swap = *first;
 
     *first = *second;
@@ -116,13 +132,16 @@ misc_separate_strings(gchar *string)
     return string_array;
 }
 
-/** Write a pointer array randomly into another one and free
-    the original one.
+/** Write a pointer array randomly into another one and free the original array.
     @param array The array to randomise.
     @return A new pointer array containing the items in random order. */
 GPtrArray*
 misc_randomise_g_pointer_array(GPtrArray *array)
 {
+#ifdef DEBUG
+    printf("misc_randomise_g_pointer_array\n");
+#endif
+
     GPtrArray *new = g_ptr_array_new();
     gint order[array->len];
     gint i;
@@ -141,6 +160,10 @@ misc_randomise_g_pointer_array(GPtrArray *array)
 GPtrArray*
 misc_copy_ptr_array(const GPtrArray *array)
 {
+#ifdef DEBUG
+    printf("misc_copy_ptr_array\n");
+#endif
+
     gint i;
     GPtrArray *copy = NULL;
 
@@ -162,6 +185,10 @@ misc_copy_ptr_array(const GPtrArray *array)
 void
 misc_print_grouped_int(gint number, gchar *buf)
 {
+#ifdef DEBUG
+    printf("misc_print_grouped_int\n");
+#endif
+
     gint i;
     gchar buf2[SMALL];
     gint length = 0;
@@ -209,6 +236,10 @@ misc_print_grouped_int(gint number, gchar *buf)
 gboolean
 query_integer_is_in_array(gint item, gint *array, gint max)
 {
+#ifdef DEBUG
+    printf("query_integer_is_in_array\n");
+#endif
+
     gint i;
 
     for(i=0;i<max;i++)
@@ -222,6 +253,10 @@ query_integer_is_in_array(gint item, gint *array, gint max)
 gboolean
 query_misc_integer_is_in_g_array(gint item, GArray *array)
 {
+#ifdef DEBUG
+    printf("query_misc_integer_is_in_g_array\n");
+#endif
+
     gint i;
 
     for(i=0;i<array->len;i++)
@@ -235,6 +270,10 @@ query_misc_integer_is_in_g_array(gint item, GArray *array)
 gint
 misc_int_compare(gint first, gint second)
 {
+#ifdef DEBUG
+    printf("misc_int_compare\n");
+#endif
+
     if(first > second)
 	return -1;
     else if(first < second)
@@ -247,6 +286,10 @@ misc_int_compare(gint first, gint second)
 gint
 misc_float_compare(gfloat first, gfloat second)
 {
+#ifdef DEBUG
+    printf("misc_float_compare\n");
+#endif
+
     if(first > second)
 	return -1;
     else if(first < second)
@@ -255,9 +298,42 @@ misc_float_compare(gfloat first, gfloat second)
     return 0;
 }
 
+const gchar*
+misc_strip_definitions_root(gchar *directory)
+{
+    gchar **vector;
+    GList *list = root_definitions_directories;
+    gchar *buf;
+
+    while (list!=NULL)
+    {
+	if (g_str_has_prefix(directory, (gchar*)list->data))
+        {
+            vector = g_strsplit(directory, (gchar*)list->data,-1);
+            buf =  g_strdup((gchar*)vector[g_strv_length(vector)-1]);
+            g_strfreev(vector);
+            return buf;
+        }
+        list = list->next; 
+    }
+    return "";
+}
+
+/** Check whether the string starts with a string in the string array. */
+gboolean
+query_misc_string_starts_with(const gchar *string, GList *list)
+{
+    while (list!=NULL)
+    {
+	return g_str_has_prefix(string, (gchar*)list->data);
+        list = list->next; 
+    }
+    return FALSE;
+}
+
 /** Check whether the string is in the string array. */
 gboolean
-query_misc_string_in_array(const gchar *string, GPtrArray *array)
+query_misc_string_in_array(const gchar *string, const GPtrArray *array)
 {
     gint i;
 
@@ -273,6 +349,10 @@ query_misc_string_in_array(const gchar *string, GPtrArray *array)
 gfloat
 misc_get_age_from_birth(gint birth_year, gint birth_month)
 {
+#ifdef DEBUG
+    printf("misc_get_age_from_birth\n");
+#endif
+
     GDate *current_date = g_date_new();
     GDate *birth_date = g_date_new();
 
@@ -435,6 +515,10 @@ misc_parse(const gchar *s, gint *result)
 void
 misc_string_assign(gchar **string, const gchar *contents)
 {
+#ifdef DEBUG
+    printf("misc_string_assign\n");
+#endif
+
     if(contents == NULL)
 	return;
 
@@ -512,7 +596,7 @@ misc_string_replace_expressions(gchar *string)
     gchar *occurrence = NULL,
 	*occurrence2 = NULL;
 
-    if(debug > 100)
+    if(debug > 200)
 	g_print("misc_string_replace_expressions: #%s#\n",
 		string);
 
@@ -625,6 +709,7 @@ misc_parse_condition(const gchar *condition, GPtrArray **token_rep)
     while(g_strrstr(buf, "("))
     {
 	misc_string_get_parenthesised(buf, buf2);
+
 	if(misc_parse_condition(buf2, token_rep))
 	    misc_string_replace_parenthesised(buf, buf2, "1 = 1");
 	else
@@ -659,10 +744,20 @@ misc_token_add(GPtrArray **token_rep, gint token_idx,
     g_ptr_array_add(token_rep[1], (gpointer)replacement);
 }
 
+/** Add a 0 or 1 as a token to the token array. */
+void
+misc_token_add_bool(GPtrArray **token_rep, gint token_idx, 
+                    gboolean value)
+{
+    g_ptr_array_add(token_rep[0], 
+		    (gpointer)g_strdup(g_array_index(tokens.list, Option, token_idx).string_value));
+    g_ptr_array_add(token_rep[1], misc_int_to_char(value));
+}
+
 /** Remove the replacement rule given by the index. */
 void
 misc_token_remove(GPtrArray **token_rep, gint idx)
-{
+{ 
     gint i;
 
     for(i=token_rep[0]->len - 1; i >= 0; i--)
@@ -675,4 +770,25 @@ misc_token_remove(GPtrArray **token_rep, gint idx)
 	    g_ptr_array_remove_index_fast(token_rep[0], i);
 	    g_ptr_array_remove_index_fast(token_rep[1], i);
 	}    
+}
+
+/** Try to replace all tokens in the given text and write the result
+    into the dest variable. */
+gboolean
+misc_string_replace_all_tokens(GPtrArray **token_rep,
+                               const gchar *text_tokens, gchar *dest)
+{
+    gchar buf[SMALL];
+
+    strcpy(dest, text_tokens);
+    
+    do
+    {
+	strcpy(buf, dest);
+	misc_string_replace_tokens(dest, token_rep);
+	misc_string_replace_expressions(dest);
+    }
+    while(strcmp(buf, dest) != 0);
+
+    return (g_strrstr(dest, "_") == NULL);
 }

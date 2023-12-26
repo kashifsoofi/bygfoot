@@ -31,12 +31,15 @@
 #include "league_struct.h"
 #include "fixture_struct.h"
 
-#define league_cup_get_teams(clid) (clid < ID_CUP_START) ? ((gpointer)(league_from_clid(clid)->teams)) : ((gpointer)(cup_from_clid(clid)->teams))
 #define league_cup_get_fixtures(clid) (clid < ID_CUP_START) ? (league_from_clid(clid)->fixtures) : (cup_from_clid(clid)->fixtures)
 #define league_cup_get_name_string(clid) (clid < ID_CUP_START) ? league_from_clid(clid)->name : cup_from_clid(clid)->name
 #define league_cup_get_yellow_red(clid) (clid < ID_CUP_START) ? (league_from_clid(clid)->yellow_red) : (cup_from_clid(clid)->yellow_red)
 
-#define query_league_has_prom_games(league) (league->prom_rel.prom_games_dest_sid != NULL)
+#define league_table_cumul(league) (&g_array_index((league)->tables, Table, 0))
+#define league_table(league) (&g_array_index((league)->tables, Table, league->tables->len - 1))
+
+#define query_league_has_prom_games(league) (league->prom_rel.prom_games->len > 0)
+#define query_league_active(league) (!query_league_cup_has_property((league)->id, "inactive"))
 
 /** A struct needed when managing promotions
     and relegations. */
@@ -55,6 +58,9 @@ league_new(gboolean new_id);
 
 PromRelElement
 prom_rel_element_new(void);
+
+PromGames
+prom_games_new(void);
 
 gint
 league_cup_get_index_from_clid(gint clid);
@@ -102,7 +108,8 @@ void
 league_get_team_movements_prom_rel(const League *league, GArray *team_movements);
 
 void
-league_get_team_movements_prom_games(const League *league, GArray *team_movements,
+league_get_team_movements_prom_games(const League *league, const PromGames *prom_games,
+                                     GArray *team_movements,
 				     const GPtrArray *prom_games_teams, gboolean up);
 
 void
@@ -135,5 +142,32 @@ query_leagues_active_in_country(void);
 
 gboolean
 query_league_cup_matchday_in_two_match_week(GArray **two_match_weeks, gint matchday);
+
+void
+league_check_new_tables(League *league);
+
+void
+league_add_table(League *league);
+
+gboolean
+query_league_cup_has_property(gint clid, const gchar *property);
+
+GPtrArray*
+league_cup_get_teams(gint clid);
+
+GPtrArray*
+league_cup_get_properties(gint clid);
+
+void
+league_cup_adjust_rr_breaks(GArray *rr_breaks, gint round_robins, gint week_gap);
+
+void
+league_cup_fill_rr_breaks(GArray *rr_breaks, const gchar *breaks);
+
+void
+league_cup_adjust_week_breaks(GArray *week_breaks, gint week_gap);
+
+gint
+league_cup_get_week_with_break(gint clid, gint week_number);
 
 #endif

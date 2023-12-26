@@ -42,7 +42,7 @@ create_window_startup (void)
   GtkWidget *treeview_startup;
   GtkWidget *hseparator11;
   GtkWidget *label4;
-  GtkWidget *comboboxentry_start_league;
+  GtkWidget *combobox_start_league;
   GtkWidget *hseparator12;
   GtkWidget *label75;
   GtkWidget *hbox54;
@@ -147,9 +147,9 @@ create_window_startup (void)
   gtk_widget_show (label4);
   gtk_box_pack_start (GTK_BOX (vbox2), label4, FALSE, FALSE, 0);
 
-  comboboxentry_start_league = gtk_combo_box_entry_new_text ();
-  gtk_widget_show (comboboxentry_start_league);
-  gtk_box_pack_start (GTK_BOX (vbox2), comboboxentry_start_league, FALSE, FALSE, 0);
+  combobox_start_league = gtk_combo_box_new_text ();
+  gtk_widget_show (combobox_start_league);
+  gtk_box_pack_start (GTK_BOX (vbox2), combobox_start_league, FALSE, FALSE, 0);
 
   hseparator12 = gtk_hseparator_new ();
   gtk_widget_show (hseparator12);
@@ -173,6 +173,8 @@ create_window_startup (void)
   button_add_player = gtk_button_new ();
   gtk_widget_show (button_add_player);
   gtk_box_pack_start (GTK_BOX (vbox2), button_add_player, FALSE, FALSE, 0);
+  gtk_widget_set_sensitive (button_add_player, FALSE);
+  GTK_WIDGET_UNSET_FLAGS (button_add_player, GTK_CAN_FOCUS);
 
   alignment19 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment19);
@@ -335,7 +337,7 @@ create_window_startup (void)
   GLADE_HOOKUP_OBJECT (window_startup, treeview_startup, "treeview_startup");
   GLADE_HOOKUP_OBJECT (window_startup, hseparator11, "hseparator11");
   GLADE_HOOKUP_OBJECT (window_startup, label4, "label4");
-  GLADE_HOOKUP_OBJECT (window_startup, comboboxentry_start_league, "comboboxentry_start_league");
+  GLADE_HOOKUP_OBJECT (window_startup, combobox_start_league, "combobox_start_league");
   GLADE_HOOKUP_OBJECT (window_startup, hseparator12, "hseparator12");
   GLADE_HOOKUP_OBJECT (window_startup, label75, "label75");
   GLADE_HOOKUP_OBJECT (window_startup, hbox54, "hbox54");

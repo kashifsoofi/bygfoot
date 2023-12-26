@@ -40,7 +40,7 @@
 /**
  * Program version number and year (copyright).
  */
-#define VERS "2.3.0"
+#define VERS "2.3.1"
 #define YEAR "2005 - 2008"
 
 /** Home dir name */
@@ -63,6 +63,9 @@
 #define league_id_new (counters[COUNT_LEAGUE_ID]++)
 #define fixture_id_new (counters[COUNT_FIX_ID]++)
 #define lg_commentary_id_new (counters[COUNT_LG_COMM_ID]++)
+#define news_title_id_new (counters[COUNT_NEWS_TITLE_ID]++)
+#define news_subtitle_id_new (counters[COUNT_NEWS_SUBTITLE_ID]++)
+#define news_article_id_new (counters[COUNT_NEWS_ARTICLE_ID]++)
 
 /** Convenience abbreviation. */
 #define ligs country.leagues
@@ -89,6 +92,9 @@
 
 #define debug const_int("int_debug")
 #define debug_writer const_int("int_debug_writer")
+/* Uncommenting this will cause each function to print its name when it's entered.
+   Makes the whole program really slow, of course. */
+//#define DEBUG
 
 /**
  * Exit codes.
@@ -168,6 +174,7 @@ typedef struct
 	*bets,
 	*splash,
 	*training_camp,
+	*news,
         *alr;
     
     /** The position of the horizontal divider is stored here. */

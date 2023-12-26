@@ -32,6 +32,7 @@
 #include "league_struct.h"
 #include "live_game_struct.h"
 #include "name_struct.h"
+#include "news_struct.h"
 #include "player_struct.h"
 #include "team_struct.h"
 #include "user_struct.h"
@@ -64,6 +65,9 @@ free_leagues_array(GArray **leagues, gboolean reset);
 
 void
 free_league(League *league);
+
+void
+free_joined_leagues(GArray **joined_leagues);
 
 void
 free_teams_array(GArray **teams, gboolean reset);
@@ -108,7 +112,10 @@ void
 free_support_dirs(void);
 
 void
-free_table(Table *table);
+free_tables(GArray **tables);
+
+void
+free_new_tables(GArray **new_tables);
 
 void
 free_league_stats(LeagueStat *stats);
@@ -139,5 +146,20 @@ free_job(Job *job, gboolean free_tm);
 
 void
 free_jobs(gboolean reset);
+
+void
+free_news(gboolean reset);
+
+void
+free_newspaper(gboolean reset);
+
+void
+free_newspaper_article(NewsPaperArticle *article);
+
+void
+free_cup_round(CupRound *cup_round);
+
+void
+free_prom_rel(PromRel *prom_rel);
 
 #endif

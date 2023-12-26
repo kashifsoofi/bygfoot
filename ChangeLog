@@ -1,3 +1,33 @@
+29/01/2009: v2.3.1
+	- added possibility for multiple tables in leagues (think
+	  apertura/clausura in south america)
+	- added joined leagues feature (think conferences in US sports)
+	- added variable round robins for cups and variable breaks between
+	round robins
+	- solved some minor bugs
+	- added clicking in tables and fixtures mode (switches to the
+	  other view, respectively)
+	- added new images for simulation
+	- added newspaper feature
+	- the country selection got some convenience updates
+	- updated player names for most European countries (thanks Mihai Floran,
+	tomassi)
+	- updated Swedish translation (thanks to Daniel Nylander)
+	- updated North American country definitions (thanks to Chris Hunter),
+	- updated South American country definitions (thanks to Ivan Ramirez),
+	- updated and added European country definitions (thanks to Tommasi,
+	Mihai Floran)
+	- revamped European cup system (thanks to Tommasi)
+	- updated Polish translation (thanks to Michał Rudolf)
+	- updated Romanian translations (thanks to Mihai Floran)
+	- updated Chinese translation (thanks to Jie Luo, Calvin Zhuang)
+	- added Portuguese translation (thanks to  Marco Alves)
+	- added Brazilian Portuguese translation (thanks to Valdinei Martins)
+	- updated Spanish translation (thanks to Ivan Ramirez)
+	- updated Dutch translation
+	- updated German translation
+	
+
 06/11/2008: v2.3.0
 	- added flag for Montenegro (thanks to Mihai Floran)
 	- added definitions for a European Union League (thanks to Mihai Floran)

@@ -49,6 +49,10 @@
 void
 xml_load_users(const gchar *dirname, const gchar *basename)
 {
+#ifdef DEBUG
+    printf("xml_load_users\n");
+#endif
+
     gint i;
     gchar buf[SMALL];
 
@@ -71,34 +75,31 @@ xml_load_users(const gchar *dirname, const gchar *basename)
 void
 xml_load_league(const gchar *dirname, const gchar *basename)
 {
-    gchar buf[SMALL];
+#ifdef DEBUG
+    printf("xml_load_league\n");
+#endif
+
+    gchar buf[SMALL], team_file[SMALL];
     League new = league_new(FALSE);
     gchar *prefix = g_strndup(basename, strlen(basename) - 4);
 
-    sprintf(buf, "%s%s%s", dirname, G_DIR_SEPARATOR_S, basename);
-    xml_loadsave_league_read(buf, &new);
-
     g_array_append_val(ligs, new);
 
-    sprintf(buf, _("Loading league: %s"),
-	    new.name);
+    sprintf(buf, "%s%s%s", dirname, G_DIR_SEPARATOR_S, basename);
+    sprintf(team_file, "%s%s%s_teams.xml", dirname, G_DIR_SEPARATOR_S, prefix);
+    xml_loadsave_league_read(buf, team_file, &lig(ligs->len - 1));
 
-    gui_show_progress(
-	gtk_progress_bar_get_fraction(
-	    GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar"))), buf,
-	PIC_TYPE_LOAD);
+    sprintf(buf, _("Loading league: %s"),
+	    lig(ligs->len - 1).name);
+
+    gui_show_progress(gui_get_progress_bar_fraction(), buf,
+                      PIC_TYPE_LOAD);
 
     if(debug > 80)
 	g_print("%s\n", buf);
 
-    sprintf(buf, "%s%s%s_teams.xml", dirname, G_DIR_SEPARATOR_S, prefix);
-    xml_loadsave_teams_read(buf, lig(ligs->len - 1).teams);
-
     sprintf(buf, "%s%s%s_fixtures.xml", dirname, G_DIR_SEPARATOR_S, prefix);
     xml_loadsave_fixtures_read(buf, lig(ligs->len - 1).fixtures);
-
-    sprintf(buf, "%s%s%s_table.xml", dirname, G_DIR_SEPARATOR_S, prefix);
-    xml_loadsave_table_read(buf, &lig(ligs->len - 1).table);
 
     sprintf(buf, "%s%s%s_stat.xml", dirname, G_DIR_SEPARATOR_S, prefix);
     xml_loadsave_league_stat_read(buf, &lig(ligs->len - 1).stats);
@@ -109,6 +110,10 @@ xml_load_league(const gchar *dirname, const gchar *basename)
 void
 xml_load_cup(Cup *cup, const gchar *dirname, const gchar *basename)
 {
+#ifdef DEBUG
+    printf("xml_load_cup\n");
+#endif
+
     gchar buf[SMALL];
     gchar *prefix = g_strndup(basename, strlen(basename) - 4);
 
@@ -117,10 +122,8 @@ xml_load_cup(Cup *cup, const gchar *dirname, const gchar *basename)
 
     sprintf(buf, _("Loading cup: %s"),
 	    cup->name);
-    gui_show_progress(
-	gtk_progress_bar_get_fraction(
-	    GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar"))), buf,
-	PIC_TYPE_LOAD);
+    gui_show_progress(gui_get_progress_bar_fraction(), buf,
+                      PIC_TYPE_LOAD);
 
     if(debug > 80)
 	g_print("%s\n", buf);
@@ -134,6 +137,10 @@ xml_load_cup(Cup *cup, const gchar *dirname, const gchar *basename)
 void
 xml_load_transfers(const gchar *dirname, const gchar *basename)
 {
+#ifdef DEBUG
+    printf("xml_load_transfers\n");
+#endif
+
     gchar buf[SMALL];
 
     sprintf(buf, "%s%s%s___transfer_list.xml", dirname, G_DIR_SEPARATOR_S, basename);
@@ -147,6 +154,10 @@ xml_load_transfers(const gchar *dirname, const gchar *basename)
 void
 xml_write_string(FILE *fil, const gchar *string, gint tag, const gchar* indent)
 {
+#ifdef DEBUG
+    printf("xml_write_string\n");
+#endif
+
     if(string == NULL)
 	return;
 

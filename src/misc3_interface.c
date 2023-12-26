@@ -590,14 +590,14 @@ create_window_alr (void)
   gtk_misc_set_alignment (GTK_MISC (label24), 0, 0.5);
   gtk_misc_set_padding (GTK_MISC (label24), 5, 0);
 
-  label_current_start_week = gtk_label_new (_("label26"));
+  label_current_start_week = gtk_label_new ("");
   gtk_widget_show (label_current_start_week);
   gtk_table_attach (GTK_TABLE (table2), label_current_start_week, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label_current_start_week), 0, 0.5);
 
-  label_current_weekly_installment = gtk_label_new (_("label27"));
+  label_current_weekly_installment = gtk_label_new ("");
   gtk_widget_show (label_current_weekly_installment);
   gtk_table_attach (GTK_TABLE (table2), label_current_weekly_installment, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -768,5 +768,77 @@ create_window_alr (void)
   gtk_window_add_accel_group (GTK_WINDOW (window_alr), accel_group);
 
   return window_alr;
+}
+
+GtkWidget*
+create_window_news (void)
+{
+  GtkWidget *window_news;
+  GtkWidget *vbox6;
+  GtkWidget *scrolledwindow3;
+  GtkWidget *treeview_news;
+  GtkWidget *hseparator8;
+  GtkWidget *button_news_close;
+  GtkAccelGroup *accel_group;
+  GtkTooltips *tooltips;
+
+  tooltips = gtk_tooltips_new ();
+
+  accel_group = gtk_accel_group_new ();
+
+  window_news = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (window_news), _("Bygfoot News"));
+  gtk_window_set_position (GTK_WINDOW (window_news), GTK_WIN_POS_CENTER);
+  gtk_window_set_default_size (GTK_WINDOW (window_news), 700, 600);
+
+  vbox6 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox6);
+  gtk_container_add (GTK_CONTAINER (window_news), vbox6);
+
+  scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow3);
+  gtk_box_pack_start (GTK_BOX (vbox6), scrolledwindow3, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_SHADOW_IN);
+
+  treeview_news = gtk_tree_view_new ();
+  gtk_widget_show (treeview_news);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow3), treeview_news);
+
+  hseparator8 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator8);
+  gtk_box_pack_start (GTK_BOX (vbox6), hseparator8, FALSE, FALSE, 0);
+  gtk_widget_set_size_request (hseparator8, -1, 10);
+
+  button_news_close = gtk_button_new_from_stock ("gtk-close");
+  gtk_widget_show (button_news_close);
+  gtk_box_pack_start (GTK_BOX (vbox6), button_news_close, FALSE, FALSE, 0);
+  gtk_tooltips_set_tip (tooltips, button_news_close, _("Esc"), NULL);
+  gtk_widget_add_accelerator (button_news_close, "clicked", accel_group,
+                              GDK_Escape, (GdkModifierType) 0,
+                              GTK_ACCEL_VISIBLE);
+
+  g_signal_connect ((gpointer) window_news, "delete_event",
+                    G_CALLBACK (on_window_news_delete_event),
+                    NULL);
+  g_signal_connect ((gpointer) window_news, "destroy_event",
+                    G_CALLBACK (on_window_news_destroy_event),
+                    NULL);
+  g_signal_connect ((gpointer) button_news_close, "clicked",
+                    G_CALLBACK (on_button_news_close_clicked),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (window_news, window_news, "window_news");
+  GLADE_HOOKUP_OBJECT (window_news, vbox6, "vbox6");
+  GLADE_HOOKUP_OBJECT (window_news, scrolledwindow3, "scrolledwindow3");
+  GLADE_HOOKUP_OBJECT (window_news, treeview_news, "treeview_news");
+  GLADE_HOOKUP_OBJECT (window_news, hseparator8, "hseparator8");
+  GLADE_HOOKUP_OBJECT (window_news, button_news_close, "button_news_close");
+  GLADE_HOOKUP_OBJECT_NO_REF (window_news, tooltips, "tooltips");
+
+  gtk_window_add_accel_group (GTK_WINDOW (window_news), accel_group);
+
+  return window_news;
 }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<country>
+	<name>Perú</name>
+	<symbol>flag_peru.png</symbol>
+	<sid>peru</sid>
+	<rating>5</rating>
+	<leagues>
+		<league>peru1</league>
+		<league>peru2</league>
+		<league>peru3</league>
+	</leagues>
+	<cups>
+		<cup>peru_elim</cup>
+		<cup>peru</cup>
+		<cup>peru_final</cup>
+		<cup>cable_magico</cup>
+		<cup>libertadores</cup>
+		<cup>sudamericana</cup>
+		<cup>recopa</cup>
+		<cup>mundial_clubes</cup>
+	</cups>
+</country>

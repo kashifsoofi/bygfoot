@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<country>
+	<name>Ecuador</name>
+	<symbol>flag_ecuador.png</symbol>
+	<sid>ecuador</sid>
+	<rating>6</rating>
+	<leagues>
+		<league>ecuador1</league>
+		<league>ecuador2</league>
+	</leagues>
+        <cups>
+		<cup>ecuador_serie_a_dos_a</cup>
+		<cup>ecuador_serie_a_dos_b</cup>
+		<cup>ecuador_serie_a_tres</cup>
+		<cup>ecuador_serie_b_final</cup>
+                <cup>libertadores</cup>
+                <cup>sudamericana</cup>
+                <cup>recopa</cup>
+	        <cup>mundial_clubes</cup>
+        </cups>
+</country>

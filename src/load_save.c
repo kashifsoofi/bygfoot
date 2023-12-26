@@ -40,17 +40,22 @@
 #include "xml_loadsave_league.h"
 #include "xml_loadsave_leagues_cups.h"
 #include "xml_loadsave_misc.h"
+#include "xml_loadsave_newspaper.h"
 #include "xml_loadsave_season_stats.h"
 #include "xml_loadsave_transfers.h"
 #include "xml_loadsave_users.h"
 #include "xml.h"
 
-#define PROGRESS_MAX 8
+#define PROGRESS_MAX 9
 
 /** Save the game to the specified file. */
 void
 load_save_save_game(const gchar *filename)
 {
+#ifdef DEBUG
+    printf("load_save_save_game\n");
+#endif
+
     gchar buf[SMALL];
     gchar *prefix = (g_str_has_suffix(filename, const_str("string_fs_save_suffix"))) ?
 	g_strndup(filename, strlen(filename) - strlen(const_str("string_fs_save_suffix"))) :
@@ -82,8 +87,7 @@ load_save_save_game(const gchar *filename)
 	g_print("load_save_save leagues/cups \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Saving leagues and cups..."),
 	PIC_TYPE_SAVE);
 
@@ -93,8 +97,7 @@ load_save_save_game(const gchar *filename)
 	g_print("load_save_save users \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Saving users..."),
 	PIC_TYPE_SAVE);
 
@@ -104,8 +107,7 @@ load_save_save_game(const gchar *filename)
 	g_print("load_save_save transfers \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Saving transfer list..."),
 	PIC_TYPE_SAVE);
 
@@ -115,8 +117,7 @@ load_save_save_game(const gchar *filename)
 	g_print("load_save_save stats \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Saving season stats..."),
 	PIC_TYPE_SAVE);
 
@@ -126,9 +127,7 @@ load_save_save_game(const gchar *filename)
 	g_print("load_save_save jobs \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(
-		  lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	/* The 'job exchange' is a list of teams looking for a manager. */
 	_("Saving job exchange..."),
 	PIC_TYPE_SAVE);
@@ -136,19 +135,27 @@ load_save_save_game(const gchar *filename)
     xml_loadsave_jobs_write(prefix);
 
     if(debug > 60)
+	g_print("load_save_save newspaper \n");
+
+    gui_show_progress(
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
+	_("Saving newspaper..."),
+	PIC_TYPE_SAVE);
+
+    xml_loadsave_newspaper_write(prefix);
+
+    if(debug > 60)
 	g_print("load_save_save misc \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Saving miscellaneous..."),
 	PIC_TYPE_SAVE);
 
     xml_loadsave_misc_write(prefix);
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Compressing savegame..."),
 	PIC_TYPE_SAVE);
 
@@ -161,7 +168,7 @@ load_save_save_game(const gchar *filename)
     gui_show_progress(1, _("Done."),
 		      PIC_TYPE_SAVE);
 
-    load_save_last_save_set(fullname->str);
+    file_store_text_in_saves("last_save", fullname->str);
 
     g_free(prefix);
     g_string_free(fullname, TRUE);
@@ -176,6 +183,10 @@ load_save_save_game(const gchar *filename)
 gboolean
 load_save_load_game(const gchar* filename, gboolean create_main_window)
 {
+#ifdef DEBUG
+    printf("load_save_load_game\n");
+#endif
+
     GString *buf = g_string_new("");
     gchar *fullname = (g_str_has_suffix(filename, const_str("string_fs_save_suffix"))) ?
 	g_strdup(filename) :
@@ -193,7 +204,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	g_free(prefix);
 	g_free(fullname);
 
-	basename = load_save_last_save_get();
+	basename = file_load_text_from_saves("last_save");
 
 	if(basename != NULL)
 	{
@@ -220,8 +231,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	g_print("load_save_load options\n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Loading options..."),
 	PIC_TYPE_LOAD);
 
@@ -235,8 +245,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	g_print("load_save_load leagues \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Loading leagues and cups..."),
 	PIC_TYPE_LOAD);
 
@@ -246,8 +255,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	g_print("load_save_load users \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Loading users..."),
 	PIC_TYPE_LOAD);
 
@@ -257,8 +265,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	g_print("load_save_load transfers \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Loading transfer list..."),
 	PIC_TYPE_LOAD);
 
@@ -268,8 +275,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	g_print("load_save_load stats \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Loading season stats..."),
 	PIC_TYPE_LOAD);
 
@@ -279,9 +285,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	g_print("load_save_load jobs \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(
-		  lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	/* The 'job exchange' is a list of teams looking for a manager. */
 	_("Loading job exchange..."),
 	PIC_TYPE_LOAD);
@@ -289,11 +293,20 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
     xml_loadsave_jobs_read(dirname, prefix);
 
     if(debug > 60)
+	g_print("load_save_load newspaper \n");
+
+    gui_show_progress(
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
+	_("Loading newspaper..."),
+	PIC_TYPE_LOAD);
+
+    xml_loadsave_newspaper_read(dirname, prefix);
+
+    if(debug > 60)
 	g_print("load_save_load misc \n");
 
     gui_show_progress(
-	((PROGRESS_MAX * gtk_progress_bar_get_fraction(
-	      GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")))) + 1) / PROGRESS_MAX,
+	((PROGRESS_MAX * gui_get_progress_bar_fraction()) + 1) / PROGRESS_MAX,
 	_("Loading miscellaneous..."),
 	PIC_TYPE_LOAD);
 
@@ -310,7 +323,7 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 
     misc_string_assign(&save_file, fullname);
 
-    load_save_last_save_set(fullname);
+    file_store_text_in_saves("last_save", fullname);
 
     gui_show_progress(-1, "",
 		      PIC_TYPE_LOAD);
@@ -336,69 +349,15 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
     return TRUE;
 }
 
-/** Store the name of the last savegame in the users home dir. */
-void
-load_save_last_save_set(const gchar *filename)
-{
-    gchar buf[SMALL];
-    const gchar *home = g_get_home_dir();
-    FILE *fil = NULL;
-
-    if(os_is_unix)
-	sprintf(buf, "%s%s%s%ssaves%slast_save", home, G_DIR_SEPARATOR_S,
-		HOMEDIRNAME, G_DIR_SEPARATOR_S, G_DIR_SEPARATOR_S);
-    else
-    {
-	gchar *pwd = g_get_current_dir();
-	sprintf(buf, "%s%ssaves%slast_save", pwd, G_DIR_SEPARATOR_S,
-		G_DIR_SEPARATOR_S);
-	g_free(pwd);
-    }
-
-    if(!file_my_fopen(buf, "w", &fil, FALSE))
-	return;
-
-    fprintf(fil, "%s", filename);
-
-    fclose(fil);
-}
-
-/** Return the filename of the last savegame. */
-gchar*
-load_save_last_save_get(void)
-{
-    gchar buf[SMALL];
-    const gchar *home = g_get_home_dir();
-    FILE *fil = NULL;
-    gint i = 0, c;
-
-    if(os_is_unix)
-	sprintf(buf, "%s%s%s%ssaves%slast_save", home, G_DIR_SEPARATOR_S,
-		HOMEDIRNAME, G_DIR_SEPARATOR_S,  G_DIR_SEPARATOR_S);
-    else
-    {
-	gchar *pwd = g_get_current_dir();
-	sprintf(buf, "%s%ssaves%slast_save", pwd, G_DIR_SEPARATOR_S,
-		G_DIR_SEPARATOR_S);
-	g_free(pwd);
-    }
-
-    if(!file_my_fopen(buf, "r", &fil, FALSE))
-	return NULL;
-
-    while ((c = (gchar)fgetc(fil)) != EOF)
-	buf[i++] = (gchar)c;
-    buf[i] = 0;    
-
-    fclose(fil);
-
-    return g_strdup(buf);
-}
 
 /** Write an autosave. */
 void
 load_save_autosave(void)
 {
+#ifdef DEBUG
+    printf("load_save_autosave\n");
+#endif
+
     gchar buf[SMALL];
     const gchar *home = g_get_home_dir();
     FILE *fil = NULL;
@@ -439,6 +398,10 @@ load_save_autosave(void)
 gboolean
 load_game_from_command_line(const gchar *filename)
 {
+#ifdef DEBUG
+    printf("load_game_from_command_line\n");
+#endif
+
     gchar *fullname = NULL,
 	*support_file_name = NULL;
 

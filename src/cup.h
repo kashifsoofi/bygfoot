@@ -34,13 +34,6 @@
 #define cup_get_last_tables_round(clid) &g_array_index(cup_from_clid(clid)->rounds, CupRound, cup_has_tables(clid))
 #define cup_get_last_tables(clid) g_array_index(cup_from_clid(clid)->rounds, CupRound, cup_has_tables(clid)).tables
 
-#define query_cup_has_property(clid, string) query_misc_string_in_array(string, cup_from_clid(clid)->properties)
-
-#define query_cup_is_international(clid) query_cup_has_property(clid, "international")
-#define query_cup_is_national(clid) query_cup_has_property(clid, "national")
-#define query_cup_hide(clid) query_cup_has_property(clid, "hide")
-#define query_cup_weak_at_home(clid) query_cup_has_property(clid, "weak_at_home")
-
 Cup
 cup_new(gboolean new_id);
 
@@ -54,16 +47,24 @@ void
 cup_reset(Cup *cup);
 
 void
-cup_get_team_pointers(Cup *cup, gint round);
+cup_get_team_pointers(Cup *cup, gint round, GPtrArray *teams_sorted, gboolean preload);
 
 void
 cup_load_choose_team_generate(Cup *cup, CupRound *cup_round, const CupChooseTeam *ct);
 
 void
-cup_load_choose_team(Cup *cup, GPtrArray *teams, const CupChooseTeam *ct);
+cup_load_choose_team(Cup *cup, GPtrArray *teams, GPtrArray *teams_sorted, const CupChooseTeam *ct);
+
+void
+cup_load_choose_team_from_league(Cup *cup, const League *league,
+                                 GPtrArray *teams, const CupChooseTeam *ct);
+
+void
+cup_load_choose_team_from_cup(Cup *cup, const Cup *cup_team, GPtrArray *teams, 
+                              GPtrArray *teams_sorted, const CupChooseTeam *ct);
 
 gint
-cup_get_first_week_of_cup_round(Cup *cup, gint cup_round);
+cup_get_first_week_of_cup_round(Cup *cup, gint cup_round, gboolean with_delay);
 
 gint
 cup_get_matchdays_in_cup_round(const Cup *cup, gint round);
@@ -84,7 +85,7 @@ Cup*
 cup_from_sid(const gchar* sid);
 
 void
-cup_round_name(const Fixture *fix, gchar *buf);
+cup_round_get_name(const Fixture *fix, gchar *buf);
 
 GPtrArray*
 cup_get_teams_sorted(const Cup *cup);
@@ -125,5 +126,17 @@ query_cup_transfer(void);
 
 gchar*
 cup_get_highlight_colour(const Cup *cup);
+
+gboolean
+cup_check_fixtures(const Cup *cup);
+
+gboolean
+cup_round_check_waits(const CupRound *cup_round);
+
+gboolean
+query_cup_self_referential(const Cup *cup);
+
+gboolean
+query_cup_hidden(const Cup *cup);
 
 #endif

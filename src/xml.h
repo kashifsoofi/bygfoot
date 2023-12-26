@@ -50,11 +50,26 @@ enum XmlTags
     TAG_SHORT_NAME,
     TAG_ID,
     TAG_WEEK_GAP,
+    TAG_WEEK_BREAK,
+    TAG_WEEK_BREAK_LENGTH,
+    TAG_SKIP_WEEKS_WITH,
     TAG_YELLOW_RED,
     TAG_TEAM_ID,
     TAG_NAMES_FILE,
+    TAG_PROPERTY,
     TAG_ROUND
 };
+
+#define TAG_DEF_NAME "name"
+#define TAG_DEF_SHORT_NAME "short_name"
+#define TAG_DEF_SID "sid"
+#define TAG_DEF_SYMBOL "symbol"
+#define TAG_DEF_WEEK_GAP "week_gap"
+#define TAG_DEF_PROPERTY "property"
+#define TAG_DEF_YELLOW_RED "yellow_red"
+#define TAG_DEF_WEEK_BREAK "break_in"
+#define ATT_DEF_NAME_WEEK_BREAK_LENGTH "length"
+#define TAG_DEF_SKIP_WEEKS_WITH "skip_weeks_with"
 
 /** Starting values for tag enums in the various xml loading source files. */
 #define TAG_START_MISC 1000
@@ -72,6 +87,7 @@ enum XmlTags
 #define TAG_START_LEAGUES_CUPS 12000
 #define TAG_START_TRANSFERS 20000
 #define TAG_START_JOBS 21000
+#define TAG_START_NEWS_PAPER 22000
 
 #define xml_write_g_string(fil, gstring, tag, indent) xml_write_string(fil, (gstring)->str, tag, indent)
 

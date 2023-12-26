@@ -58,8 +58,14 @@ misc_int_compare(gint first, gint second);
 gint
 misc_float_compare(gfloat first, gfloat second);
 
+const gchar*
+misc_strip_definitions_root(gchar *directory);
+
 gboolean
-query_misc_string_in_array(const gchar *string, GPtrArray *array);
+query_misc_string_starts_with(const gchar *string, GList *list);
+
+gboolean
+query_misc_string_in_array(const gchar *string, const GPtrArray *array);
 
 gboolean
 query_misc_integer_is_in_g_array(gint item, GArray *array);
@@ -120,5 +126,13 @@ misc_string_get_parenthesised(const gchar *string, gchar *dest);
 void
 misc_string_replace_parenthesised(gchar *string, const gchar *paren, 
 				  const gchar *replacement);
+
+gboolean
+misc_string_replace_all_tokens(GPtrArray **token_rep,
+                               const gchar *text_tokens, gchar *dest);
+
+void
+misc_token_add_bool(GPtrArray **token_rep, gint token_idx, 
+                    gboolean value);
 
 #endif

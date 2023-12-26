@@ -45,6 +45,10 @@
 League
 league_new(gboolean new_id)
 {
+#ifdef DEBUG
+    printf("league_new\n");
+#endif
+
     League new;
 
     new.name = NULL;
@@ -55,23 +59,21 @@ league_new(gboolean new_id)
 
     new.id = (new_id) ? league_id_new : -1;
     new.layer = -1;
-    new.rr_break = 1;
 
     new.average_talent = 0;
 
-    new.prom_rel.prom_games_dest_sid = NULL;
-    new.prom_rel.prom_games_loser_sid = NULL;
-    new.prom_rel.prom_games_cup_sid = NULL;
-    new.prom_rel.prom_games_number_of_advance = 1;
-
     new.prom_rel.elements = g_array_new(FALSE, FALSE, sizeof(PromRelElement));
+    new.prom_rel.prom_games = g_array_new(FALSE, FALSE, sizeof(PromGames));
 
     new.teams = g_array_new(FALSE, FALSE, sizeof(Team));
-    
     new.fixtures = g_array_new(FALSE, FALSE, sizeof(Fixture));
-
-    new.table = table_new();
-    new.table.clid = new.id;
+    new.joined_leagues = g_array_new(FALSE, FALSE, sizeof(JoinedLeague));
+    new.new_tables = g_array_new(FALSE, FALSE, sizeof(NewTable));
+    new.tables = g_array_new(FALSE, FALSE, sizeof(Table));
+    new.properties = g_ptr_array_new();
+    new.skip_weeks_with = g_ptr_array_new();
+    new.rr_breaks = g_array_new(FALSE, FALSE, sizeof(gint));
+    new.week_breaks = g_array_new(FALSE, FALSE, sizeof(WeekBreak));
 
     new.first_week = new.week_gap = 1;
     new.two_match_weeks[0] = g_array_new(FALSE, FALSE, sizeof(gint));
@@ -81,8 +83,6 @@ league_new(gboolean new_id)
 
     new.stats = stat_league_new("", "");
     
-    new.active = TRUE;
-
     return new;
 }
 
@@ -94,11 +94,37 @@ league_new(gboolean new_id)
 PromRelElement
 prom_rel_element_new(void)
 {
+#ifdef DEBUG
+    printf("prom_rel_element_new\n");
+#endif
+
     PromRelElement new;
 
-    new.ranks[0] = new.ranks[1] = 0;
+    new.ranks[0] = new.ranks[1] =
+        new.from_table = 0;
     new.dest_sid = NULL;
     new.type = PROM_REL_NONE;
+
+    return new;
+}
+
+/**
+   Create a new PromGames with default values.
+   @see PromGames
+*/
+PromGames
+prom_games_new(void)
+{
+#ifdef DEBUG
+    printf("prom_games_new\n");
+#endif
+
+    PromGames new;
+
+    new.dest_sid = NULL;
+    new.loser_sid = NULL;
+    new.cup_sid = NULL;
+    new.number_of_advance = 1;
 
     return new;
 }
@@ -109,6 +135,10 @@ prom_rel_element_new(void)
 gint
 league_cup_get_index_from_clid(gint clid)
 {
+#ifdef DEBUG
+    printf("league_cup_get_index_from_clid\n");
+#endif
+
     gint i;
     gint index = -1;
 
@@ -143,6 +173,10 @@ league_cup_get_index_from_clid(gint clid)
 League*
 league_from_clid(gint clid)
 {
+#ifdef DEBUG
+    printf("league_from_clid\n");
+#endif
+
     gint i;
 
     for(i=0;i<ligs->len;i++)
@@ -163,6 +197,10 @@ league_from_clid(gint clid)
 gint
 league_cup_get_next_clid(gint clid, gboolean count_inactive)
 {
+#ifdef DEBUG
+    printf("league_cup_get_next_clid\n");
+#endif
+
     gint i, return_value = -1;
 
     if(clid < ID_CUP_START)
@@ -173,7 +211,7 @@ league_cup_get_next_clid(gint clid, gboolean count_inactive)
 
 	if(i != ligs->len - 1)
 	{
-	    if(lig(i + 1).active || count_inactive)
+	    if(query_league_active(&lig(i + 1)) || count_inactive)
 		return_value = lig(i + 1).id;
 	    else
 		return_value = league_cup_get_next_clid(lig(i + 1).id, count_inactive);
@@ -182,7 +220,7 @@ league_cup_get_next_clid(gint clid, gboolean count_inactive)
 	    return_value = acp(0)->id;
 	else
 	{
-	    if(lig(0).active || count_inactive)
+	    if(query_league_active(&lig(0)) || count_inactive)
 		return_value = lig(0).id;
 	    else
 		return_value = league_cup_get_next_clid(lig(0).id, count_inactive);
@@ -198,7 +236,7 @@ league_cup_get_next_clid(gint clid, gboolean count_inactive)
 	    return_value = acp(i + 1)->id;
 	else
 	{
-	    if(lig(0).active || count_inactive)
+	    if(query_league_active(&lig(0)) || count_inactive)
 		return_value = lig(0).id;
 	    else
 		return_value = league_cup_get_next_clid(lig(0).id, count_inactive);
@@ -215,6 +253,10 @@ league_cup_get_next_clid(gint clid, gboolean count_inactive)
 gint
 league_cup_get_previous_clid(gint clid, gboolean count_inactive)
 {
+#ifdef DEBUG
+    printf("league_cup_get_previous_clid\n");
+#endif
+
     gint i, return_value = -1;
 
     if(clid < ID_CUP_START)
@@ -225,7 +267,7 @@ league_cup_get_previous_clid(gint clid, gboolean count_inactive)
 
 	if(i != 0)
 	{
-	    if(lig(i - 1).active || count_inactive)
+	    if(query_league_active(&lig(i - 1)) || count_inactive)
 		return_value = lig(i - 1).id;
 	    else
 		return_value = league_cup_get_previous_clid(lig(i - 1).id, count_inactive);
@@ -234,7 +276,7 @@ league_cup_get_previous_clid(gint clid, gboolean count_inactive)
 	    return_value = acp(acps->len - 1)->id;
 	else
 	{
-	    if(lig(ligs->len - 1).active || count_inactive)
+	    if(query_league_active(&lig(ligs->len - 1)) || count_inactive)
 		return_value = lig(ligs->len - 1).id;
 	    else
 		return_value = league_cup_get_previous_clid(lig(ligs->len - 1).id, count_inactive);
@@ -250,7 +292,7 @@ league_cup_get_previous_clid(gint clid, gboolean count_inactive)
 	    return_value = acp(i - 1)->id;
 	else
 	{
-	    if(lig(ligs->len - 1).active || count_inactive)
+	    if(query_league_active(&lig(ligs->len - 1)) || count_inactive)
 		return_value = lig(ligs->len - 1).id;
 	    else
 		return_value = league_cup_get_previous_clid(lig(ligs->len - 1).id, count_inactive);
@@ -266,6 +308,10 @@ league_cup_get_previous_clid(gint clid, gboolean count_inactive)
 Fixture*
 league_cup_get_next_fixture(gint clid, gint week_number, gint week_round_number)
 {
+#ifdef DEBUG
+    printf("league_cup_get_next_fixture\n");
+#endif
+
     gint i;
     GArray *fixtures = league_cup_get_fixtures(clid);
 
@@ -284,6 +330,10 @@ league_cup_get_next_fixture(gint clid, gint week_number, gint week_round_number)
 Fixture*
 league_cup_get_previous_fixture(gint clid, gint week_number, gint week_round_number)
 {
+#ifdef DEBUG
+    printf("league_cup_get_previous_fixture\n");
+#endif
+
     gint i;
     GArray *fixtures = league_cup_get_fixtures(clid);
 
@@ -302,6 +352,10 @@ league_cup_get_previous_fixture(gint clid, gint week_number, gint week_round_num
 gint
 league_cup_average_capacity(gint clid)
 {
+#ifdef DEBUG
+    printf("league_cup_average_capacity\n");
+#endif
+
     gint i, cnt = 0;
     gfloat sum = 0;
     const GArray *teams = NULL;
@@ -335,6 +389,10 @@ league_cup_average_capacity(gint clid)
 gint
 league_index_from_sid(const gchar *sid)
 {
+#ifdef DEBUG
+    printf("league_index_from_sid\n");
+#endif
+
     gint i;
 
     for(i=0;i<ligs->len;i++)
@@ -352,6 +410,10 @@ league_index_from_sid(const gchar *sid)
 void
 league_remove_team_with_id(League *league, gint id)
 {
+#ifdef DEBUG
+    printf("league_remove_team_with_id\n");
+#endif
+
     gint i;
 
     for(i=0;i<league->teams->len;i++)
@@ -372,12 +434,16 @@ league_remove_team_with_id(League *league, gint id)
 void
 league_season_start(League *league)
 {
+#ifdef DEBUG
+    printf("league_season_start\n");
+#endif
+
     gint i, j;
     gint idx = league_index_from_sid(league->sid);
     gboolean user_champ = 
 	(team_is_user(
 	    team_of_id(
-		g_array_index(lig(0).table.elements, TableElement, 0).team_id)) != -1);
+		g_array_index(league_table((&lig(0)))->elements, TableElement, 0).team_id)) != -1);
     gboolean league_above_talent =
 	(team_get_average_talents(league->teams) > league->average_talent *
 	 const_float("float_season_end_league_above_talent_factor") && !user_champ);
@@ -401,7 +467,7 @@ league_season_start(League *league)
     if(user_champ)
     {
 	tm = team_of_id(
-	    g_array_index(lig(0).table.elements, TableElement, 0).team_id);
+	    g_array_index(league_table((&lig(0)))->elements, TableElement, 0).team_id);
 	tm->luck = MAX(tm->luck * const_float("float_season_end_user_champ_luck_factor"),
 		       const_float("float_luck_limit"));
     }
@@ -411,17 +477,13 @@ league_season_start(League *league)
 		usr(i).tm->luck = 
 		    MIN(usr(i).tm->luck * const_float("float_season_end_user_champ_luck_factor_regen"), 1);
 
-    for(i=0;i<league->table.elements->len;i++)
+    /** Reset tables */
+    for(i = league->tables->len - 1; i >= 0; i--)
     {
-	g_array_index(league->table.elements, TableElement, i).team = 
-	    &g_array_index(league->teams, Team, i);
-	g_array_index(league->table.elements, TableElement, i).team_id = 
-	    g_array_index(league->teams, Team, i).id;
-	g_array_index(league->table.elements, TableElement, i).old_rank = i;
-
-	for(j=0;j<TABLE_END;j++)
-	    g_array_index(league->table.elements, TableElement, i).values[j] = 0;
+        g_array_free(g_array_index(league->tables, Table, i).elements, TRUE);
+        g_array_remove_index(league->tables, i);
     }
+    league_add_table(league);
 
     /*d*/
 /*     if(league == &lig(0)) */
@@ -464,38 +526,45 @@ league_season_start(League *league)
 gboolean
 query_league_rank_in_prom_games(const League *league, gint rank)
 {
-    gint i, j, k;
+#ifdef DEBUG
+    printf("query_league_rank_in_prom_games\n");
+#endif
+
+    gint i, j, k, l;
     const Cup *cup = NULL;
     const CupRound *cup_round = NULL;
 
     for(i=0;i<ligs->len;i++)
 	if(query_league_has_prom_games((&lig(i))))
 	{
-	    cup = cup_from_sid(lig(i).prom_rel.prom_games_cup_sid);
-	    for(k=0;k<cup->rounds->len;k++)
-	    {
-		cup_round = &g_array_index(cup->rounds, CupRound, k);
-		for(j=0;j<cup_round->choose_teams->len;j++)
-		{
-		    if(strcmp(g_array_index(cup_round->choose_teams, CupChooseTeam, j).sid,
-			      league->sid) == 0 &&
-		       ((rank >= g_array_index(cup_round->choose_teams,
-					       CupChooseTeam, j).start_idx &&
-			 rank <= g_array_index(cup_round->choose_teams, 
-					       CupChooseTeam, j).end_idx && 
-			 g_array_index(cup_round->choose_teams, 
-				       CupChooseTeam, j).randomly) ||
-			(rank >= g_array_index(cup_round->choose_teams, 
-					       CupChooseTeam, j).start_idx &&
-			 rank < g_array_index(cup_round->choose_teams, 
-					      CupChooseTeam, j).start_idx + 
-			 g_array_index(cup_round->choose_teams, 
-				       CupChooseTeam, j).number_of_teams &&
-			 !g_array_index(cup_round->choose_teams, 
-					CupChooseTeam, j).randomly)))
-			return TRUE;
-		}
-	    }
+            for(l = 0; l < lig(i).prom_rel.prom_games->len; l++)
+            {
+                cup = cup_from_sid(g_array_index(lig(i).prom_rel.prom_games, PromGames, l).cup_sid);
+                for(k=0;k<cup->rounds->len;k++)
+                {
+                    cup_round = &g_array_index(cup->rounds, CupRound, k);
+                    for(j=0;j<cup_round->choose_teams->len;j++)
+                    {
+                        if(strcmp(g_array_index(cup_round->choose_teams, CupChooseTeam, j).sid,
+                                  league->sid) == 0 &&
+                           ((rank >= g_array_index(cup_round->choose_teams,
+                                                   CupChooseTeam, j).start_idx &&
+                             rank <= g_array_index(cup_round->choose_teams, 
+                                                   CupChooseTeam, j).end_idx && 
+                             g_array_index(cup_round->choose_teams, 
+                                           CupChooseTeam, j).randomly) ||
+                            (rank >= g_array_index(cup_round->choose_teams, 
+                                                   CupChooseTeam, j).start_idx &&
+                             rank < g_array_index(cup_round->choose_teams, 
+                                                  CupChooseTeam, j).start_idx + 
+                             g_array_index(cup_round->choose_teams, 
+                                           CupChooseTeam, j).number_of_teams &&
+                             !g_array_index(cup_round->choose_teams, 
+                                            CupChooseTeam, j).randomly)))
+                            return TRUE;
+                    }
+                }                
+            }
 	}
 
     return FALSE;
@@ -505,6 +574,10 @@ query_league_rank_in_prom_games(const League *league, gint rank)
 gboolean
 query_league_matches_in_week(const League *league, gint week_number)
 {
+#ifdef DEBUG
+    printf("query_league_matches_in_week\n");
+#endif
+
     gint i;
 
     for(i=0;i<league->fixtures->len;i++)
@@ -519,16 +592,22 @@ query_league_matches_in_week(const League *league, gint week_number)
 void
 league_get_team_movements_prom_rel(const League *league, GArray *team_movements)
 {
+#ifdef DEBUG
+    printf("league_get_team_movements_prom_rel\n");
+#endif
+
     gint i, j, k;
     TeamMove new_move;
     const GArray *elements = league->prom_rel.elements;
+    PromRelElement *elem;
     GArray *dest_idcs = NULL;
     GPtrArray *dest_sids = NULL;
 
     for(i=0;i<elements->len;i++)
     {
+        elem = &g_array_index(elements, PromRelElement, i);
 	dest_sids = misc_separate_strings(
-	    g_array_index(elements, PromRelElement, i).dest_sid);
+	    elem->dest_sid);
 	gint dest_idcs_int[dest_sids->len];
 	gint dest_idcs_order[dest_sids->len];
 
@@ -536,8 +615,8 @@ league_get_team_movements_prom_rel(const League *league, GArray *team_movements)
 	    dest_idcs_int[j] = 
 		league_index_from_sid((gchar*)g_ptr_array_index(dest_sids, j));
 
-	for(j=g_array_index(elements, PromRelElement, i).ranks[0];
-	    j<=g_array_index(elements, PromRelElement, i).ranks[1]; j++)
+	for(j=elem->ranks[0];
+	    j<=elem->ranks[1]; j++)
 	{
 	    dest_idcs = g_array_new(FALSE, FALSE, sizeof(gint));
 	    math_generate_permutation(dest_idcs_order, 0, dest_sids->len - 1);
@@ -545,8 +624,8 @@ league_get_team_movements_prom_rel(const League *league, GArray *team_movements)
 	    for(k=0;k<dest_sids->len;k++)		
 		g_array_append_val(dest_idcs, dest_idcs_int[dest_idcs_order[k]]);
 	    
-	    new_move.tm = *(g_array_index(league->table.elements, TableElement, j - 1).team);
-	    new_move.prom_rel_type = g_array_index(elements, PromRelElement, i).type;
+	    new_move.tm = *(g_array_index(g_array_index(league->tables, Table, elem->from_table).elements, TableElement, j - 1).team);
+	    new_move.prom_rel_type = elem->type;
 	    new_move.dest_idcs = dest_idcs;
 	    new_move.dest_assigned = FALSE;
 	    g_array_append_val(team_movements, new_move);
@@ -560,24 +639,29 @@ league_get_team_movements_prom_rel(const League *league, GArray *team_movements)
 /** Add the team movements from the promotion games
     to the array. */
 void
-league_get_team_movements_prom_games(const League *league, GArray *team_movements,
-				     const GPtrArray *prom_games_teams, gboolean up)
+league_get_team_movements_prom_games(const League *league, const PromGames *prom_games,
+                                     GArray *team_movements, const GPtrArray *prom_games_teams,
+                                     gboolean up)
 {
+#ifdef DEBUG
+    printf("league_get_team_movements_prom_games\n");
+#endif
+
     gint i, j;
     TeamMove new_move;
     GPtrArray *dest_sids = (up) ?
-	misc_separate_strings(league->prom_rel.prom_games_dest_sid) :
-	misc_separate_strings(league->prom_rel.prom_games_loser_sid);
+	misc_separate_strings(prom_games->dest_sid) :
+	misc_separate_strings(prom_games->loser_sid);
     GArray *dest_idcs = NULL;
     gint dest_idcs_int[dest_sids->len];
     gint dest_idcs_order[dest_sids->len];
     gint start_idx = 0, 
-	end_idx = league->prom_rel.prom_games_number_of_advance;
+	end_idx = prom_games->number_of_advance;
     gint prom_type = PROM_REL_PROMOTION;
 
     if(!up)
     {
-	start_idx = league->prom_rel.prom_games_number_of_advance;
+	start_idx = prom_games->number_of_advance;
 	end_idx = prom_games_teams->len;
 	prom_type = PROM_REL_RELEGATION;
     }
@@ -609,6 +693,11 @@ league_get_team_movements_prom_games(const League *league, GArray *team_movement
 void
 league_get_team_movements(League *league, GArray *team_movements)
 {
+#ifdef DEBUG
+    printf("league_get_team_movements\n");
+#endif
+
+    gint i;
     GPtrArray *prom_games_teams = NULL;
     const Cup *prom_cup = NULL;
 
@@ -616,24 +705,21 @@ league_get_team_movements(League *league, GArray *team_movements)
 
     if(query_league_has_prom_games(league))
     {
-	prom_cup = cup_from_sid(league->prom_rel.prom_games_cup_sid);
+        for(i = 0; i < league->prom_rel.prom_games->len; i++)
+        {
+            prom_cup = cup_from_sid(g_array_index(league->prom_rel.prom_games, PromGames, i).cup_sid);
     
-	if(prom_cup == NULL)
-	{
-	    g_warning("league_get_team_movements: promotion games cup not found for league %s (cup sid %s).\n",
-		      league->name, league->prom_rel.prom_games_cup_sid);
-	    return;
-	}
+            prom_games_teams = cup_get_teams_sorted(prom_cup);
 
-	prom_games_teams = cup_get_teams_sorted(prom_cup);
+            league_get_team_movements_prom_games(league, &g_array_index(league->prom_rel.prom_games, PromGames, i),
+                                                 team_movements, prom_games_teams, TRUE);
 
-	league_get_team_movements_prom_games(league, team_movements, prom_games_teams, TRUE);
-
-	if(league->prom_rel.prom_games_loser_sid != NULL)
-	    league_get_team_movements_prom_games(league, team_movements, 
-						 prom_games_teams, FALSE);
+            if(g_array_index(league->prom_rel.prom_games, PromGames, i).loser_sid != NULL)
+                league_get_team_movements_prom_games(league, &g_array_index(league->prom_rel.prom_games, PromGames, i),
+                                                     team_movements, prom_games_teams, FALSE);
 	
-	g_ptr_array_free(prom_games_teams, TRUE);
+            g_ptr_array_free(prom_games_teams, TRUE);
+        }
     }
 
     g_array_sort_with_data(league->teams, team_compare_func,
@@ -644,6 +730,10 @@ league_get_team_movements(League *league, GArray *team_movements)
 gboolean
 query_league_team_movements_unassigned(const GArray *team_movements)
 {
+#ifdef DEBUG
+    printf("query_league_team_movements_unassigned\n");
+#endif
+
     gint i;
 
     for(i=0;i<team_movements->len;i++)
@@ -658,6 +748,10 @@ query_league_team_movements_unassigned(const GArray *team_movements)
 gboolean
 query_league_team_movements_unassigned_single(const GArray *team_movements)
 {
+#ifdef DEBUG
+    printf("query_league_team_movements_unassigned_single\n");
+#endif
+
     gint i;
 
     for(i=0;i<team_movements->len;i++)
@@ -673,6 +767,10 @@ void
 league_team_movements_print(const GArray *team_movements, 
 			    const gint *league_size, const gint *league_cur_size)
 {
+#ifdef DEBUG
+    printf("league_team_movements_print\n");
+#endif
+
     gint i, j;
     const TeamMove *tmove = NULL;
 
@@ -704,6 +802,10 @@ gint
 league_team_movements_compare_dest_idcs(gconstpointer a, gconstpointer b, 
 					gpointer data)
 {
+#ifdef DEBUG
+    printf("league_team_movements_compare_dest_idcs\n");
+#endif
+
     gint league_idx1 = *(gint*)a,
 	league_idx2 = *(gint*)b;
     const gint *league_cur_size = (const gint*)data;
@@ -723,6 +825,10 @@ void
 league_team_movements_assign_dest(GArray *team_movements, gint idx,
 				  const gint *league_size, gint *league_cur_size)
 {
+#ifdef DEBUG
+    printf("league_team_movements_assign_dest\n");
+#endif
+
     gint i, j, dest_idx;
     TeamMove *tmove = &g_array_index(team_movements, TeamMove, idx);
 
@@ -795,6 +901,10 @@ void
 league_team_movements_prune(GArray *team_movements, const gint *league_size,
 			    gint *league_cur_size)
 {
+#ifdef DEBUG
+    printf("league_team_movements_prune\n");
+#endif
+
     gint i;
 
     if(debug > 60)
@@ -817,6 +927,10 @@ league_team_movements_prune(GArray *team_movements, const gint *league_size,
 void
 league_team_movements_destinations(GArray *team_movements, const gint *league_size)
 {
+#ifdef DEBUG
+    printf("league_team_movements_destinations\n");
+#endif
+
     gint i;
     gint league_cur_size[ligs->len];
 
@@ -846,10 +960,14 @@ league_team_movements_destinations(GArray *team_movements, const gint *league_si
 gboolean
 query_leagues_active_in_country(void)
 {
+#ifdef DEBUG
+    printf("query_leagues_active_in_country\n");
+#endif
+
     gint i;
 
     for(i=0;i<ligs->len;i++)
-	if(lig(i).active)
+	if(query_league_active(&lig(i)))
 	    return TRUE;
 
     return FALSE;
@@ -860,6 +978,10 @@ query_leagues_active_in_country(void)
 gboolean
 query_league_cup_matchday_in_two_match_week(GArray **two_match_weeks, gint matchday)
 {
+#ifdef DEBUG
+    printf("query_league_cup_matchday_in_two_match_week\n");
+#endif
+
     gint i;
 
     for(i=0;i<two_match_weeks[0]->len;i++)
@@ -871,4 +993,160 @@ query_league_cup_matchday_in_two_match_week(GArray **two_match_weeks, gint match
     }
 
     return FALSE;
+}
+
+/** Add a new table to the league tables if specified
+    in the new_tables array. */
+void
+league_check_new_tables(League *league)
+{
+#ifdef DEBUG
+    printf("league_check_new_tables\n");
+#endif
+
+    gint i;
+    Table new_table;
+
+    for(i = 0; i < league->new_tables->len; i++)
+        if(g_array_index(league->new_tables, NewTable, i).add_week == week)
+        {
+            /** Create cumulative table if necessary. */
+            if(league->tables->len == 1 && week > 1)
+            {
+                new_table = table_copy(league_table(league));
+                g_array_append_val(league->tables, new_table);
+            }
+
+            league_add_table(league);
+            misc_string_assign(&league_table(league)->name,
+                               g_array_index(league->new_tables, NewTable, i).name);
+        }
+}
+
+/** Add an initialized table to the league. */
+void
+league_add_table(League *league)
+{
+#ifdef DEBUG
+    printf("league_add_table\n");
+#endif
+
+    gint i;
+    Table new_table;
+    TableElement new_table_element;
+ 
+    new_table = table_new();
+    new_table.clid = league->id;
+    new_table.name = g_strdup(league->name);
+
+    for(i = 0; i < league->teams->len; i++)
+    {
+        new_table_element = 
+            table_element_new(
+                &g_array_index(league->teams, Team, i), i);
+        g_array_append_val(new_table.elements, new_table_element);
+    }
+
+    g_array_append_val(league->tables, new_table);
+}
+
+gboolean
+query_league_cup_has_property(gint clid, const gchar *property)
+{
+    const GPtrArray *properties = league_cup_get_properties(clid);
+    return query_misc_string_in_array(property, properties);
+}
+
+GPtrArray*
+league_cup_get_teams(gint clid)
+{
+    return (clid < ID_CUP_START) ?
+	(GPtrArray*)league_from_clid(clid)->teams :
+	cup_from_clid(clid)->teams;
+}
+
+GPtrArray*
+league_cup_get_properties(gint clid)
+{
+    return (clid < ID_CUP_START) ? 
+	league_from_clid(clid)->properties :
+	cup_from_clid(clid)->properties;
+}
+
+/** Synchronise the number of league breaks with the number of 
+    round robins in the league. */
+void
+league_cup_adjust_rr_breaks(GArray *rr_breaks, gint round_robins, gint week_gap)
+{
+#ifdef DEBUG
+    printf("league_cup_adjust_rr_breaks\n");
+#endif
+
+    gint i;
+    gint default_break;
+
+    /* Remove superfluous breaks. */
+    for(i = rr_breaks->len - 1; i >= round_robins - 1; i--)
+        g_array_remove_index(rr_breaks, i);
+
+    /* Add more breaks if necessary. */
+    if(rr_breaks->len == 0)
+        default_break = week_gap;
+    else
+        default_break = g_array_index(rr_breaks, gint, rr_breaks->len - 1);
+
+    for(i = rr_breaks->len; i < round_robins - 1; i++)
+        g_array_append_val(rr_breaks, default_break);
+}
+
+/** Fill the breaks array from a comma separated string of integers. */
+void
+league_cup_fill_rr_breaks(GArray *rr_breaks, const gchar *breaks)
+{
+#ifdef DEBUG
+    printf("league_cup_fill_rr_breaks\n");
+#endif
+
+    gint i = 0;
+    gchar **breaks_arr = g_strsplit(breaks, ",", 0);
+    gint new_break;
+
+    while(breaks_arr[i] != NULL)
+    {
+        new_break = (gint)g_ascii_strtod(breaks_arr[i], NULL);
+        g_array_append_val(rr_breaks, new_break);
+        i++;
+    }
+
+    g_strfreev(breaks_arr);
+}
+
+/** Set the values of the week breaks to the week gap of the league or
+    cup if necessary. */
+void
+league_cup_adjust_week_breaks(GArray *week_breaks, gint week_gap)
+{
+    gint i;
+
+    for(i = 0; i < week_breaks->len; i++)
+        if(g_array_index(week_breaks, WeekBreak, i).length == -1000)
+            g_array_index(week_breaks, WeekBreak, i).length = week_gap;
+}
+
+/** Return the week number with a possible schedule break adjustment. */
+gint
+league_cup_get_week_with_break(gint clid, gint week_number)
+{
+    gint i;
+    const GArray *week_breaks;
+
+    week_breaks = (clid >= ID_CUP_START) ?
+        cup_from_clid(clid)->week_breaks :
+        league_from_clid(clid)->week_breaks;
+
+    for(i = 0; i < week_breaks->len; i++)
+        if(g_array_index(week_breaks, WeekBreak, i).week_number == week_number)
+            return week_number + g_array_index(week_breaks, WeekBreak, i).length;            
+
+    return week_number;
 }

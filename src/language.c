@@ -30,6 +30,7 @@
 #include "language.h"
 #include "lg_commentary.h"
 #include "misc.h"
+#include "news.h"
 #include "option.h"
 #include "variables.h"
 #include "window.h"
@@ -42,6 +43,10 @@ extern int _nl_msg_cat_cntr=0;
 void
 language_set(gint index)
 {
+#ifdef DEBUG
+    printf("language_set\n");
+#endif
+
     gchar buf[SMALL], buf2[SMALL];
     gchar *pwd = g_get_current_dir();
     GPtrArray *codes =
@@ -55,9 +60,8 @@ language_set(gint index)
     if(strcmp(buf, opt_str("string_opt_language_code")) != 0 ||
        window.main == NULL)
     {
-#ifdef ENABLE_NLS
 	sprintf(buf2, "%s%slocale", pwd, G_DIR_SEPARATOR_S);
-	g_free(pwd);
+#ifdef ENABLE_NLS
 	if(g_file_test(buf2, G_FILE_TEST_EXISTS))
 	{
 	    bindtextdomain (GETTEXT_PACKAGE, buf2);
@@ -83,7 +87,8 @@ language_set(gint index)
     }
 
     lg_commentary_load_commentary_file_from_option();
-
+    news_load_news_file_from_option();
+    g_free(pwd);
     free_gchar_array(&codes);
 }
 
@@ -92,6 +97,10 @@ language_set(gint index)
 gint
 language_get_code_index(const gchar *code)
 {
+#ifdef DEBUG
+    printf("language_get_code_index\n");
+#endif
+
     gint i, return_value = -1;
     GPtrArray *codes =
 	misc_separate_strings(const_str("string_language_codes"));
@@ -169,34 +178,40 @@ language_compare_country_files(gconstpointer a, gconstpointer b, gpointer data)
 void
 language_pick_country(GPtrArray *country_files)
 {
+#ifdef DEBUG
+    printf("language_pick_country\n");
+#endif
+
     gint i, j;
     GPtrArray *codes =
 	misc_separate_strings(const_str("string_language_codes"));
     GPtrArray *defs =
 	misc_separate_strings(const_str("string_language_defs"));
     gpointer prefdef = NULL;
-    const gchar *lang = g_getenv("LANG");
+    const gchar *lang = g_getenv("LANGUAGE");
 
-    if(lang == NULL)
+    if(lang == NULL || strcmp(lang, "") == 0)
+	lang = g_getenv("LANG");
+
+    if(lang == NULL || strcmp(lang, "") == 0)
 	lang = g_getenv("LC_ALL");
 
     if(lang != NULL)
 	for(i=0;i<codes->len;i++)
 	{
-	    if(((g_str_has_prefix(lang, "en") &&
-		 strcmp((gchar*)g_ptr_array_index(codes, i), "C") == 0) ||
+	    if(((g_str_has_prefix(lang, "en") && strcmp((gchar*)g_ptr_array_index(codes, i), "C") == 0) ||
 		g_str_has_prefix(lang, (gchar*)g_ptr_array_index(codes, i))) &&
 	       strcmp((gchar*)g_ptr_array_index(defs, i), "NONE") != 0)
-		for(j=0;j<country_files->len;j++)
-		    if(strcmp((gchar*)g_ptr_array_index(country_files, j),
-			      (gchar*)g_ptr_array_index(defs, i)) == 0)
+            {
+                for(j=0;j<country_files->len;j++)
+		    if(g_str_has_suffix((gchar*)g_ptr_array_index(country_files, j),
+                                        (gchar*)g_ptr_array_index(defs, i)))
 		    {
 			prefdef = g_ptr_array_index(country_files, j);
 			break;
 		    }
-
-	    if(prefdef != NULL)
-		break;
+                break;
+            }
 	}
 
     g_ptr_array_sort_with_data(
@@ -213,8 +228,11 @@ language_pick_country(GPtrArray *country_files)
 void
 language_get_code(gchar *buf)
 {
-    gchar *cur_locale = NULL;
+#ifdef DEBUG
+    printf("language_get_code\n");
+#endif
 
+    gchar *cur_locale = NULL;
 #ifdef G_OS_UNIX
      cur_locale = setlocale(LC_MESSAGES, NULL);
 #else

@@ -29,11 +29,23 @@
 #include "bygfoot.h"
 #include "table_struct.h"
 
+/** Information about what cup another cup has to wait for
+    before scheduling matches. */
+typedef struct
+{
+    /** The cup we wait for. */
+    gchar *cup_sid;
+    /** The cup round of the cup we wait for. */
+    gint cup_round;
+} CupRoundWait;
+
 /** Rules for a round of a cup.
     Cups consist of rounds, e.g. the final counts as
     a round or the round robin games. */
 typedef struct
 {
+    /** Name of the cup round. By default filled with "Last 32", "Final" etc. */
+    gchar *name;
     /** Whether there are home and away games or only one leg. 
 	Default: TRUE. */
     gboolean home_away;
@@ -57,6 +69,10 @@ typedef struct
 	and additionally the best 3 from all the groups.
 	Default: 0. */
     gint round_robin_number_of_best_advance;
+    /** How many matchdays there are in the round robin phase. */
+    gint round_robins;
+    /** Number of weeks between the parts of a round robin. */
+    GArray *rr_breaks;
     /** Number of new teams participating in the cup round 
 	(ie. teams that get loaded and are not advancing from a previous
 	round). */
@@ -85,7 +101,9 @@ typedef struct
     /** Which new teams come into the cup (@see #CupChooseTeam) */
     GArray *choose_teams;
     /** The round robin tables (in case there is a round robin). */
-    GArray *tables;    
+    GArray *tables;
+    /** Array with CupRoundWaits. */
+    GArray *waits;
 } CupRound;
 
 /**
@@ -101,6 +119,10 @@ typedef struct
     /** The number of teams chosen.
 	Default: -1 (ie. all teams are chosen). */
     gint number_of_teams;
+    /** Which league table to use. Only relevant
+        for leagues which use more than one table during
+        the season. Default is 0, ie. the cumulative table. */
+    gint from_table;
     /** The range from which the teams are chosen,
 	e.g. 2 and 5 means the teams from 2 to 5 are chosen
 	(given that 'number_of_teams' is 4). 
@@ -115,6 +137,14 @@ typedef struct
 	a league file or taken from one of the country's leagues
 	or cups. Default: FALSE. */
     gboolean generate;
+    /** Whether to skip the checking if a team participates in other
+        of the same cup groupcups. */
+    gboolean skip_group_check;
+    /** Whether to load the choose_team when the cup fixtures for the 
+        first cup round are written or only when the cup round the choose_team
+        belongs to is scheduled. Default: TRUE. */
+    gboolean preload;
+    
 } CupChooseTeam;
 
 /** Structure representing a cup. */
@@ -167,6 +197,12 @@ typedef struct
     GPtrArray *team_names;
     /** The fixtures of a season for the cup. */
     GArray *fixtures;
+    /** Array of custom breaks in schedule. */
+    GArray *week_breaks;
+    /** Pointer array with the sids of competitions that
+        the fixtures of which should be avoided when scheduling
+        the cup fixtures. */
+    GPtrArray *skip_weeks_with;
 } Cup;
 
 #endif

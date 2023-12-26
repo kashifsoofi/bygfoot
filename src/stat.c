@@ -26,6 +26,7 @@
 #include "cup.h"
 #include "free.h"
 #include "league.h"
+#include "misc.h"
 #include "option.h"
 #include "player.h"
 #include "stat.h"
@@ -54,10 +55,14 @@ stat_league_new(const gchar *league_name, const gchar *league_symbol)
 void
 stat_update_leagues(void)
 {
+#ifdef DEBUG
+    printf("stat_update_leagues\n");
+#endif
+
     gint i;
 
     for(i=0;i<ligs->len;i++)
-	if(lig(i).active && 
+	if(query_league_active(&lig(i)) && 
 	   g_array_index(
 	       lig(i).fixtures, Fixture, lig(i).fixtures->len - 1).week_number >= week)
 	{
@@ -76,6 +81,10 @@ stat_update_leagues(void)
 void
 stat_update_league_players(League *league)
 {
+#ifdef DEBUG
+    printf("stat_update_league_players\n");
+#endif
+
     gint i, j;
     GPtrArray *players_sorted[2] = {g_ptr_array_new(),
 				    g_ptr_array_new()};
@@ -129,6 +138,10 @@ stat_update_league_players(League *league)
 GArray*
 stat_update_league_teams(const GArray *teams_array, gint compare_type)
 {
+#ifdef DEBUG
+    printf("stat_update_league_teams\n");
+#endif
+
     gint i;
     GArray *stats = g_array_new(FALSE, FALSE, sizeof(Stat));
     GPtrArray *teams = g_ptr_array_new();
@@ -164,6 +177,10 @@ stat_update_league_teams(const GArray *teams_array, gint compare_type)
 SeasonStat
 stat_season_stat_new(gint season_number)
 {
+#ifdef DEBUG
+    printf("stat_season_stat_new\n");
+#endif
+
     SeasonStat new;
 
     new.season_number = season_number;
@@ -178,27 +195,42 @@ stat_season_stat_new(gint season_number)
 void
 stat_create_season_stat(void)
 {
-    gint i;
+#ifdef DEBUG
+    printf("stat_create_season_stat\n");
+#endif
+
+    gint i, j;
     SeasonStat new = stat_season_stat_new(season);
     ChampStat new_champ;
 
     for(i=0;i<ligs->len;i++)
     {
-	new_champ.cl_name = g_strdup(lig(i).name);
-	new_champ.team_name = 
-	    g_strdup(g_array_index(lig(i).table.elements, TableElement, 0).team->name);
-	g_array_append_val(new.league_champs, new_champ);
+        if(!query_league_cup_has_property(lig(i).id, "omit_from_history") &&
+           !query_league_cup_has_property(lig(i).id, "inactive"))
+        {
+            for(j = 0; j < lig(i).tables->len; j++)
+            {
+                new_champ.cl_name = g_strdup(g_array_index(lig(i).tables, Table, j).name);
+                new_champ.team_name = 
+                    g_strdup(g_array_index(g_array_index(lig(i).tables, Table, j).elements, TableElement, 0).team->name);
+                g_array_append_val(new.league_champs, new_champ);
 
-	g_array_append_val(new.league_stats, lig(i).stats);
-	lig(i).stats = stat_league_new(lig(i).name, lig(i).symbol);
+            }
+
+            g_array_append_val(new.league_stats, lig(i).stats);
+            lig(i).stats = stat_league_new(lig(i).name, lig(i).symbol);     
+        }
     }
 
     for(i=0;i<acps->len;i++)
     {
-	new_champ.cl_name = g_strdup(acp(i)->name);
-	new_champ.team_name = 
-	    g_strdup(cup_get_winner(acp(i))->name);
-	g_array_append_val(new.cup_champs, new_champ);
+        if(!query_league_cup_has_property(acp(i)->id, "omit_from_history"))
+        {
+            new_champ.cl_name = g_strdup(acp(i)->name);
+            new_champ.team_name = 
+                g_strdup(cup_get_winner(acp(i))->name);
+            g_array_append_val(new.cup_champs, new_champ);
+        }
     }
 
     g_array_append_val(season_stats, new);
@@ -209,6 +241,10 @@ stat_create_season_stat(void)
 void
 stat_show_av_goals(GArray *fixtures)
 {
+#ifdef DEBUG
+    printf("stat_show_av_goals\n");
+#endif
+
     gint i;
     gfloat games = 0,
 	allgoals = 0,
@@ -253,6 +289,10 @@ stat_show_av_goals(GArray *fixtures)
 void
 stat_show_av_league_goals(void)
 {
+#ifdef DEBUG
+    printf("stat_show_av_league_goals\n");
+#endif
+
     gint i;
 
     g_print("\n\n");

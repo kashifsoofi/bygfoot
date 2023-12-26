@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cup>
+	<sid>peru</sid>
+	<name>Copa Perú</name>
+	<short_name>CPeru</short_name>
+	<symbol>flag_peru.png</symbol>	
+	<add_week>32</add_week>
+	<last_week>42</last_week>
+	<property>omit_from_history</property>
+	<cup_rounds>
+		<cup_round>
+			<number_of_groups>4</number_of_groups>
+			<number_of_advance>2</number_of_advance>
+			<round_name>Fase 2</round_name>
+			<choose_teams>
+				<choose_team>
+					<choose_team_sid>peru_elim</choose_team_sid>
+					<number_of_teams>16</number_of_teams>
+					<start_idx>1</start_idx>
+					<end_idx>16</end_idx>
+				</choose_team>
+			</choose_teams>
+		</cup_round>
+		<cup_round>
+			<round_name>Cuartos de final</round_name>
+		</cup_round>
+		<cup_round>
+			<round_name>Semifinal</round_name>
+		</cup_round>
+	</cup_rounds>
+</cup>
