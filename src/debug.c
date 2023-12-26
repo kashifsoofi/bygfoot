@@ -49,6 +49,11 @@ debug_action(const gchar *text)
 	option_set_int("int_debug", &constants, value);
 	game_gui_print_message("Debug value set to %d.", value);
     }
+    else if(g_str_has_prefix(text, "writer"))
+    {
+    	option_set_int("int_debug_writer", &constants, value);
+    	game_gui_print_message("Debug writer value set to %d.", value);
+    } 
     else if(g_str_has_prefix(text, "cap"))
     {
 	current_user.tm->stadium.capacity += value;
@@ -110,6 +115,7 @@ debug_action(const gchar *text)
     {
 	g_print("Debug options:\n"
 	       "deb \t set debug value\n"
+	       "writer \t set debug-writer value\n"
 	       "cap \t change stadium capacity\n"
 	       "saf \t change stadium safety\n"
 	       "mon \t change money\n"
@@ -194,4 +200,38 @@ debug_egg_forwards_boost_style(void)
 	    fwds++;
 
     return (fwds > 3);
+}
+
+/** 
+ * debug_writer writes debug-messages to an outpot
+ * 
+ * *file_name = the name of the file where the debug-funtion is called
+ * *method_name = the name of the function where the debug-funtion is called
+ * *text = the text of the debug message
+ * 
+ * debuglevel < int_debug -> print message to output
+ */
+void
+debug_writer_out(const gchar *file_name,
+				 const gchar *method_name,
+			 	 const gchar *text,
+			 	 gint debuglevel)
+{
+	
+	gint writer = option_int("int_debug_writer", &constants);
+	gint debugging = option_int("int_debug", &constants);
+
+	if ((debuglevel < debugging) && (writer == 1))
+	{
+		printf("%s # %s # %s\n", file_name, method_name, text);
+	}
+	
+	//Example
+	//gchar message[SMALL];
+    //sprintf(message, "Number of players in player list: %d", current_user.tm->players->len);
+    //debug_writer_out("misc2_callbacks2.c",
+	//		 "on_button_transfer_yes_clicked",
+	//		 	 message,
+	//		 	 3);
+	
 }

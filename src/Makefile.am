@@ -53,12 +53,15 @@ bygfoot_SOURCES = \
 	support.c support.h \
 	table.c cup.h league.h misc.h table.h variables.h \
 	team.c cup.h file.h finance.h fixture.h game_gui.h game.h league.h main.h maths.h misc.h option.h player.h strategy.h team.h transfer.h user.h xml_team.h \
+	training.c training.h \
+	training_callbacks.c training_callbacks.h training_interface.h variables.h window.h training_struct.h \
+	training_interface.c training_callbacks.h training_interface.h support.h \
 	transfer.c callbacks.h cup.h finance.h free.h game_gui.h main.h maths.h misc.h option.h player.h support.h team.h transfer.h treeview.h user.h \
 	treeview.c cup.h file.h finance.h fixture.h free.h game_gui.h game.h language.h league.h live_game.h maths.h misc.h option.h player.h support.h team.h transfer.h treeview.h treeview_helper.h user.h \
 	treeview2.c bet.h fixture.h job.h league.h live_game.h misc.h option.h support.h team.h treeview2.h treeview_helper.h user.h \
 	treeview_helper.c bet.h cup.h file.h fixture.h free.h job.h league.h misc.h option.h player.h support.h team.h transfer.h treeview2.h treeview.h treeview_helper.h user.h variables.h \
 	user.c bet.h cup.h file.h finance.h fixture.h free.h game_gui.h league.h live_game.h main.h maths.h misc.h name.h option.h player.h support.h team.h transfer.h treeview.h user.h window.h xml_mmatches.h youth_academy.h \
-	window.c callbacks.h debug.h file.h finance.h free.h game_gui.h gui.h interface.h language.h league.h live_game.h load_save.h main.h maths.h misc2_interface.h misc3_interface.h misc_callback_func.h misc_interface.h option_gui.h option.h options_interface.h support.h transfer.h treeview2.h treeview.h treeview_helper.h user.h window.h \
+	window.c callbacks.h debug.h file.h finance.h free.h game_gui.h gui.h interface.h language.h league.h live_game.h load_save.h main.h maths.h misc2_interface.h misc3_interface.h misc_callback_func.h misc_interface.h option_gui.h option.h options_interface.h support.h training_interface.h transfer.h treeview2.h treeview.h treeview_helper.h user.h window.h \
 	xml.c cup.h file.h free.h gui.h league.h misc.h option.h support.h table.h transfer_struct.h user.h variables.h xml.h xml_loadsave_cup.h xml_loadsave_fixtures.h xml_loadsave_league.h xml_loadsave_league_stat.h xml_loadsave_live_game.h xml_loadsave_table.h xml_loadsave_teams.h xml_loadsave_transfers.h xml_loadsave_users.h \
 	xml_loadsave_cup.c cup.h file.h misc.h table.h team.h xml.h xml_loadsave_cup.h xml_loadsave_fixtures.h xml_loadsave_table.h xml_loadsave_teams.h \
 	xml_loadsave_fixtures.c file.h fixture.h misc.h team.h xml.h xml_loadsave_fixtures.h \

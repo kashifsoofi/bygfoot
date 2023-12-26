@@ -453,14 +453,16 @@ treeview_show_player_list_team(GtkTreeView *treeview, const Team *tm, gint scout
 void
 treeview_live_game_show_commentary(const LiveGameUnit *unit)
 {
+    GtkTreeView *treeview = 
+	GTK_TREE_VIEW(lookup_widget(window.live, "treeview_commentary"));
+    GtkListStore *ls =
+	GTK_LIST_STORE(gtk_tree_view_get_model(treeview));
     GtkAdjustment *adjustment =
 	gtk_scrolled_window_get_vadjustment(
 	    GTK_SCROLLED_WINDOW(lookup_widget(window.live,
 					      "scrolledwindow9")));
-    GtkListStore *ls =
-	GTK_LIST_STORE(
-	    gtk_tree_view_get_model(GTK_TREE_VIEW(lookup_widget(window.live, "treeview_commentary"))));
     GtkTreeIter iter;
+    GtkTreePath *path;
     gchar buf[SMALL], buf2[SMALL];
 
     sprintf(buf, "%3d.", live_game_unit_get_minute(unit));
@@ -481,6 +483,11 @@ treeview_live_game_show_commentary(const LiveGameUnit *unit)
 
     adjustment->value = adjustment->lower - adjustment->page_size;
     gtk_adjustment_value_changed(adjustment);
+
+    path = gtk_tree_model_get_path(GTK_TREE_MODEL(ls), &iter);
+    gtk_tree_view_set_cursor(treeview, path, NULL, FALSE);
+    gtk_widget_grab_focus(GTK_WIDGET(treeview));
+    gtk_tree_path_free(path);
 }
 
 /** Create the list store for the live game 
@@ -1441,6 +1448,14 @@ treeview_create_finances(const User* user)
 		const_app("string_treeview_finances_expenses_fg"), buf);
 	gtk_list_store_append(ls, &iter);
 	gtk_list_store_set(ls, &iter, 0, _("Stadium expenses"), 1, "", 2, buf2, -1);
+    }
+    
+    if(out[MON_OUT_TRAINING_CAMP] != 0)
+    {
+		misc_print_grouped_int(out[MON_OUT_TRAINING_CAMP], buf);
+		sprintf(buf2, "<span foreground='%s'>%s</span>", const_app("string_treeview_finances_expenses_fg"), buf);
+		gtk_list_store_append(ls, &iter);
+		gtk_list_store_set(ls, &iter, 0, _("Training camp"), 1, "", 2, buf2, -1);
     }
 
     gtk_list_store_append(ls, &iter);

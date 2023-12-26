@@ -23,6 +23,8 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <gdk/gdkkeysyms.h>
+
 #include "callbacks.h"
 #include "callback_func.h"
 #include "debug.h"
@@ -162,6 +164,7 @@ on_button_back_to_main_clicked         (GtkButton       *button,
     if(stat0 != STATUS_LIVE_GAME_PAUSE)
 	stat0 = STATUS_MAIN;
     gtk_notebook_set_current_page(GTK_NOTEBOOK(lookup_widget(window.main, "notebook_player")), 0);
+    selected_row = -1;
     game_gui_show_main();
 
     gui_set_arrows();
@@ -248,11 +251,36 @@ on_player_list1_button_press_event     (GtkWidget       *widget,
 	selected_row = -1;
 	return FALSE;
     }
-
+ 
     callback_player_clicked(idx - 1, event);
 
     return FALSE;
 }
+
+
+gboolean
+on_player_list1_key_press_event        (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    gint idx = -1;
+
+    if(event->keyval != GDK_Return)
+	return FALSE;
+
+    idx = treeview_helper_get_index(GTK_TREE_VIEW(widget), 0);
+
+    if(idx < 0 || idx - 1 == selected_row)
+    {
+	selected_row = -1;
+	return FALSE;
+    }
+
+    callback_player_activate(idx - 1);
+
+    return FALSE;
+}
+
 
 void
 on_button_browse_forward_clicked       (GtkButton       *button,
@@ -1242,4 +1270,19 @@ on_hpaned2_button_release_event        (GtkWidget       *widget,
 	gtk_paned_get_position(GTK_PANED(widget));
 
     return FALSE;
+}
+
+void
+on_training_camp_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+   if(sett_int("int_opt_disable_training_camp"))
+    {
+	game_gui_print_message(
+	    _("Training camp is disabled in this country definition."));
+	return;
+    }
+
+    window_show_training_camp();
+
 }
