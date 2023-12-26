@@ -16,61 +16,41 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>14</rank_start>
-      <rank_end>16</rank_end>
+      <rank_start>5</rank_start>
+      <rank_end>7</rank_end>
       <dest_sid>greece2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
 
   <teams>
-    <team>
-      <team_name>A. Athena</team_name>
+     <team>
+      <team_name>Panathinaikos</team_name>
+<def_file>greece_panathinaikos</def_file>
     </team>
     <team>
-      <team_name>P. Athena</team_name>
+      <team_name>Olympiakos</team_name>
+<def_file>greece_olympiakos</def_file>
     </team>
     <team>
-      <team_name>Ergotelis</team_name>
+      <team_name>PAOK</team_name>
+<def_file>greece_paok</def_file>
+    </team>
+<team>
+      <team_name>AEK</team_name>
+<def_file>greece_aek</def_file>
+    </team>
+    <team>
+      <team_name>Aris</team_name>
+<def_file>greece_aris</def_file>
     </team>
    <team>
-      <team_name>I. Thessaloniki</team_name>
-    </team>
-    <team>
-      <team_name>Larissa</team_name>
-    </team>
-    <team>
-      <team_name>Levadiakos</team_name>
-    </team>
-    <team>
-      <team_name>OFI</team_name>
-    </team>
-    <team>
-      <team_name>O. Piraeus</team_name>
-    </team>
-    <team>
       <team_name>Panionios</team_name>
+<def_file>greece_panionios</def_file>
     </team>
-    <team>
-      <team_name>Panserraikos</team_name>
-    </team>
-    <team>
-      <team_name>Panthrakikos</team_name>
-    </team>
-    <team>
-      <team_name>A. Thessaloniki</team_name>
-    </team>
-    <team>
-      <team_name>P. Thessaloniki</team_name>
-    </team>
-    <team>
-      <team_name>Thrasyvoulos</team_name>
-    </team>
-    <team>
-      <team_name>A. Tripolis</team_name>
-    </team>
-    <team>
-      <team_name>S. Xanthi</team_name>
+   <team>
+      <team_name>Kavala</team_name>
+<def_file>greece_kavala</def_file>
     </team>
   </teams>
 </league>

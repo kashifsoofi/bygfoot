@@ -12,30 +12,18 @@
   <names_file>italy</names_file>
   <layer>1</layer>
 
-  <teams>
+      <teams>
     <team>
-      <team_name>Cailungo</team_name>
+      <team_name>Folgore Falciano</team_name>
+<def_file>san_marino_folgore</def_file>
+    </team>
+    <team>
+      <team_name>Pennarossa</team_name>
+<def_file>san_marino_pennarossa</def_file>
     </team>
     <team>
       <team_name>Cosmos</team_name>
-    </team>
-    <team>
-      <team_name>Faetano</team_name>
-    </team>
-    <team>
-      <team_name>Fiorentino</team_name>
-    </team>
-    <team>
-      <team_name>Folgore</team_name>
-    </team>
-    <team>
-      <team_name>Murata</team_name>
-    </team>
-    <team>
-      <team_name>San Giovanni</team_name>
-    </team>
-    <team>
-      <team_name>Tre Fiori</team_name>
+<def_file>san_marino_cosmos</def_file>
     </team>
   </teams>
 </league>

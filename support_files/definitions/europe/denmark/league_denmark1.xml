@@ -32,40 +32,24 @@
   
   <teams>
     <team>
-      <team_name>B. København</team_name>
-    </team>
-    <team>
-      <team_name>København</team_name>
-    </team>
-    <team>
-      <team_name>Odense</team_name>
-    </team>
-    <team>
-      <team_name>Aarhus</team_name>
+      <team_name>FC København</team_name>
+<def_file>denmark_kobenhavn</def_file>
     </team>
     <team>
       <team_name>Aalborg</team_name>
+<def_file>denmark_aalborg</def_file>
     </team>
     <team>
+      <team_name>Brondby</team_name>
+<def_file>denmark_brondby</def_file>
+    </team>
+    <team>
+      <team_name>Odense</team_name>
+<def_file>denmark_odense</def_file>
+    </team>
+   <team>
       <team_name>Midtjylland</team_name>
-    </team>
-    <team>
-      <team_name>Randers</team_name>
-    </team>
-    <team>
-      <team_name>Horsens</team_name>
-    </team>
-    <team>
-      <team_name>Vejle</team_name>
-    </team>
-    <team>
-      <team_name>Nordsjælland</team_name>
-    </team>
-    <team>
-      <team_name>Esbjerg</team_name>
-    </team>
-    <team>
-      <team_name>SønderjyskE</team_name>
+<def_file>denmark_midt</def_file>
     </team>
   </teams>
 </league>

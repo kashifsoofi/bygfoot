@@ -12,8 +12,8 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>15</rank_start>
-      <rank_end>16</rank_end>
+      <rank_start>4</rank_start>
+      <rank_end>5</rank_end>
       <dest_sid>kazakhstan2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -21,52 +21,24 @@
 
   <teams>
     <team>
-      <team_name>A. Lento</team_name>
+      <team_name>Aktobe</team_name>
+<team_average_talent>4400</team_average_talent>
     </team>
     <team>
-      <team_name>Almaty</team_name>
+      <team_name>Irtysh</team_name>
+<team_average_talent>4200</team_average_talent>
+    </team>
+    <team>
+      <team_name>Tobol</team_name>
+<team_average_talent>4100</team_average_talent>
+    </team>
+    <team>
+      <team_name>Shakhter</team_name>
+<team_average_talent>3800</team_average_talent>
     </team>
     <team>
       <team_name>Astana</team_name>
-    </team>
-    <team>
-      <team_name>Atyrau</team_name>
-    </team>
-    <team>
-      <team_name>E. Pavlodar</team_name>
-    </team>
-    <team>
-      <team_name>I. Pavlodar</team_name>
-    </team>
-    <team>
-      <team_name>K. Almaty</team_name>
-    </team>
-    <team>
-      <team_name>K. Kyzylorda</team_name>
-    </team>
-    <team>
-      <team_name>M. Almaty</team_name>
-    </team>
-    <team>
-      <team_name>O. Kokshetau</team_name>
-    </team>
-    <team>
-      <team_name>O. Shymkent</team_name>
-    </team>
-    <team>
-      <team_name>S. Karagandy</team_name>
-    </team>
-    <team>
-      <team_name>T. Kostanay</team_name>
-    </team>
-    <team>
-      <team_name>V. Oskemen</team_name>
-    </team>
-    <team>
-      <team_name>E. B. Petropavl</team_name>
-    </team>
-    <team>
-      <team_name>Z. Taldykorgan</team_name>
+<team_average_talent>4000</team_average_talent>
     </team>
   </teams>
 </league>

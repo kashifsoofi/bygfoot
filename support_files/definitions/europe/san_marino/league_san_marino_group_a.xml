@@ -16,24 +16,15 @@
   <teams>
     <team>
       <team_name>Domagnano</team_name>
+<def_file>san_marino_domagnano</def_file>
     </team>
     <team>
-      <team_name>Juvenes-Dogana</team_name>
+      <team_name>Murata</team_name>
+<def_file>san_marino_murata</def_file>
     </team>
     <team>
-      <team_name>La Fiorita</team_name>
-    </team>
-    <team>
-      <team_name>Libertas</team_name>
-    </team>
-    <team>
-      <team_name>Pennarossa</team_name>
-    </team>
-    <team>
-      <team_name>Tre Penne</team_name>
-    </team>
-    <team>
-      <team_name>Virtus</team_name>
+      <team_name>Tre Fiori</team_name>
+<def_file>san_marino_trefiori</def_file>
     </team>
   </teams>
 </league>

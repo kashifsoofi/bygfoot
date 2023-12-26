@@ -20,49 +20,29 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>12</rank_start>
-      <rank_end>12</rank_end>
+      <rank_start>4</rank_start>
+      <rank_end>4</rank_end>
       <dest_sid>montenegro2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
   </prom_rel>
 
   <teams>
-    <team>
-      <team_name>B. Podgorica</team_name>
+     <team>
+      <team_name>Morgen</team_name>
+<def_file>montenegro_morgen</def_file>
     </team>
     <team>
-      <team_name>D. Tuzi</team_name>
+      <team_name>Zeta</team_name>
+<team_average_talent>5000</team_average_talent>
     </team>
     <team>
-      <team_name>G. Radanovići</team_name>
+      <team_name>Rudar</team_name>
+<team_average_talent>5000</team_average_talent>
     </team>
     <team>
-      <team_name>J. Bijelo Polje</team_name>
-    </team>
-    <team>
-      <team_name>J. Plav</team_name>
-    </team>
-    <team>
-      <team_name>K. Podgorica</team_name>
-    </team>
-    <team>
-      <team_name>L. Cetinje</team_name>
-    </team>
-    <team>
-      <team_name>M. Budva</team_name>
-    </team>
-    <team>
-      <team_name>Petrovac</team_name>
-    </team>
-    <team>
-      <team_name>R. Pljevlja</team_name>
-    </team>
-    <team>
-      <team_name>S. Nikšić</team_name>
-    </team>
-    <team>
-      <team_name>Z. Golubovci</team_name>
+      <team_name>Budućnost</team_name>
+<team_average_talent>5500</team_average_talent>
     </team>
   </teams>
 </league>

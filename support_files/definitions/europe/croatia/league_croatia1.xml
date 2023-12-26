@@ -18,8 +18,8 @@
 
   <prom_rel>
     <prom_rel_element>
-      <rank_start>12</rank_start>
-      <rank_end>12</rank_end>
+      <rank_start>5</rank_start>
+      <rank_end>5</rank_end>
       <dest_sid>croatia2</dest_sid>
       <prom_rel_type>relegation</prom_rel_type>
     </prom_rel_element>
@@ -27,40 +27,25 @@
 
   <teams>
     <team>
-      <team_name>Cibalia</team_name>
+      <team_name>Dinamo Zagreb</team_name>
+<def_file>croatia_zagreb</def_file>
     </team>
     <team>
-      <team_name>C. Sesvete</team_name>
-    </team>
-    <team>
-      <team_name>D. Zagreb</team_name>
-    </team>
-    <team>
-      <team_name>H. Split</team_name>
-    </team>
-    <team>
-      <team_name>I. Zaprešic</team_name>
-    </team>
-    <team>
-      <team_name>Osijek</team_name>
-    </team>
-    <team>
-      <team_name>Rijeka</team_name>
+      <team_name>Hajduk Split</team_name>
+<def_file>croatia_hajduk</def_file>
     </team>
     <team>
       <team_name>Šibenik</team_name>
+<team_average_talent>6000</team_average_talent>
     </team>
     <team>
-      <team_name>S. B. Koprivnica</team_name>
+      <team_name>Slaven Belupo</team_name>
+<team_average_talent>6000</team_average_talent>
     </team>
     <team>
-      <team_name>V. Varazdin</team_name>
+      <team_name>Osijek</team_name>
+<team_average_talent>6000</team_average_talent>
     </team>
-    <team>
-      <team_name>Zadar</team_name>
-    </team>
-    <team>
-      <team_name>N. Zagreb</team_name>
-    </team>
+   
   </teams>
 </league>
