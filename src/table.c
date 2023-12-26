@@ -27,12 +27,17 @@
 #include "league.h"
 #include "misc.h"
 #include "table.h"
+#include "team.h"
 #include "variables.h"
 
 /** Return a newly allocated empty table. */
 Table
 table_new(void)
 {
+#ifdef DEBUG
+    printf("table_new\n");
+#endif
+
     Table new;
 
     new.name = NULL;
@@ -50,6 +55,10 @@ table_new(void)
 TableElement
 table_element_new(Team *team, gint old_rank)
 {
+#ifdef DEBUG
+    printf("table_element_new\n");
+#endif
+
     gint i;
     TableElement new;
 
@@ -69,55 +78,94 @@ table_element_new(Team *team, gint old_rank)
 void
 table_update(const Fixture *fix)
 {
-    gint i;
+#ifdef DEBUG
+    printf("table_update\n");
+#endif
+
+    gint i, j, end;
     gint idx = (fix->result[0][0] < fix->result[1][0]);
-    TableElement *elements[2] = {NULL, NULL};
+    TableElement *elements[2];
 
-    table_update_get_elements(elements, fix);
+    end = (fix->clid < ID_CUP_START) ? 2 : 1;
 
-    for(i=0;i<2;i++)
-    {
-	elements[i]->values[TABLE_PLAYED]++;
-	elements[i]->values[TABLE_GF] += fix->result[i][0];
-	elements[i]->values[TABLE_GA] += fix->result[!i][0];
-	elements[i]->values[TABLE_GD] = 
-	    elements[i]->values[TABLE_GF] - elements[i]->values[TABLE_GA];
-    }
+    for(j = 0; j < end; j++)
+    {        
+        elements[0] = elements[1] = NULL;
+        table_update_get_elements(elements, fix, (j == 1));
+
+        for(i=0;i<2;i++)
+        {
+            if(elements[i] != NULL)
+            {
+                elements[i]->values[TABLE_PLAYED]++;
+                elements[i]->values[TABLE_GF] += fix->result[i][0];
+                elements[i]->values[TABLE_GA] += fix->result[!i][0];
+                elements[i]->values[TABLE_GD] = 
+                    elements[i]->values[TABLE_GF] - elements[i]->values[TABLE_GA];                
+            }
+        }
     
-    if(fix->result[0][0] == fix->result[1][0])
-	for(i=0;i<2;i++)
-	{
-	    elements[i]->values[TABLE_DRAW]++;
-	    elements[i]->values[TABLE_PTS] += 1;
-	}
-    else
-    {
-	elements[idx]->values[TABLE_WON]++;
-	elements[idx]->values[TABLE_PTS] += 3;
-	elements[!idx]->values[TABLE_LOST]++;
+        if(fix->result[0][0] == fix->result[1][0])
+            for(i=0;i<2;i++)
+            {
+                if(elements[i] != NULL)
+                {
+                    elements[i]->values[TABLE_DRAW]++;
+                    elements[i]->values[TABLE_PTS] += 1;
+                }
+            }
+        else
+        {
+            if(elements[idx] != NULL)
+            {
+                elements[idx]->values[TABLE_WON]++;
+                elements[idx]->values[TABLE_PTS] += 3;
+            }
+
+            if(elements[!idx] != NULL)
+            {
+                elements[!idx]->values[TABLE_LOST]++;
+            }
+        }
     }
 }
 
 /** Get the pointers to the table entries
     representing the two teams from the fixture. 
     @param elements The table entries.
-    @fix The fixture. */
+    @fix The fixture.
+    @non_cumulative Whether to return the last non-cumulative table. */
 void
-table_update_get_elements(TableElement **elements, const Fixture *fix)
+table_update_get_elements(TableElement **elements, const Fixture *fix, gboolean non_cumulative)
 {
+#ifdef DEBUG
+    printf("table_update_get_elements\n");
+#endif
+
     gint i, j;
     Table *table;
 
     if(fix->clid < ID_CUP_START)
     {
-	table = &league_from_clid(fix->clid)->table;
-	for(i=0;i<table->elements->len;i++)
-	{
-	    if(g_array_index(table->elements, TableElement, i).team == fix->teams[0])
-		elements[0] = &g_array_index(table->elements, TableElement, i);
-	    else if(g_array_index(table->elements, TableElement, i).team == fix->teams[1])
-		elements[1] = &g_array_index(table->elements, TableElement, i);
-	}
+        for(j = 0; j < 2; j++)
+        {
+            if(non_cumulative &&
+               league_from_clid(fix->teams[j]->clid)->tables->len == 1)
+            {
+                elements[j] = NULL;
+                continue;
+            }
+
+            table = (non_cumulative) ? 
+                league_table(league_from_clid(fix->teams[j]->clid)) :
+                league_table_cumul(league_from_clid(fix->teams[j]->clid));
+            
+            for(i=0;i<table->elements->len;i++)
+            {
+                if(g_array_index(table->elements, TableElement, i).team == fix->teams[j])
+                    elements[j] = &g_array_index(table->elements, TableElement, i);
+            }
+        }
     }
     else
 	for(i=0;i<cup_get_last_tables(fix->clid)->len;i++)
@@ -145,6 +193,10 @@ table_element_compare_func(gconstpointer a,
 			   gconstpointer b,
 			   gpointer clid_pointer)
 {
+#ifdef DEBUG
+    printf("table_element_compare_func\n");
+#endif
+
     gint i;
     gint clid, cup_round, value;
     TableElement *element1 = (TableElement*)a,
@@ -216,10 +268,14 @@ table_element_compare_func(gconstpointer a,
 gboolean
 query_tables_in_country(void)
 {
+#ifdef DEBUG
+    printf("query_tables_in_country\n");
+#endif
+
     gint i;
 
     for(i=0;i<ligs->len;i++)
-	if(lig(i).active)
+	if(query_league_active(&lig(i)))
 	    return TRUE;
 
     for(i=0;i<cps->len;i++)
@@ -227,4 +283,49 @@ query_tables_in_country(void)
 	    return TRUE;
 
     return FALSE;
+}
+
+/** Copy a table. */
+Table
+table_copy(const Table *table)
+{
+#ifdef DEBUG
+    printf("table_copy\n");
+#endif
+
+    gint i, j;
+    Table new_table;
+    TableElement new_table_element;
+    TableElement *elem;
+
+    new_table.name = g_strdup(table->name);
+    new_table.clid = table->clid;
+    new_table.round = table->round;
+    new_table.elements = g_array_new(FALSE, FALSE, sizeof(TableElement));
+
+    for(i = 0; i < table->elements->len; i++)
+    {
+        elem = &g_array_index(table->elements, TableElement, i);
+        new_table_element.team = elem->team;
+        new_table_element.team_id = elem->team_id;
+        new_table_element.old_rank = elem->old_rank;
+
+        for(j=0;j<TABLE_END;j++)
+            new_table_element.values[j] = elem->values[j];
+        
+        g_array_append_val(new_table.elements, new_table_element);
+    }
+
+    return new_table;
+}
+
+/** Refresh the team pointers in the table from the team ids. */
+void
+table_refresh_team_pointers(Table *table)
+{
+    gint i;
+
+    for(i = 0; i < table->elements->len; i++)
+        g_array_index(table->elements, TableElement, i).team =
+            team_of_id(g_array_index(table->elements, TableElement, i).team_id);
 }

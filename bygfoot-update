@@ -289,7 +289,7 @@ function check_progs()
     fi
 
     my_echo
-    for i in sed tar bzip2 wget patch cvs; do
+    for i in sed tar bzip2 wget patch svn; do
 	my_echo -n "** b-u: checking for $i... "
 	if which $i &> /dev/null; then
 	    my_echo "ok"
@@ -353,8 +353,11 @@ function get_team_defs()
 		tar xfj $file_name.bz2
 		rm -rfv $file_name.bz2 2>> $log_file | tee -a $log_file
 
-		if [ -d ../$country ]; then
-		    pushd ../$country &> /dev/null
+                echo $PWD
+                read a
+                
+		if [ -d $country ]; then
+		    pushd $country &> /dev/null
 		    team_found=0
 		    for league in league*xml; do
 			for team in "$team_name1" "$team_name2"; do
@@ -385,7 +388,7 @@ function get_team_defs()
 		    uri) uri=$value ;;
 		    team_name1) team_name1="$value" ;;
 		    team_name2) team_name2="$value" ;;
-		    country) country=$value ;;
+		    country) country=$(find .. -type d -name $value | tail -n 1);;
 		esac
 	    fi
 	fi
@@ -407,16 +410,19 @@ function get_country_files()
     my_wget http://bygfoot.sourceforge.net/revisions/official_names
 
     while read -d : oldname && read newname 
-      do
-      if [ "$oldname" == "League" ]; then
-	  DIRNAME=$newname
-	  my_echo "   + Adding official names to $DIRNAME..."
-      else
-	  oldname="${oldname## }"
-	  newname="${newname%% }"
-	  sed -i -e "s/>$oldname</>$newname</" $DIRNAME/league*.xml
-      fi
-      
+    do
+        if [ "$oldname" = "League" ]; then
+            DIRNAME=$(find . -type d -name $newname | tail -n 1)
+            if [ ! $DIRNAME = "" ]; then
+                my_echo "   + Adding official team names to $DIRNAME..."
+            fi
+        else
+            if [ ! $DIRNAME = "" ]; then        
+                oldname="${oldname## }"
+                newname="${newname%% }"
+                perl -i -pe "s?>$oldname<?>$newname<?g" $DIRNAME/league*.xml
+            fi
+        fi
     done < official_names
 
     rm -vf official_names 2>> $log_file | tee -a $log_file
@@ -885,15 +891,16 @@ function get_cvs()
 	read_input
 
 	if [ -z $tempvar ]; then
-	    cvs_command="cvs -z3 -d:pserver:anonymous@bygfoot.cvs.sourceforge.net:/cvsroot/bygfoot"
+	    cvs_command="svn co https://bygfoot.svn.sourceforge.net/svnroot/bygfoot bygfoot/trunk/bygfoor/trunk"
+
 	else
-	    cvs_command="cvs -z3 -d:ext:$tempvar@bygfoot.cvs.sourceforge.net:/cvsroot/bygfoot"
+	    cvs_command="svn --username=$tempvar co https://bygfoot.svn.sourceforge.net/svnroot/bygfoot bygfoot/trunk/bygfoor/trunk"
 	fi
     else
 	if [ $cvs_user = "A" ]; then
-	    cvs_command="cvs -z3 -d:pserver:anonymous@bygfoot.cvs.sourceforge.net:/cvsroot/bygfoot"
+	    cvs_command="svn co https://bygfoot.svn.sourceforge.net/svnroot/bygfoot bygfoot/trunk/bygfoor/trunk"
 	else
-	    cvs_command="cvs -z3 -d:ext:$cvs_user@bygfoot.cvs.sourceforge.net:/cvsroot/bygfoot"
+	    cvs_command="svn --username=$cvs_user co https://bygfoot.svn.sourceforge.net/svnroot/bygfoot bygfoot/trunk/bygfoor/trunk"
 	fi	
     fi
     

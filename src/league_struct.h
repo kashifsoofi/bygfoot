@@ -27,7 +27,6 @@
 #define LEAGUE_STRUCT_H
 
 #include "bygfoot.h"
-#include "cup_struct.h"
 #include "stat_struct.h"
 #include "table_struct.h"
 
@@ -47,9 +46,26 @@ enum PromRelType
 typedef struct
 {
     gint ranks[2]; /**< The range of teams; default 0 and 0 */
+    gint from_table; /**< From which table to pick the teams in case there are several. Default: 0. */
     gchar *dest_sid; /**< The id of the destination league. Default "" */
     gint type; /**< Type. Promotion or relegation or none. */
 } PromRelElement;
+
+/**
+   An struct representing promotion/relegation games.
+*/
+typedef struct
+{
+    /** The id of the league the promotion games winner gets promoted to. Default "" */
+    gchar *dest_sid;
+    /** The id of the league the promotion games losers get moved to. Default "" */
+    gchar *loser_sid;
+    /** Number of teams that advance from the promotion games. Default: 1. */
+    gint number_of_advance;    
+    /** The cup determining how the promotion games are handled. */
+    gchar *cup_sid;
+
+} PromGames;
 
 /**
    This structure specifies how promotion and relegation is handled in a league.
@@ -59,23 +75,53 @@ typedef struct
 */
 typedef struct
 {
-    /** The id of the league the promotion games winner gets promoted to. Default "" */
-    gchar *prom_games_dest_sid;
-
-    /** The id of the league the promotion games losers get moved to. Default "" */
-    gchar *prom_games_loser_sid;
-
-    /** Number of teams that advance from the promotion games. Default: 1. */
-    gint prom_games_number_of_advance;
-    
     /** Array with promotion/relegation rules.
 	@see PromRelElement
     */
     GArray *elements;
 
-    /** The cup determining how the promotion games are handled. */
-    gchar *prom_games_cup_sid;
+    /** Array with promotion/relegation games.
+	@see PromGames
+    */
+    GArray *prom_games;
+
 } PromRel;
+
+/**
+   A structure describing a different league joined to the current one
+   in the sense that there are matches played between teams from both leagues
+   like in the US conference system.
+*/
+typedef struct
+{
+    /** Sid of the joined league. */
+    gchar *sid;
+    /** How many round robins to schedule. */
+    gint rr;
+} JoinedLeague;
+
+/**
+   A structure containing a week when a new table
+   gets created with nullified values for the league;
+   older tables get stored.
+*/
+typedef struct
+{
+    gint add_week;
+    gchar *name;
+} NewTable;
+
+/**
+   A structure describing a custom break in the fixtures
+   schedule occuring at a particular week.
+*/
+typedef struct
+{
+    /** In which week the break occurs. */
+    gint week_number;
+    /** Length of break in weeks. */
+    gint length;
+} WeekBreak;
 
 /**
    Representation of a league.
@@ -105,10 +151,10 @@ typedef struct
 	there should be two matches in a week instead of one. */
     GArray *two_match_weeks[2];
     /** How many round robins are played. Important for
-	small leagues with 10 teams or so. Default: 1. */
+	small leagues with 10 teams or so. Default: 2. */
     gint round_robins;
     /** Number of weeks between the parts of a round robin. */
-    gint rr_break;
+    GArray *rr_breaks;
     /** Number of yellow cards until a player gets banned. 
 	Default 1000 (which means 'off', basically). */
     gint yellow_red;
@@ -117,16 +163,27 @@ typedef struct
     /** Array of teams in the league.
 	@see Team */
     GArray *teams;
-    /** League table.
+    /** List of leagues joined fixture-wise to this one.
+	@see JoinedLeague */
+    GArray *joined_leagues;
+    /** League tables. Usually only one, sometimes more than one is created.
 	@see Table */
-    Table table;
+    GArray *tables;
+    /** Array holding NewTable elements specifying when to add
+        a new table to the tables array. */
+    GArray *new_tables;
     /** The fixtures of a season for the league. */
     GArray *fixtures;
+    /** A gchar pointer array of properties (like "inactive"). */
+    GPtrArray *properties;
+    /** Array of custom breaks in schedule. */
+    GArray *week_breaks;
     /** The current league statistics. */
     LeagueStat stats;
-    /** Whether the league is only a container for teams
-	or really a league with fixtures and all. */
-    gboolean active;
+    /** Pointer array with the sids of competitions that
+        the fixtures of which should be avoided when scheduling
+        the league fixtures. */
+    GPtrArray *skip_weeks_with;
 } League;
 
 #endif

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cup>
+	<name>Descenso Argentino A-B</name>
+	<short_name>Descenso Argentino A-B</short_name>
+	<symbol>flag_argentina.png</symbol>
+	<sid>argentino_a_descenso</sid>
+	<add_week>37</add_week>
+	<last_week>48</last_week>
+	<property>promotion</property>
+	<week_gap>1</week_gap>
+	<property>national</property>
+	<property>highlight3</property>
+	<property>omit_from_history</property>
+	<cup_rounds>
+		<cup_round>
+			<round_name>Descenso</round_name>
+			<choose_teams>
+				<choose_team>
+					<choose_team_sid>argentino_a_fase1</choose_team_sid>
+					<number_of_teams>4</number_of_teams>
+					<start_idx>21</start_idx>
+					<end_idx>24</end_idx>
+				</choose_team>
+			</choose_teams>
+		</cup_round>
+	</cup_rounds>
+</cup>

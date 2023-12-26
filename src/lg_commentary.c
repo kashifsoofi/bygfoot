@@ -56,6 +56,10 @@ void
 lg_commentary_generate(const LiveGame *live_game, LiveGameUnit *unit, 
 		       const gchar *event_name, gint ev_type)
 {
+#ifdef DEBUG
+    printf("lg_commentary_generate\n");
+#endif
+
     gint i, event_type = -1;
     gint commentary_idx = -1;
     gchar buf[SMALL];
@@ -75,7 +79,7 @@ lg_commentary_generate(const LiveGame *live_game, LiveGameUnit *unit,
 	lg_commentary_set_basic_tokens(unit, live_game->fix);
 	lg_commentary_set_team_tokens(unit, live_game->fix);
 	lg_commentary_set_player_tokens(unit, live_game->fix);
-	lg_commentary_set_stats_tokens(&live_game->stats);
+	lg_commentary_set_stats_tokens(&live_game->stats, token_rep);
     }
     
     if(event_type == LIVE_GAME_EVENT_STYLE_CHANGE_ALL_OUT_DEFEND ||
@@ -123,6 +127,10 @@ lg_commentary_generate(const LiveGame *live_game, LiveGameUnit *unit,
 gint
 lg_commentary_select(const GArray *commentaries, gchar *buf)
 {
+#ifdef DEBUG
+    printf("lg_commentary_select\n");
+#endif
+
     gint i, order[commentaries->len];
 
     lg_commentary_get_order(commentaries, order);
@@ -155,7 +163,9 @@ lg_commentary_select(const GArray *commentaries, gchar *buf)
 gboolean
 lg_commentary_check_commentary(const LGCommentary *commentary, gchar *dest)
 {
-    gchar buf[SMALL];
+#ifdef DEBUG
+    printf("lg_commentary_check_commentary\n");
+#endif
 
     if(strlen(commentary->text) == 0 ||
        (commentary->condition != NULL &&
@@ -163,17 +173,7 @@ lg_commentary_check_commentary(const LGCommentary *commentary, gchar *dest)
        (repetition == FALSE && query_lg_commentary_is_repetition(commentary->id)))
 	return FALSE;
 
-    strcpy(dest, commentary->text);
-    
-    do
-    {
-	strcpy(buf, dest);
-	misc_string_replace_tokens(dest, token_rep);
-	misc_string_replace_expressions(dest);
-    }
-    while(strcmp(buf, dest) != 0);
-
-    return (g_strrstr(dest, "_") == NULL);
+    return misc_string_replace_all_tokens(token_rep, commentary->text, dest);
 }
 
 /** Check whether a commentary with given id has been used in the last
@@ -181,6 +181,10 @@ lg_commentary_check_commentary(const LGCommentary *commentary, gchar *dest)
 gboolean
 query_lg_commentary_is_repetition(gint id)
 {
+#ifdef DEBUG
+    printf("query_lg_commentary_is_repetition\n");
+#endif
+
     const GArray *units = ((LiveGame*)statp)->units;
     gint units_min = units->len - const_int("int_lg_commentary_check_backwards") - 1;
     gint i, min = MAX(units_min, 0);
@@ -199,6 +203,10 @@ query_lg_commentary_is_repetition(gint id)
 void
 lg_commentary_get_order(const GArray *commentaries, gint *order)
 {
+#ifdef DEBUG
+    printf("lg_commentary_get_order\n");
+#endif
+
     gint i, j, order_idx = 0;
     gint priority_sum = 0, bounds[commentaries->len + 1];
 
@@ -236,61 +244,65 @@ lg_commentary_get_order(const GArray *commentaries, gint *order)
 
 /** Fill the stats tokens. */
 void
-lg_commentary_set_stats_tokens(const LiveGameStats *stats)
+lg_commentary_set_stats_tokens(const LiveGameStats *stats, GPtrArray **token_arrays)
 {
-    misc_token_add(token_rep, 
+#ifdef DEBUG
+    printf("lg_commentary_set_stats_tokens\n");
+#endif
+
+    misc_token_add(token_arrays, 
 		   option_int("string_token_stat_shots0", &tokens),
 		   misc_int_to_char(stats->values[0][LIVE_GAME_STAT_VALUE_SHOTS]));
 
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_shot_per0", &tokens),
 		   misc_int_to_char(stats->values[0][LIVE_GAME_STAT_VALUE_SHOT_PERCENTAGE]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_poss0", &tokens),
 		   misc_int_to_char((gint)rint(100 * 
 					       ((gfloat)stats->values[0][LIVE_GAME_STAT_VALUE_POSSESSION] /
 						((gfloat)stats->values[0][LIVE_GAME_STAT_VALUE_POSSESSION] + 
 						 (gfloat)stats->values[1][LIVE_GAME_STAT_VALUE_POSSESSION])))));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_pen0", &tokens),
 		   misc_int_to_char(stats->values[0][LIVE_GAME_STAT_VALUE_PENALTIES]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_fouls0", &tokens),
 		   misc_int_to_char(stats->values[0][LIVE_GAME_STAT_VALUE_FOULS]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_yellows0", &tokens),
 		   misc_int_to_char(stats->values[0][LIVE_GAME_STAT_VALUE_CARDS]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_reds0", &tokens),
 		   misc_int_to_char(stats->values[0][LIVE_GAME_STAT_VALUE_REDS]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_injs0", &tokens),
 		   misc_int_to_char(stats->values[0][LIVE_GAME_STAT_VALUE_INJURIES]));
 
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_shots1", &tokens),
 		   misc_int_to_char(stats->values[1][LIVE_GAME_STAT_VALUE_SHOTS]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_shot_per1", &tokens),
 		   misc_int_to_char(stats->values[1][LIVE_GAME_STAT_VALUE_SHOT_PERCENTAGE]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_poss1", &tokens),
 		   misc_int_to_char((gint)rint(100 * ((gfloat)stats->values[1][LIVE_GAME_STAT_VALUE_POSSESSION] /
 						      ((gfloat)stats->values[0][LIVE_GAME_STAT_VALUE_POSSESSION] + 
 						       (gfloat)stats->values[1][LIVE_GAME_STAT_VALUE_POSSESSION])))));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_pen1", &tokens),
 		   misc_int_to_char(stats->values[1][LIVE_GAME_STAT_VALUE_PENALTIES]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_fouls1", &tokens),
 		   misc_int_to_char(stats->values[1][LIVE_GAME_STAT_VALUE_FOULS]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_yellows1", &tokens),
 		   misc_int_to_char(stats->values[1][LIVE_GAME_STAT_VALUE_CARDS]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_reds1", &tokens),
 		   misc_int_to_char(stats->values[1][LIVE_GAME_STAT_VALUE_REDS]));
-    misc_token_add(token_rep,
+    misc_token_add(token_arrays,
 		   option_int("string_token_stat_injs1", &tokens),
 		   misc_int_to_char(stats->values[1][LIVE_GAME_STAT_VALUE_INJURIES]));
 }
@@ -299,6 +311,10 @@ lg_commentary_set_stats_tokens(const LiveGameStats *stats)
 void
 lg_commentary_set_basic_tokens(const LiveGameUnit *unit, const Fixture *fix)
 {
+#ifdef DEBUG
+    printf("lg_commentary_set_basic_tokens\n");
+#endif
+
     gchar buf[SMALL];
     gint tmp_int = 1, current_min = live_game_unit_get_minute(unit);
     gint avskill0 = (gint)rint(team_get_average_skill(fix->teams[0], TRUE)),
@@ -368,6 +384,10 @@ lg_commentary_set_basic_tokens(const LiveGameUnit *unit, const Fixture *fix)
 void
 lg_commentary_set_team_tokens(const LiveGameUnit *unit, const Fixture *fix)
 {
+#ifdef DEBUG
+    printf("lg_commentary_set_team_tokens\n");
+#endif
+
     if(unit->result[0] != unit->result[1])
     {
 	misc_token_add(token_rep,
@@ -394,6 +414,10 @@ lg_commentary_set_team_tokens(const LiveGameUnit *unit, const Fixture *fix)
 void
 lg_commentary_set_player_tokens(const LiveGameUnit *unit, const Fixture *fix)
 {
+#ifdef DEBUG
+    printf("lg_commentary_set_player_tokens\n");
+#endif
+
     Player *pl1 = NULL,
 	*pl2 = NULL;
 
@@ -482,6 +506,14 @@ lg_commentary_set_player_tokens(const LiveGameUnit *unit, const Fixture *fix)
 gchar*
 lg_commentary_get_extra_data(const LiveGameUnit *unit, const Fixture *fix)
 {
+#ifdef DEBUG
+    printf("lg_commentary_get_extra_data\n");
+#endif
+
+#ifdef DEBUG
+    printf("lg_commentary_get_extra_data\n");
+#endif
+
     gchar buf[SMALL];
 
     switch(unit->event.type)
@@ -527,6 +559,10 @@ lg_commentary_get_extra_data(const LiveGameUnit *unit, const Fixture *fix)
 void
 lg_commentary_initialize(const Fixture *fix)
 {
+#ifdef DEBUG
+    printf("lg_commentary_initialize\n");
+#endif
+
     gchar buf[SMALL];
 
     token_rep[0] = g_ptr_array_new();
@@ -581,6 +617,10 @@ lg_commentary_initialize(const Fixture *fix)
 void
 lg_commentary_free_tokens(void)
 {
+#ifdef DEBUG
+    printf("lg_commentary_free_tokens\n");
+#endif
+
     gint i;
 
     for(i=token_rep[0]->len - 1;i >= 0; i--)
@@ -598,6 +638,10 @@ lg_commentary_free_tokens(void)
 void
 lg_commentary_load_commentary_file_from_option(void)
 {
+#ifdef DEBUG
+    printf("lg_commentary_load_commentary_file_from_option\n");
+#endif
+
     gchar buf[SMALL], commentary_file[SMALL];
 
     language_get_code(buf);
@@ -612,6 +656,10 @@ lg_commentary_load_commentary_file_from_option(void)
 void
 lg_commentary_load_commentary_file(const gchar *commentary_file, gboolean abort)
 {
+#ifdef DEBUG
+    printf("lg_commentary_load_commentary_file\n");
+#endif
+
     gchar *file_name = NULL;
 
     if(g_file_test(commentary_file, G_FILE_TEST_EXISTS))
@@ -642,6 +690,10 @@ lg_commentary_load_commentary_file(const gchar *commentary_file, gboolean abort)
 void
 lg_commentary_test_load_token_file(const gchar *token_file)
 {
+#ifdef DEBUG
+    printf("lg_commentary_test_load_token_file\n");
+#endif
+
     gchar token_name[SMALL], token_value[SMALL];
     FILE *fil = NULL;
 
@@ -666,6 +718,10 @@ void
 lg_commentary_test(const gchar *commentary_file, const gchar* token_file,
 		   const gchar *event_name, gint number_of_passes)
 {
+#ifdef DEBUG
+    printf("lg_commentary_test\n");
+#endif
+
     gint i, j;
     LiveGame dummy;
 

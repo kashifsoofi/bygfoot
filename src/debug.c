@@ -39,8 +39,13 @@
 void
 debug_action(const gchar *text)
 {
+#ifdef DEBUG
+    printf("debug_action\n");
+#endif
+
     gchar buf[SMALL];
     gint value = -1;
+    gint i, j;
 
     printf("debact: %s\n", text);
 
@@ -104,14 +109,50 @@ debug_action(const gchar *text)
     }
     else if(g_str_has_prefix(text, "goto"))
     {
-	while(week < value)
-	    on_button_new_week_clicked(NULL, NULL);
+        if(debug < 50)
+            option_set_int("int_debug", &constants, 50);
+
+        if(option_int("int_opt_user_show_live_game", &current_user.options))
+            option_set_int("int_opt_user_show_live_game", &current_user.options, 0);
+
+        sett_set_int("int_opt_goto_mode", 1);
+        if(value < 100)
+            while(week < value)
+            {
+                on_button_new_week_clicked(NULL, NULL);
+                game_gui_set_main_window_header();
+                while (gtk_events_pending ())
+                    gtk_main_iteration ();
+            }        
+        else
+            while(season < value - 100)
+            {
+                on_button_new_week_clicked(NULL, NULL);
+                game_gui_set_main_window_header();
+                while (gtk_events_pending ())
+                    gtk_main_iteration ();
+            }
+        sett_set_int("int_opt_goto_mode", 0);
     }
     else if(g_str_has_prefix(text, "testcom") ||
 	    g_str_has_prefix(text, "tc"))
     {
 	stat5 = -value - 1000;
 	game_gui_print_message("Commentary type displayed: %d.", value);
+    }
+    else if(g_str_has_prefix(text, "printweeks"))
+    {
+        for(i = 0; i < cps->len; i++)
+        {
+            if(cp(i).add_week != 1000)
+            {
+                g_print("Cup: %s\n", cp(i).name);
+                for(j = 0; j < cp(i).rounds->len; j++)
+                    g_print("  Round %2d: Week %2d (w/o delay: %2d)\n",
+                            j, cup_get_first_week_of_cup_round(&cp(i), j, TRUE),
+                            cup_get_first_week_of_cup_round(&cp(i), j, FALSE));                
+            }
+        }
     }
     else if(g_str_has_prefix(text, "help"))
     {
@@ -124,10 +165,12 @@ debug_action(const gchar *text)
 	       "suc \t change success counter\n"
 	       "scout \t change scout\n"
 	       "physio \t change physio\n"
+	       "printweeks \t print the starting weeks of all cup rounds\n"
 	       "youth coach \t change youth coach\n"
 	       "pospref \t change recruiting pref\n"
 	       "goto \t Press 'new week' automatically until\n"
 	       "     \t the appropriate week is reached\n"
+	       "     \t Supply 100+X to go to season X (e.g. 102)\n"
 	       "testcom|tc \t Test a specific live game commentary.\n"
 	       "           \t Find the numbers in live_game_struct.h (LiveGameEventType)\n"
 	       "           \t Use 'goto' afterwards.\n"
@@ -140,6 +183,10 @@ debug_action(const gchar *text)
 gboolean
 debug_reset_counter(gpointer data)
 {
+#ifdef DEBUG
+    printf("debug_reset_counter\n");
+#endif
+
     counters[COUNT_SHOW_DEBUG] = 0;
 
     return FALSE;
@@ -148,8 +195,13 @@ debug_reset_counter(gpointer data)
 void
 debug_calibrate_betting_odds(gint skilldiffmax, gint matches_per_skilldiff)
 {
+#ifdef DEBUG
+    printf("debug_calibrate_betting_odds\n");
+#endif
+
     gint i, skilldiff, matches;
     Fixture *fix = &g_array_index(lig(0).fixtures, Fixture, 0);
+    LiveGame live_game;
 
     fix->home_advantage = FALSE;
     
@@ -171,7 +223,7 @@ debug_calibrate_betting_odds(gint skilldiffmax, gint matches_per_skilldiff)
 		g_array_index(fix->teams[1]->players, Player, i).fitness = 0.9;
 	    }
 
-	    live_game_calculate_fixture(fix);
+	    live_game_calculate_fixture(fix, &live_game);
 	    if(fix->result[0][0] < fix->result[1][0])
 		res[2]++;
 	    else
@@ -189,6 +241,10 @@ debug_calibrate_betting_odds(gint skilldiffmax, gint matches_per_skilldiff)
 gboolean
 debug_egg_forwards_boost_style(void)
 {
+#ifdef DEBUG
+    printf("debug_egg_forwards_boost_style\n");
+#endif
+
     gint i, fwds = 0;
     
     if(current_user.tm->boost != 1 ||
@@ -219,6 +275,10 @@ debug_writer_out(const gchar *file_name,
 			 	 const gchar *text,
 			 	 gint debuglevel)
 {
+#ifdef DEBUG
+    printf("debug_writer_out\n");
+#endif
+
 	
 	gint writer = option_int("int_debug_writer", &constants);
 	gint debugging = option_int("int_debug", &constants);

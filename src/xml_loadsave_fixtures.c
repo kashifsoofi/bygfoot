@@ -58,6 +58,10 @@ xml_loadsave_fixtures_start_element (GMarkupParseContext *context,
 				    gpointer             user_data,
 				    GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_fixtures_start_element\n");
+#endif
+
     gint i;
     gint tag = xml_get_tag_from_name(element_name);
     gboolean valid_tag = FALSE;
@@ -90,6 +94,10 @@ xml_loadsave_fixtures_end_element    (GMarkupParseContext *context,
 				     gpointer             user_data,
 				     GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_fixtures_end_element\n");
+#endif
+
     gint tag = xml_get_tag_from_name(element_name);
     
     if(tag == TAG_FIXTURE)
@@ -132,6 +140,10 @@ xml_loadsave_fixtures_text         (GMarkupParseContext *context,
 				   gpointer             user_data,
 				   GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_fixtures_text\n");
+#endif
+
     gchar buf[SMALL];
     gint int_value = -1;
 
@@ -163,15 +175,16 @@ xml_loadsave_fixtures_text         (GMarkupParseContext *context,
     else if(state == TAG_FIXTURE_RESULT)
 	new_fixture.result[residx1][residx2] = int_value;
     else if(state == TAG_TEAM_ID)
-    {
-	new_fixture.teams[teamidx] = team_of_id(int_value);
 	new_fixture.team_ids[teamidx] = int_value;
-    }
 }
 
 void
 xml_loadsave_fixtures_read(const gchar *filename, GArray *fixtures)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_fixtures_read\n");
+#endif
+
     GMarkupParser parser = {xml_loadsave_fixtures_start_element,
 			    xml_loadsave_fixtures_end_element,
 			    xml_loadsave_fixtures_text, NULL, NULL};
@@ -207,6 +220,10 @@ xml_loadsave_fixtures_read(const gchar *filename, GArray *fixtures)
 void
 xml_loadsave_fixtures_write(const gchar *filename, const GArray *fixtures)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_fixtures_write\n");
+#endif
+
     gint i, j;
     FILE *fil = NULL;
 
@@ -244,12 +261,9 @@ xml_loadsave_fixtures_write(const gchar *filename, const GArray *fixtures)
 			  TAG_FIXTURE_RESULT, I1);
 	    xml_write_int(fil, g_array_index(fixtures, Fixture, i).result[j][2],
 			  TAG_FIXTURE_RESULT, I1);
+            xml_write_int(fil, g_array_index(fixtures, Fixture, i).team_ids[j], 
+                          TAG_TEAM_ID, I1);
 	}
-
-	xml_write_int(fil, g_array_index(fixtures, Fixture, i).team_ids[0], 
-		      TAG_TEAM_ID, I1);
-	xml_write_int(fil, g_array_index(fixtures, Fixture, i).team_ids[1], 
-		      TAG_TEAM_ID, I1);
 
 	fprintf(fil, "</_%d>\n", TAG_FIXTURE);
     }

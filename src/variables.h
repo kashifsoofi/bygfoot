@@ -26,6 +26,7 @@
 #include "bygfoot.h"
 #include "enums.h"
 #include "live_game_struct.h"
+#include "news_struct.h"
 #include "option_struct.h"
 
 /**
@@ -57,6 +58,12 @@ OptionList tokens;
 
 /** The array containing the live game commentary strings. */
 GArray *lg_commentary[LIVE_GAME_EVENT_END];
+
+/** The array containing the news article strings. */
+GArray *news[NEWS_ARTICLE_TYPE_END];
+
+/** Newspaper containing the news articles. */
+NewsPaper newspaper;
 
 /** The array containing players to be transfered.
     @see TransferPlayer */
@@ -97,8 +104,8 @@ GArray *name_lists;
 /** The struct containing the window pointers. */
 Windows window;
 
-/** The variable for non-user games (which aren't shown). */
-LiveGame live_game_temp;
+/** The variables for non-user live games (which aren't shown). */
+GArray *live_games;
 
 /** The index of the current user in the #users array. */
 gint cur_user;
@@ -114,6 +121,16 @@ GRand *rand_generator;
    @see file_add_support_directory_recursive()
 */
 GList *support_directories;
+
+/**
+ * The list of root defintions directories found (ending in definitions)
+ */ 
+GList *root_definitions_directories;
+
+/**
+ * The list of defintions directories found
+ */ 
+GList *definitions_directories;
 
 /** The name of the current save file (gets updated when a game is
     saved or loaded).  */

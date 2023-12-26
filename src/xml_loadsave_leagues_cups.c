@@ -25,9 +25,12 @@
 
 #include "cup.h"
 #include "file.h"
+#include "fixture.h"
 #include "free.h"
 #include "league_struct.h"
 #include "misc.h"
+#include "table.h"
+#include "team.h"
 #include "xml.h"
 #include "xml_loadsave_cup.h"
 #include "xml_loadsave_league.h"
@@ -52,6 +55,10 @@ xml_loadsave_leagues_cups_start_element (GMarkupParseContext *context,
 					 gpointer             user_data,
 					 GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_leagues_cups_start_element\n");
+#endif
+
     gint i;
     gint tag = xml_get_tag_from_name(element_name);
     gboolean valid_tag = FALSE;
@@ -74,6 +81,10 @@ xml_loadsave_leagues_cups_end_element    (GMarkupParseContext *context,
 					  gpointer             user_data,
 					  GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_leagues_cups_end_element\n");
+#endif
+
     gint tag = xml_get_tag_from_name(element_name);
 
     if(tag == TAG_LEAGUE_FILE ||
@@ -91,6 +102,10 @@ xml_loadsave_leagues_cups_text         (GMarkupParseContext *context,
 					gpointer             user_data,
 					GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_leagues_cups_text\n");
+#endif
+
     gchar buf[SMALL];
     Cup new_cup;
 
@@ -111,6 +126,10 @@ xml_loadsave_leagues_cups_text         (GMarkupParseContext *context,
 void
 xml_loadsave_leagues_cups_read(const gchar *dirname, const gchar *prefix)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_leagues_cups_read\n");
+#endif
+
     gchar file[SMALL];
     GMarkupParser parser = {xml_loadsave_leagues_cups_start_element,
 			    xml_loadsave_leagues_cups_end_element,
@@ -147,12 +166,18 @@ xml_loadsave_leagues_cups_read(const gchar *dirname, const gchar *prefix)
 	g_warning("xml_loadsave_misc_read: error parsing file %s\n", file);
 	misc_print_error(&error, TRUE);
     }
+
+    xml_loadsave_leagues_cups_adjust_team_ptrs();
 }
 
 /** Write the leagues into xml files with the given prefix. */
 void
 xml_loadsave_leagues_cups_write(const gchar *prefix)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_leagues_cups_write\n");
+#endif
+
     gint i;
     gchar buf[SMALL],
 	*basename = g_path_get_basename(prefix);
@@ -182,4 +207,37 @@ xml_loadsave_leagues_cups_write(const gchar *prefix)
     fclose(fil);
 
     g_free(basename);
+}
+
+void
+xml_loadsave_leagues_cups_adjust_team_ptrs(void)
+{
+    gint i, j, k;
+    GPtrArray *team_ptrs;
+
+    for(i = 0; i < ligs->len; i++)
+    {
+        fixture_refresh_team_pointers(lig(i).fixtures);
+
+        for(j = 0; j < lig(i).tables->len; j++)
+            table_refresh_team_pointers(&g_array_index(lig(i).tables, Table, j));
+    }
+
+    for(i = 0; i < cps->len; i++)
+    {
+        fixture_refresh_team_pointers(cp(i).fixtures);
+
+        for(j = 0; j < cp(i).rounds->len; j++)
+        {
+            team_ptrs = g_ptr_array_new();
+            for(k = 0; k < g_array_index(cp(i).rounds, CupRound, j).team_ptrs->len; k++)
+                g_ptr_array_add(team_ptrs, team_of_id(GPOINTER_TO_INT(g_ptr_array_index(g_array_index(cp(i).rounds, CupRound, j).team_ptrs, k))));
+            
+            g_ptr_array_free(g_array_index(cp(i).rounds, CupRound, j).team_ptrs, TRUE);
+            g_array_index(cp(i).rounds, CupRound, j).team_ptrs = team_ptrs;
+
+            for(k = 0; k < g_array_index(cp(i).rounds, CupRound, j).tables->len; k++)
+                table_refresh_team_pointers(&g_array_index(g_array_index(cp(i).rounds, CupRound, j).tables, Table, k));
+        }
+    }
 }

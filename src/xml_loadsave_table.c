@@ -50,6 +50,10 @@ xml_loadsave_table_start_element (GMarkupParseContext *context,
 				    gpointer             user_data,
 				    GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_table_start_element\n");
+#endif
+
     gint i;
     gint tag = xml_get_tag_from_name(element_name);
     gboolean valid_tag = FALSE;
@@ -82,6 +86,10 @@ xml_loadsave_table_end_element    (GMarkupParseContext *context,
 				     gpointer             user_data,
 				     GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_table_end_element\n");
+#endif
+
     gint tag = xml_get_tag_from_name(element_name);
 
     if(tag == TAG_NAME ||
@@ -113,6 +121,10 @@ xml_loadsave_table_text         (GMarkupParseContext *context,
 				   gpointer             user_data,
 				   GError             **error)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_table_text\n");
+#endif
+
     gchar buf[SMALL];
     gint int_value = -1;
 
@@ -128,10 +140,7 @@ xml_loadsave_table_text         (GMarkupParseContext *context,
     else if(state == TAG_ROUND)
 	new_table->round = int_value;
     else if(state == TAG_TEAM_ID)
-    {
-	new_element.team = team_of_id(int_value);
 	new_element.team_id = int_value;
-    }
     else if(state == TAG_TABLE_ELEMENT_VALUE)
 	new_element.values[valueidx] = int_value;
     else if(state == TAG_TABLE_ELEMENT_OLD_RANK)
@@ -141,6 +150,10 @@ xml_loadsave_table_text         (GMarkupParseContext *context,
 void
 xml_loadsave_table_read(const gchar *filename, Table *table)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_table_read\n");
+#endif
+
     GMarkupParser parser = {xml_loadsave_table_start_element,
 			    xml_loadsave_table_end_element,
 			    xml_loadsave_table_text, NULL, NULL};
@@ -176,6 +189,10 @@ xml_loadsave_table_read(const gchar *filename, Table *table)
 void
 xml_loadsave_table_write(const gchar *filename, const Table *table)
 {
+#ifdef DEBUG
+    printf("xml_loadsave_table_write\n");
+#endif
+
     gint i, j;
     FILE *fil = NULL;
 
@@ -186,7 +203,7 @@ xml_loadsave_table_write(const gchar *filename, const Table *table)
     xml_write_string(fil, table->name, TAG_NAME, I0);
     xml_write_int(fil, table->clid, TAG_ID, I0);
     xml_write_int(fil, table->round, TAG_ROUND, I0);
-        
+
     for(i=0;i<table->elements->len;i++)
     {
 	fprintf(fil, "<_%d>\n", TAG_TABLE_ELEMENT);

@@ -37,6 +37,10 @@
 void
 gui_label_set_text_from_int(GtkLabel *label, gint number, gboolean append)
 {
+#ifdef DEBUG
+    printf("gui_label_set_text_from_int\n");
+#endif
+
     const gchar *current_text = gtk_label_get_text(label);
     gchar buf[SMALL], buf2[SMALL];
     
@@ -56,6 +60,16 @@ gui_label_set_text_from_int(GtkLabel *label, gint number, gboolean append)
     gtk_label_set_text(label, buf2);
 }
 
+gdouble
+gui_get_progress_bar_fraction(void)
+{
+    if(sett_int("int_opt_goto_mode"))
+        return 0;
+    
+    return gtk_progress_bar_get_fraction(
+        GTK_PROGRESS_BAR(lookup_widget(window.progress, "progressbar")));
+}
+
 /* Show a window with a progress bar.
    @param value The value of the progress bar. If set to 1
    or < 0 the progress bar window gets destroyed.
@@ -64,7 +78,17 @@ gui_label_set_text_from_int(GtkLabel *label, gint number, gboolean append)
 void
 gui_show_progress(gfloat value, const gchar *text, gint pictype)
 {
+#ifdef DEBUG
+    printf("gui_show_progress\n");
+#endif
+
     GtkProgressBar *progressbar = NULL;
+
+    if(sett_int("int_opt_goto_mode"))
+    {
+	window_destroy(&window.progress);        
+        return;  
+    } 
 
     if(value == 1 || value < 0)
     {
@@ -95,6 +119,10 @@ gui_show_progress(gfloat value, const gchar *text, gint pictype)
 void
 gui_set_arrow_pair(gint pair, gboolean state)
 {
+#ifdef DEBUG
+    printf("gui_set_arrow_pair\n");
+#endif
+
     gint i, j;
     GtkWidget *buttons[2][2] =
 	{{lookup_widget(window.main ,"button_cl_back"),
@@ -117,6 +145,10 @@ gui_set_arrow_pair(gint pair, gboolean state)
 void
 gui_set_arrows(void)
 {
+#ifdef DEBUG
+    printf("gui_set_arrows\n");
+#endif
+
     gui_set_arrow_pair(3, FALSE);
 
     if(stat0 == STATUS_SHOW_FIXTURES ||
@@ -137,6 +169,10 @@ gui_set_arrows(void)
 void
 gui_set_sensitive_lg_meters(gboolean state)
 {
+#ifdef DEBUG
+    printf("gui_set_sensitive_lg_meters\n");
+#endif
+
     gtk_widget_set_sensitive(lookup_widget(window.live, "image_lg_style"), state);
     gtk_widget_set_sensitive(lookup_widget(window.live, "eventbox_lg_style"), state);
     gtk_widget_set_sensitive(lookup_widget(window.live, "image_lg_boost"), state);

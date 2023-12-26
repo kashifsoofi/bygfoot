@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<country>
+	<name>Chile</name>
+	<symbol>flag_chile.png</symbol>
+	<sid>chile</sid>
+	<rating>6</rating>
+	<leagues>
+		<league>chile1</league>
+		<league>chile2</league>
+	</leagues>
+        <cups>
+	        <cup>copa_chile</cup>
+                <cup>libertadores</cup>
+                <cup>sudamericana</cup>
+                <cup>recopa</cup>
+	        <cup>mundial_clubes</cup>
+        </cups>
+</country>

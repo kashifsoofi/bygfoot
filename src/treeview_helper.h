@@ -46,7 +46,7 @@ void
 treeview_helper_unref(GObject *object);
 
 void
-treeview_helper_insert_icon(GtkListStore *ls, GtkTreeIter *iter, gint column_nr,
+treeview_helper_insert_icon(GtkTreeModel *ls, GtkTreeIter *iter, gint column_nr,
 			    gchar *icon_name);
 
 GtkCellRenderer*
@@ -68,12 +68,12 @@ gint
 treeview_helper_get_col_number_column (GtkTreeViewColumn *col);
 
 void
-treeview_helper_get_table_element_colours(const Table *table, gint idx,
+treeview_helper_get_table_element_colours(const Table *table, gint table_index, gint idx,
 					  gchar **colour_fg, 
 					  gchar **colour_bg, gboolean user);
 
 gboolean
-treeview_helper_get_table_element_colour_cups(const League *league,
+treeview_helper_get_table_element_colour_cups(const League *league, gint table_index,
 					      gint idx, gchar **colour_bg);
 
 gboolean
@@ -228,5 +228,19 @@ treeview_helper_job_exchange(GtkTreeViewColumn *col,
 			     GtkTreeIter       *iter,
 			     gpointer           user_data);
 
+
+void
+treeview_helper_news(GtkTreeViewColumn *col,
+                     GtkCellRenderer   *renderer,
+                     GtkTreeModel      *model,
+                     GtkTreeIter       *iter,
+                     gpointer           user_data);
+
+void
+treeview_helper_news_additional(GtkTreeViewColumn *col,
+                                GtkCellRenderer   *renderer,
+                                GtkTreeModel      *model,
+                                GtkTreeIter       *iter,
+                                gpointer           user_data);
 
 #endif

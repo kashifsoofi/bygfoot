@@ -62,6 +62,10 @@ enum BooleanOptions
     BOOL_OPT_BET_SHOW_ALL_LEAGUES,
     BOOL_OPT_BET_SHOW_CUPS,
     BOOL_OPT_BET_SHOW_MY_RECENT,
+    BOOL_OPT_NEWS_USER,
+    BOOL_OPT_NEWS_CUP,
+    BOOL_OPT_NEWS_LEAGUE,
+    BOOL_OPT_NEWS_RECENT,
     BOOL_OPT_PL1_ATT_NAME,
     BOOL_OPT_PL1_ATT_CPOS,
     BOOL_OPT_PL1_ATT_POS,
@@ -106,6 +110,10 @@ enum BooleanOptions
 void
 option_gui_write_bool_widgets(gint **bool_options, GtkToggleButton **bool_widgets)
 {
+#ifdef DEBUG
+    printf("option_gui_write_bool_widgets\n");
+#endif
+
     bool_widgets[BOOL_OPT_CONF_QUIT] = 
 	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_conf_quit"));
     bool_options[BOOL_OPT_CONF_QUIT] = opt_intp("int_opt_confirm_quit");
@@ -194,6 +202,22 @@ option_gui_write_bool_widgets(gint **bool_options, GtkToggleButton **bool_widget
     bool_widgets[BOOL_OPT_BET_SHOW_MY_RECENT] =
 	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_bet_show_only_recent"));
     bool_options[BOOL_OPT_BET_SHOW_MY_RECENT] = opt_user_intp("int_opt_user_bet_show_my_recent");
+
+    bool_widgets[BOOL_OPT_NEWS_USER] =
+	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_news_user"));
+    bool_options[BOOL_OPT_NEWS_USER] = opt_intp("int_opt_news_create_user");
+
+    bool_widgets[BOOL_OPT_NEWS_CUP] =
+	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_news_cup"));
+    bool_options[BOOL_OPT_NEWS_CUP] = opt_intp("int_opt_news_create_cup");
+
+    bool_widgets[BOOL_OPT_NEWS_LEAGUE] =
+	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_news_league"));
+    bool_options[BOOL_OPT_NEWS_LEAGUE] = opt_intp("int_opt_news_create_league");
+
+    bool_widgets[BOOL_OPT_NEWS_RECENT] =
+	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton_news_recent"));
+    bool_options[BOOL_OPT_NEWS_RECENT] = opt_intp("int_opt_news_show_recent");
 
     bool_widgets[BOOL_OPT_PL1_ATT_NAME] =
 	GTK_TOGGLE_BUTTON(lookup_widget(window.options, "checkbutton1"));
@@ -359,6 +383,10 @@ enum SpinOptions
 void
 option_gui_write_spin_widgets(gint **spin_options, GtkSpinButton **spin_widgets)
 {
+#ifdef DEBUG
+    printf("option_gui_write_spin_widgets\n");
+#endif
+
     gint tmp = 0;
 
     spin_widgets[SPIN_OPT_AUTOSAVE] =
@@ -415,7 +443,6 @@ option_gui_write_spin_widgets(gint **spin_options, GtkSpinButton **spin_widgets)
 			      (gdouble)tmp);
 }
 
-
 /** Text entries. */
 enum EntryOptions
 {
@@ -428,6 +455,10 @@ enum EntryOptions
 void
 option_gui_write_entry_widgets(gchar ***entry_options, GtkEntry **entry_widgets)
 {
+#ifdef DEBUG
+    printf("option_gui_write_entry_widgets\n");
+#endif
+
     entry_widgets[ENTRY_OPT_CONSTANTS] = 
 	GTK_ENTRY(lookup_widget(window.options, "entry_constants_file"));
     entry_options[ENTRY_OPT_CONSTANTS] = opt_strp("string_opt_constants_file");
@@ -442,6 +473,10 @@ option_gui_write_entry_widgets(gchar ***entry_options, GtkEntry **entry_widgets)
 void
 option_gui_set_up_window(void)
 {
+#ifdef DEBUG
+    printf("option_gui_set_up_window\n");
+#endif
+
     gint i;
     gchar buf[SMALL];
     GtkToggleButton *bool_widgets[BOOL_OPT_END];
@@ -453,6 +488,11 @@ option_gui_set_up_window(void)
     GtkEntry *entry_widgets[ENTRY_OPT_END];
     gchar **entry_options[ENTRY_OPT_END];
 
+    GtkToggleButton *news_popup_buttons[3] = 
+        {GTK_TOGGLE_BUTTON(lookup_widget(window.options, "radiobutton_news_popup_no")),
+         GTK_TOGGLE_BUTTON(lookup_widget(window.options, "radiobutton_news_popup_user")),
+         GTK_TOGGLE_BUTTON(lookup_widget(window.options, "radiobutton_news_popup_always"))};
+
     treeview_show_language_combo();
     treeview_show_training_hotels_combo();
 
@@ -461,8 +501,8 @@ option_gui_set_up_window(void)
     option_gui_write_entry_widgets(entry_options, entry_widgets);
 
     for(i=0;i<BOOL_OPT_END;i++)
-	gtk_toggle_button_set_active(bool_widgets[i], *(bool_options[i]));
-
+        gtk_toggle_button_set_active(bool_widgets[i], *(bool_options[i]));
+	
     for(i=0;i<SPIN_OPT_END;i++)
 	gtk_spin_button_set_value(spin_widgets[i], (gfloat)(*(spin_options[i])));
 
@@ -472,6 +512,8 @@ option_gui_set_up_window(void)
     sprintf(buf, "%d", CAMP_SCALE_MAX - gtk_spin_button_get_value_as_int(
 		GTK_SPIN_BUTTON(lookup_widget(window.options, "spinbutton_recreation"))));
     gtk_label_set_text(GTK_LABEL(lookup_widget(window.options, "label_training")), buf);
+
+    gtk_toggle_button_set_active(news_popup_buttons[opt_int("int_opt_news_popup")], TRUE);
 }
 
 /** Read the widget states in the options window and set the
@@ -479,6 +521,10 @@ option_gui_set_up_window(void)
 void
 option_gui_write_options(void)
 {
+#ifdef DEBUG
+    printf("option_gui_write_options\n");
+#endif
+
     gint i;
     gint language_index = 
 	gtk_combo_box_get_active(GTK_COMBO_BOX(lookup_widget(window.options, "combobox_languages")));
@@ -490,7 +536,11 @@ option_gui_write_options(void)
     gint *spin_options[SPIN_OPT_END];
     GtkEntry *entry_widgets[ENTRY_OPT_END];
     gchar **entry_options[ENTRY_OPT_END];
-    
+    GtkToggleButton *news_popup_buttons[3] = 
+        {GTK_TOGGLE_BUTTON(lookup_widget(window.options, "radiobutton_news_popup_no")),
+         GTK_TOGGLE_BUTTON(lookup_widget(window.options, "radiobutton_news_popup_user")),
+         GTK_TOGGLE_BUTTON(lookup_widget(window.options, "radiobutton_news_popup_always"))};
+
     language_set(language_index);
     opt_user_set_int("int_opt_user_training_camp_hotel", training_camp_hotel);
 
@@ -516,5 +566,12 @@ option_gui_write_options(void)
 	    on_button_back_to_main_clicked(NULL, NULL);
     }
 
+    for(i = 0; i < 3; i++)
+        if(gtk_toggle_button_get_active(news_popup_buttons[i]))
+        {
+            opt_set_int("int_opt_news_popup", i);
+            break;
+        }
+                
     game_gui_write_check_items();
 }

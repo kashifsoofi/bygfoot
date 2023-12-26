@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<league>
+	<sid>peru3</sid>
+	<name>Copa Perú</name>
+	<short_name>EqCPeru</short_name>
+	<symbol>flag_peru.png</symbol>
+	<average_talent>5200</average_talent>
+	<names_file>peru</names_file>
+	<layer>3</layer>
+	<property>inactive</property>
+	<property>omit_from_history</property>
+	<teams>
+		<team>
+			<team_name>A. Torino</team_name>
+		</team>
+		<team>
+			<team_name>D. Pomalca</team_name>
+		</team>
+		<team>
+			<team_name>S. Buenos Aires</team_name>
+		</team>
+		<team>
+			<team_name>Higos U.</team_name>
+		</team>
+		<team>
+			<team_name>Renovación P.</team_name>
+		</team>
+		<team>
+			<team_name>Olimpia</team_name>
+		</team>
+		<team>
+			<team_name>U. S. Sipán</team_name>
+		</team>
+		<team>
+			<team_name>Agricobank</team_name>
+		</team>
+		<team>
+			<team_name>D. Porvenir</team_name>
+		</team>
+		<team>
+			<team_name>Amenaza V.</team_name>
+		</team>
+		<team>
+			<team_name>S. Rosa Tarapoto</team_name>
+		</team>
+		<team>
+			<team_name>S. Cayetano</team_name>
+		</team>
+		<team>
+			<team_name>Comerciantes U.</team_name>
+		</team>
+		<team>
+			<team_name>D. Huallaga</team_name>
+		</team>
+		<team>
+			<team_name>C. Mannucci</team_name>
+		</team>
+		<team>
+			<team_name>T. Chical</team_name>
+		</team>
+		<team>
+			<team_name>C. N. I.</team_name>
+		</team>
+		<team>
+			<team_name>Tecnológico</team_name>
+		</team>
+		<team>
+			<team_name>S. Rosa Pucallpa</team_name>
+		</team>
+		<team>
+			<team_name>A. D. O.</team_name>
+		</team>
+		<team>
+			<team_name>O. Benavides</team_name>
+		</team>
+		<team>
+			<team_name>A. Chalaco</team_name>
+		</team>
+		<team>
+			<team_name>A. Pilsen</team_name>
+		</team>
+		<team>
+			<team_name>U. Supe</team_name>
+		</team>
+		<team>
+			<team_name>Bolognesi</team_name>
+		</team>
+		<team>
+			<team_name>U. Huaral</team_name>
+		</team>
+		<team>
+			<team_name>S. I. M. A.</team_name>
+		</team>
+		<team>
+			<team_name>Cable Visión</team_name>
+		</team>
+		<team>
+			<team_name>S. Huancayo</team_name>
+		</team>
+		<team>
+			<team_name>M. Yanahuanca</team_name>
+		</team>
+		<team>
+			<team_name>L. Huánuco</team_name>
+		</team>
+		<team>
+			<team_name>A. Universidad</team_name>
+		</team>
+		<team>
+			<team_name>Wanka</team_name>
+		</team>
+		<team>
+			<team_name>U. Minas</team_name>
+		</team>
+		<team>
+			<team_name>M. Acoria</team_name>
+		</team>
+		<team>
+			<team_name>U. N. I. C. A.</team_name>
+		</team>
+		<team>
+			<team_name>M. Huamanga</team_name>
+		</team>
+		<team>
+			<team_name>S. Huamanga</team_name>
+		</team>
+		<team>
+			<team_name>J. Guadalupe</team_name>
+		</team>
+		<team>
+			<team_name>M. Acobamba</team_name>
+		</team>
+		<team>
+			<team_name>Cobresol</team_name>
+		</team>
+		<team>
+			<team_name>D. Piérola</team_name>
+		</team>
+		<team>
+			<team_name>Dínamo</team_name>
+		</team>
+		<team>
+			<team_name>I. D. U. N. S. A.</team_name>
+		</team>
+		<team>
+			<team_name>A. Huracán</team_name>
+		</team>
+		<team>
+			<team_name>Municipal Locumba</team_name>
+		</team>
+		<team>
+			<team_name>Policial S. R.</team_name>
+		</team>
+		<team>
+			<team_name>Garcilaso</team_name>
+		</team>
+		<team>
+			<team_name>D. E. A.</team_name>
+		</team>
+		<team>
+			<team_name>M. I. N. S. A.</team_name>
+		</team>
+		<team>
+			<team_name>Diablos R.</team_name>
+		</team>
+		<team>
+			<team_name>M. S. Jerónimo</team_name>
+		</team>
+		<team>
+			<team_name>S. Rosa Quillabamba</team_name>
+		</team>
+		<team>
+			<team_name>A. Ugarte</team_name>
+		</team>
+		<team>
+			<team_name>J. La Joya</team_name>
+		</team>
+		<team>
+			<team_name>Aurora</team_name>
+		</team>
+	</teams>
+</league>
