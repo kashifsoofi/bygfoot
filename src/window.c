@@ -27,17 +27,18 @@
 #include "debug.h"
 #include "file.h"
 #include "finance.h"
+#include "fixture.h"
 #include "free.h"
 #include "game_gui.h"
 #include "gui.h"
 #include "interface.h"
 #include "language.h"
 #include "league.h"
-#include "league_table_interface.h"
 #include "live_game.h"
 #include "load_save.h"
 #include "main.h"
 #include "maths.h"
+#include "misc.h"
 #include "misc_callback_func.h"
 #include "misc_interface.h"
 #include "misc2_interface.h"
@@ -460,7 +461,7 @@ window_show_menu_youth(GdkEvent *event)
     according to the arguments. */
 void
 window_show_digits(const gchar *text_main, const gchar* text1, gint value1, 
-		   const gchar* text2, gint value2)
+		   const gchar* text2, gint value2, gboolean show_alr)
 {
     GtkLabel *label_main, *label_1, *label_2;
     GtkSpinButton *spinbutton1, *spinbutton2;
@@ -495,6 +496,9 @@ window_show_digits(const gchar *text_main, const gchar* text1, gint value1,
 	gtk_label_set_text(label_2, text2);
     else
 	gtk_widget_hide(GTK_WIDGET(label_2)->parent);
+
+    if(show_alr)
+        gtk_widget_show(lookup_widget(window.digits, "button_digits_alr"));
 }
 
 /** Show the stadium window for the current user. */
@@ -509,6 +513,7 @@ window_show_stadium(void)
     GtkProgressBar *progressbar_safety,
 	*progressbar_average_attendance;
     gfloat average_attendance_perc = 0;
+    GtkSpinButton *spin_ticket_price;
 
     window_create(WINDOW_STADIUM);
 
@@ -517,6 +522,14 @@ window_show_stadium(void)
     label_average_attendance = GTK_LABEL(lookup_widget(window.stadium, "label_average_attendance"));
     label_name = GTK_LABEL(lookup_widget(window.stadium, "label_stadium_name"));
     
+    spin_ticket_price = GTK_SPIN_BUTTON(lookup_widget(window.stadium, "spin_ticket_price"));
+    gtk_spin_button_set_value(spin_ticket_price, tm->stadium.ticket_price);
+    /* Set the lower bound to constant_ticket_price-(1/constant_ticket_attendance)
+       +1 So that we can't divide by 0 or negative numbers*/
+    gfloat lower_bound = const_int("int_team_stadium_ticket_price")-(1/const_float("float_team_stadium_price_attendance_factor"))+1;
+
+    gtk_spin_button_set_range(spin_ticket_price, lower_bound, 100);
+
     progressbar_safety = GTK_PROGRESS_BAR(lookup_widget(window.stadium, "progressbar_safety"));
     progressbar_average_attendance = GTK_PROGRESS_BAR(lookup_widget(window.stadium, "progressbar_average_attendance"));
 
@@ -868,22 +881,22 @@ window_create(gint window_type)
 		window.splash = create_window_splash();
 	    wind = window.splash;
 	    break;
-   	case WINDOW_TRAINING_CAMP:
-	    if(window.training_camp != NULL)
-		g_warning("window_create: called on already existing window\n");
-	    else
-		window.training_camp = create_window_training_camp();
-	    wind = window.training_camp;
-	    strcpy(buf, _("Training camp"));
-	    break;
-   	case WINDOW_LEAGUE_TABLE:
-   		if(window.league_table != NULL)
-   		g_warning("window_create: called on already existing window\n");
-   		else
-   		window.league_table = create_window_training_camp();
-   		wind = window.league_table;
-   		strcpy(buf, _("League table"));
-   		break;    
+    case WINDOW_TRAINING_CAMP:
+        if(window.training_camp != NULL)
+            g_warning("window_create: called on already existing window\n");
+        else
+            window.training_camp = create_window_training_camp();
+        wind = window.training_camp;
+        strcpy(buf, _("Training camp"));
+        break;
+    case WINDOW_ALR:
+        if(window.alr != NULL)
+            g_warning("window_create: called on already existing window\n");
+        else
+            window.alr = create_window_alr();
+        wind = window.alr;
+        strcpy(buf, _("Automatic loan repayment"));
+        break;
     }
 
     if(window_type != WINDOW_FILE_CHOOSER)
@@ -941,7 +954,9 @@ window_show_training_camp(void)
     window_create(WINDOW_TRAINING_CAMP);
         
     // Initialize entry costs
-    sprintf(buf, "%d", COSTS_CAMP_1);
+    misc_print_grouped_int(
+	math_round_integer(finance_wage_unit(current_user.tm) * const_float("float_training_camp_factor1"), -2),
+	buf);
     tfCosts = GTK_ENTRY(lookup_widget(window.training_camp, "tf_costs"));
     gtk_entry_set_text (tfCosts, buf);
     
@@ -949,7 +964,13 @@ window_show_training_camp(void)
     rb_camp1 = GTK_WIDGET(lookup_widget(window.training_camp, "rb_camp1"));
     rb_camp2 = GTK_WIDGET(lookup_widget(window.training_camp, "rb_camp2"));
     rb_camp3 = GTK_WIDGET(lookup_widget(window.training_camp, "rb_camp3"));
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rb_camp1), TRUE);
+
+    if(opt_user_int("int_opt_user_training_camp_hotel") == TRAINING_CAMP_HOTEL_GOOD)
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rb_camp1), TRUE);
+    else if(opt_user_int("int_opt_user_training_camp_hotel") == TRAINING_CAMP_HOTEL_FIRST)
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rb_camp2), TRUE);
+    else
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rb_camp3), TRUE);
     
     //Initialize labels
     l_costs = GTK_LABEL(lookup_widget(window.training_camp, "l_costs"));
@@ -968,9 +989,10 @@ window_show_training_camp(void)
     gtk_range_set_range (GTK_RANGE(hs_recreation), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
     gtk_range_set_range (GTK_RANGE(hs_training), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
     gtk_range_set_range (GTK_RANGE(hs_camp_points), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
-    gtk_range_set_value (GTK_RANGE(hs_recreation), CAMP_SCALE_MIN);
-    gtk_range_set_value (GTK_RANGE(hs_training), CAMP_SCALE_MIN);
-    gtk_range_set_value (GTK_RANGE(hs_camp_points), CAMP_SCALE_MAX);
+    gtk_range_set_value (GTK_RANGE(hs_recreation), opt_user_int("int_opt_user_training_camp_recreation"));
+    gtk_range_set_value (GTK_RANGE(hs_training), 
+			 CAMP_SCALE_MAX - opt_user_int("int_opt_user_training_camp_recreation"));
+    gtk_range_set_value (GTK_RANGE(hs_camp_points), CAMP_SCALE_MIN);
     gtk_scale_set_digits (GTK_SCALE(hs_recreation), 0);
     gtk_scale_set_digits (GTK_SCALE(hs_training), 0);
     gtk_scale_set_digits (GTK_SCALE(hs_camp_points), 0);
@@ -992,77 +1014,25 @@ window_show_training_camp(void)
     gtk_widget_modify_bg(GTK_WIDGET(hs_camp_points), GTK_STATE_NORMAL, &color);
 }
 
-/* Show the league table window for the current user. */
+/** Create and set up the debt repayment window. */
 void
-window_show_league_table(void)
+window_show_alr(void)
 {
-	/*
-	GtkEntry *tfCosts;
-	GtkWidget *rb_camp1;
-    GtkWidget *rb_camp2;
-    GtkWidget *rb_camp3;
-    GtkLabel *l_costs;
-    GtkLabel *l_recreation;
-    GtkLabel *l_training;
-    GtkLabel *l_camp_points;
-    GtkHScale *hs_recreation;
-    GtkHScale *hs_training;
-    GtkHScale *hs_camp_points;
-	gchar buf[SMALL];
-	*/
-    window_create(WINDOW_LEAGUE_TABLE);
-    
-    /*
-    // Initialize entry costs
-    sprintf(buf, "%d", COSTS_CAMP_1);
-    tfCosts = GTK_ENTRY(lookup_widget(window.training_camp, "tf_costs"));
-    gtk_entry_set_text (tfCosts, buf);
-    
-    // Initialize radio group camp
-    rb_camp1 = GTK_WIDGET(lookup_widget(window.training_camp, "rb_camp1"));
-    rb_camp2 = GTK_WIDGET(lookup_widget(window.training_camp, "rb_camp2"));
-    rb_camp3 = GTK_WIDGET(lookup_widget(window.training_camp, "rb_camp3"));
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rb_camp1), TRUE);
-    
-    //Initialize labels
-    l_costs = GTK_LABEL(lookup_widget(window.training_camp, "l_costs"));
-    l_recreation = GTK_LABEL(lookup_widget(window.training_camp, "l_recreation"));
-    l_training = GTK_LABEL(lookup_widget(window.training_camp, "l_training"));
-    l_camp_points = GTK_LABEL(lookup_widget(window.training_camp, "l_camp_points"));
-    gtk_misc_set_alignment (GTK_MISC(l_costs), 0.0, 0.5);
-    gtk_misc_set_alignment (GTK_MISC(l_recreation), 0.0, 0.5);
-    gtk_misc_set_alignment (GTK_MISC(l_training), 0.0, 0.5);
-    gtk_misc_set_alignment (GTK_MISC(l_camp_points), 0.0, 0.5);
-    
-    //Initialize hScales
-    hs_recreation = GTK_HSCALE(lookup_widget(window.training_camp, "hs_recreation"));
-    hs_training = GTK_HSCALE(lookup_widget(window.training_camp, "hs_training"));
-    hs_camp_points = GTK_HSCALE(lookup_widget(window.training_camp, "hs_camp_points"));
-    gtk_range_set_range (GTK_RANGE(hs_recreation), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
-    gtk_range_set_range (GTK_RANGE(hs_training), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
-    gtk_range_set_range (GTK_RANGE(hs_camp_points), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
-    gtk_range_set_value (GTK_RANGE(hs_recreation), CAMP_SCALE_MIN);
-    gtk_range_set_value (GTK_RANGE(hs_training), CAMP_SCALE_MIN);
-    gtk_range_set_value (GTK_RANGE(hs_camp_points), CAMP_SCALE_MAX);
-    gtk_scale_set_digits (GTK_SCALE(hs_recreation), 0);
-    gtk_scale_set_digits (GTK_SCALE(hs_training), 0);
-    gtk_scale_set_digits (GTK_SCALE(hs_camp_points), 0);
-    gtk_widget_set_sensitive (GTK_WIDGET(hs_recreation), FALSE);
-    gtk_widget_set_sensitive (GTK_WIDGET(hs_training), FALSE);
-    gtk_widget_set_sensitive (GTK_WIDGET(hs_camp_points), FALSE);
-    
-	GdkColor color;
-    //gtk_widget_modify_fg(GTK_WIDGET(hs_recreation), GTK_STATE_INSENSITIVE , NULL);
-    //gtk_widget_modify_fg(GTK_WIDGET(hs_training), GTK_STATE_INSENSITIVE , NULL);
-    //gtk_widget_modify_fg(GTK_WIDGET(hs_camp_points), GTK_STATE_INSENSITIVE , NULL);
-    //gtk_widget_modify_bg(GTK_WIDGET(hs_recreation), GTK_STATE_NORMAL, NULL);
-    gdk_color_parse("black", &color);
-    gtk_widget_modify_fg(GTK_WIDGET(hs_recreation), GTK_STATE_INSENSITIVE , &color);
-    gtk_widget_modify_fg(GTK_WIDGET(hs_training), GTK_STATE_INSENSITIVE , &color);
-    gtk_widget_modify_fg(GTK_WIDGET(hs_camp_points), GTK_STATE_INSENSITIVE , &color);
-    gtk_widget_modify_bg(GTK_WIDGET(hs_recreation), GTK_STATE_NORMAL, &color);
-    gtk_widget_modify_bg(GTK_WIDGET(hs_training), GTK_STATE_NORMAL, &color);
-    gtk_widget_modify_bg(GTK_WIDGET(hs_camp_points), GTK_STATE_NORMAL, &color);
-    */
-}
+    gchar weekly_installment[SMALL],
+        debt[SMALL];
 
+    window_create(WINDOW_ALR);
+
+    misc_print_grouped_int(current_user.alr_weekly_installment, weekly_installment);
+    misc_print_grouped_int(-current_user.debt, debt);
+
+    gui_label_set_text_from_int(GTK_LABEL(lookup_widget(window.alr, "label_current_start_week")),
+                                current_user.alr_start_week, FALSE);
+    gtk_label_set_text(GTK_LABEL(lookup_widget(window.alr, "label_current_weekly_installment")), weekly_installment);
+    gtk_label_set_text(GTK_LABEL(lookup_widget(window.alr, "label_alr_debt")), debt);
+
+    gtk_spin_button_set_range(GTK_SPIN_BUTTON(lookup_widget(window.alr, "spinbutton_start_week")),
+                              week + 1, MIN(week + current_user.counters[COUNT_USER_LOAN], fixture_get_last_scheduled_week()));
+    gtk_spin_button_set_range(GTK_SPIN_BUTTON(lookup_widget(window.alr, "spinbutton_weekly_installment")),
+                              0, -current_user.debt * powf(1 + current_user.debt_interest, const_int("int_finance_payback_weeks")) + 1);
+}

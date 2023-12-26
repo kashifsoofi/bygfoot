@@ -103,7 +103,7 @@ gint
 player_id_index(const Team *tm, gint player_id);
 
 gfloat
-player_get_game_skill(const Player *pl, gboolean skill, gboolean special);
+player_get_game_skill(Player *pl, gboolean skill, gboolean special);
 
 void
 player_decrease_fitness(Player *pl);
@@ -182,5 +182,8 @@ player_update_streak(Player *pl);
 
 gboolean
 query_player_is_in_ya(const Player *pl);
+
+gboolean
+query_player_star_balks(const Player *pl, const Team *tm, gboolean transfer);
 
 #endif

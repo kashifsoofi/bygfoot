@@ -59,8 +59,6 @@ on_checkbutton_bet_user_recent_button_press_event
                                         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
-#endif
-
 gboolean
 on_window_splash_delete_event          (GtkWidget       *widget,
                                         GdkEvent        *event,
@@ -89,3 +87,26 @@ on_button_splash_hint_back_clicked     (GtkButton       *button,
 void
 on_button_splash_hint_next_clicked     (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_button_calculate_installment_clicked
+                                        (GtkButton       *button,
+                                        gpointer         user_data);
+void
+on_button_calculate_start_week_clicked (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_button_alr_confirm_clicked          (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_button_alr_cancel_clicked           (GtkButton       *button,
+                                        gpointer         user_data);
+gboolean
+on_window_alr_delete_event            (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                       gpointer         user_data);
+
+#endif
+

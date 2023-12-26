@@ -332,7 +332,7 @@ callback_get_loan(void)
     misc_print_grouped_int(max_loan, buf2);
     sprintf(buf, _("You can take out at most %s."), buf2);
 
-    window_show_digits(buf, _("Loan"), max_loan, NULL, 0);
+    window_show_digits(buf, _("Loan"), max_loan, NULL, 0, TRUE);
 }
 
 /** Open the digits window to pay back a loan. */
@@ -358,7 +358,7 @@ callback_pay_loan(void)
     misc_print_grouped_int(max_payback, buf2);
     sprintf(buf, _("You can pay back at most %s"), buf2);
 
-    window_show_digits(buf, _("Payback"), max_payback, NULL, 0);
+    window_show_digits(buf, _("Payback"), max_payback, NULL, 0, FALSE);
 }
 
 /** Manage a click on a player of the current team on the
@@ -494,14 +494,14 @@ callback_transfer_list_clicked(gint button, gint idx)
 		player_of_id_team(tr->tm, tr->id)->name);
 	
 	window_show_digits(buf, _("Fee"), tr->fee[current_user.scout % 10],
-			   _("Wage"), tr->wage[current_user.scout % 10]);
+			   _("Wage"), tr->wage[current_user.scout % 10], FALSE);
     }
     else
     {
 	sprintf(buf, _("You are making an offer for %s again. Your previous values for fee and wage are preset."),
 		player_of_id_team(tr->tm, tr->id)->name);
 	
-	window_show_digits(buf, _("Fee"), old_fee, _("Wage"), old_wage);
+	window_show_digits(buf, _("Fee"), old_fee, _("Wage"), old_wage, FALSE);
     }
 }
 
@@ -525,6 +525,12 @@ callback_offer_new_contract(gint idx)
     else if(pl->offers == const_int("int_contract_max_offers"))
     {
 	game_gui_show_warning(_("The player won't negotiate with you anymore."));
+	return;
+    }
+    else if(query_player_star_balks(pl, current_user.tm, FALSE))
+    {
+	pl->offers = const_int("int_contract_max_offers");
+	game_gui_show_warning(_("The player feels he doesn't have a future in your star-studded team. He refuses to negotiate."));
 	return;
     }
 
