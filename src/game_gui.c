@@ -182,7 +182,7 @@ game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkHScale *hscale)
 			     ((unit->possession == 0) ? -1 : 1)));
     }
     else
-	g_warning("game_gui_live_game_set_hscale: don't know what to do!\n");
+	debug_print_message("game_gui_live_game_set_hscale: don't know what to do!\n");
 
     gtk_widget_modify_bg(GTK_WIDGET(hscale), GTK_STATE_NORMAL, &color);
 }
@@ -284,12 +284,12 @@ game_gui_set_main_window_header(void)
 	*label_money= GTK_LABEL(lookup_widget(window.main, "label_money"));
     GtkWidget *menu_users[2] = {lookup_widget(window.main, "menu_next_user"),
 				lookup_widget(window.main, "menu_previous_user")};
+    const Fixture *fix = team_get_fixture(current_user.tm, FALSE);
 
     gtk_label_set_text(label_user, current_user.name);
     gui_label_set_text_from_int(label_season, season, FALSE);
     gui_label_set_text_from_int(label_week, week, FALSE);
     gui_label_set_text_from_int(label_round, week_round, FALSE);
-    gui_label_set_text_from_int(label_rank, week_round, FALSE);
 
     if(!sett_int("int_opt_disable_finances"))
     {
@@ -302,7 +302,19 @@ game_gui_set_main_window_header(void)
 	gtk_widget_hide(GTK_WIDGET(lookup_widget(window.main, "label34")));
     }
 
-    rank = team_get_league_rank(current_user.tm);
+    gtk_label_set_text(label_team, current_user.tm->name);
+
+    if(fix == NULL)
+    {
+        rank = team_get_league_rank(current_user.tm, -1);
+        gtk_label_set_text(label_league, league_cup_get_name_string(current_user.tm->clid));
+    }
+    else
+    {
+        rank = team_get_league_rank(current_user.tm, fix->clid);
+        gtk_label_set_text(label_league, league_cup_get_name_string(fix->clid));        
+    }
+
     if(rank != 0)
 	gui_label_set_text_from_int(label_rank, rank, FALSE);
     else
@@ -310,9 +322,6 @@ game_gui_set_main_window_header(void)
 	gtk_widget_hide(GTK_WIDGET(label_rank));
 	gtk_widget_hide(lookup_widget(window.main, "label29"));
     }
-
-    gtk_label_set_text(label_team, current_user.tm->name);
-    gtk_label_set_text(label_league, league_cup_get_name_string(current_user.tm->clid));
 
     for(i=0;i<2;i++)
 	gtk_widget_set_sensitive(menu_users[i], (users->len > 1));
@@ -575,7 +584,7 @@ game_gui_print_message_source(gpointer data)
     printf("game_gui_print_message_source\n");
 #endif
 
-    game_gui_print_message((gchar*)data);
+    game_gui_print_message((gchar*)data, NULL);
 
     g_free(data);
 
@@ -741,7 +750,7 @@ game_gui_show_warning(const gchar *format, ...)
 
     if(opt_int("int_opt_prefer_messages") &&
        window.main != NULL)
-	game_gui_print_message(text);
+	game_gui_print_message(text, NULL);
     else
     {
 	window_create(WINDOW_WARNING);
@@ -822,7 +831,7 @@ game_gui_show_job_offer(Team *team, Job *job, gint type)
     if(job == NULL ||
        job->type == JOB_TYPE_NATIONAL)
 	gui_label_set_text_from_int(label_rank, 
-				    team_get_league_rank(tm), FALSE);
+				    team_get_league_rank(tm, -1), FALSE);
 
     misc_print_grouped_int(
 	math_round_integer(tm->stadium.capacity * 
@@ -910,7 +919,7 @@ game_gui_read_check_items(GtkWidget *widget)
 				   opt_int("int_opt_save_will_overwrite")));
     }
     else
-	g_warning("game_gui_read_check_items: unknown widget.");
+	debug_print_message("game_gui_read_check_items: unknown widget.");
 }
 
 /** Set the appropriate text into the labels in the help window. 

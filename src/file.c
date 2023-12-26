@@ -131,10 +131,6 @@ file_find_support_file                       (const gchar     *filename, gboolea
     printf("file_find_support_file\n");
 #endif
 
-#ifdef DEBUG
-    printf("file_find_support_file\n");
-#endif
-
     GList *elem = support_directories;
 
     while (elem)
@@ -150,7 +146,7 @@ file_find_support_file                       (const gchar     *filename, gboolea
     }
   
     if(warning)
-	g_warning("file_find_support_file: file '%s' not found.", filename);
+	debug_print_message("file_find_support_file: file '%s' not found.", filename);
 
     return NULL;
 }
@@ -166,11 +162,11 @@ file_my_system(const GString *command)
 
     if(system(command->str) != 0)
     {
-	g_warning("file_my_system: system returned -1 when executing '%s'.", command->str);
+	debug_print_message("file_my_system: system returned -1 when executing '%s'.", command->str);
 
 	if(!os_is_unix)
 	{
-	    g_warning("Press RETURN to try to continue.");
+	    debug_print_message("Press RETURN to try to continue.");
 	    getchar();
 	}
 
@@ -209,7 +205,7 @@ file_my_fopen(const gchar *filename, gchar *bits, FILE **fil, gboolean abort_pro
 	return TRUE;
     }
 
-    g_warning("Could not open file '%s' in mode '%s'.\n", filename, bits);
+    debug_print_message("Could not open file '%s' in mode '%s'.\n", filename, bits);
 
     if(abort_program)
 	main_exit_program(EXIT_FILE_OPEN_FAILED, NULL);
@@ -562,7 +558,7 @@ file_get_next_opt_line(FILE *fil, gchar *opt_name, gchar *opt_value)
     if(buf[0] != '#' && strlen(buf) != 0)
     {
 	if(strlen(buf) > 1000)
-	    g_warning("\n the text file I'm reading contains a line longer than 1000 chars.\n\n");
+	    debug_print_message("\n the text file I'm reading contains a line longer than 1000 chars.\n\n");
 
 	for(i=0;i<strlen(buf);i++)
 	    if(buf[i] == '#')
@@ -610,7 +606,7 @@ file_save_opt_file(const gchar *filename, OptionList *optionlist)
 /** Load a file containing name - value pairs into
     the specified array. */
 void
-file_load_opt_file(const gchar *filename, OptionList *optionlist)
+file_load_opt_file(const gchar *filename, OptionList *optionlist, gboolean sort)
 {
 #ifdef DEBUG
     printf("file_load_opt_file\n");
@@ -651,6 +647,9 @@ file_load_opt_file(const gchar *filename, OptionList *optionlist)
 	}
     }
 
+    if(sort)
+        g_array_sort(optionlist->list, (GCompareFunc)option_compare_func);
+
     for(i=0;i<optionlist->list->len;i++)
 	g_datalist_set_data(&optionlist->datalist, g_array_index(optionlist->list, Option, i).name,
 			    &g_array_index(optionlist->list, Option, i));
@@ -679,7 +678,7 @@ file_load_hints_file(void)
     else
 	strcpy(hints_file, "bygfoot_hints_en");
 
-    file_load_opt_file(hints_file, &hints);
+    file_load_opt_file(hints_file, &hints, FALSE);
 }
 
 /** Load the options at the beginning of a new game from
@@ -694,12 +693,12 @@ file_load_conf_files(void)
     gint i;
     gchar *conf_file = file_find_support_file("bygfoot.conf", TRUE);
 
-    file_load_opt_file(conf_file, &options);
+    file_load_opt_file(conf_file, &options, FALSE);
     g_free(conf_file);
 
-    file_load_opt_file(opt_str("string_opt_constants_file"), &constants);
-    file_load_opt_file(opt_str("string_opt_appearance_file"), &constants_app);
-    file_load_opt_file("bygfoot_tokens", &tokens);
+    file_load_opt_file(opt_str("string_opt_constants_file"), &constants, TRUE);
+    file_load_opt_file(opt_str("string_opt_appearance_file"), &constants_app, TRUE);
+    file_load_opt_file("bygfoot_tokens", &tokens, FALSE);
     file_load_hints_file();
 
     for(i=0;i<tokens.list->len;i++)
@@ -729,7 +728,7 @@ file_load_user_conf_file(User *user)
 	    file_find_support_file(opt_str("string_opt_default_user_conf_file"), TRUE);
     }
 
-    file_load_opt_file(conf_file, &user->options);
+    file_load_opt_file(conf_file, &user->options, FALSE);
     g_free(conf_file);
 }
 
@@ -742,16 +741,13 @@ file_get_first_support_dir(void)
     printf("file_get_first_support_dir\n");
 #endif
 
-#ifdef DEBUG
-    printf("file_get_first_support_dir\n");
-#endif
-
     GList *elem = support_directories;
   
     while (elem)
     {
 	if(g_str_has_suffix((gchar*)elem->data, HOMEDIRNAME) ||
-	   g_str_has_suffix((gchar*)elem->data, "support_files"))
+	   g_str_has_suffix((gchar*)elem->data, "support_files") ||
+	   g_str_has_suffix((gchar*)elem->data, "support_files" G_DIR_SEPARATOR_S))
 	    return (const gchar*)elem->data;
 
 	elem = elem->next;
@@ -771,10 +767,6 @@ file_get_first_support_dir_suffix(const gchar *suffix)
     printf("file_get_first_support_dir_suffix\n");
 #endif
 
-#ifdef DEBUG
-    printf("file_get_first_support_dir_suffix\n");
-#endif
-
     GList *elem = support_directories;
   
     while (elem)
@@ -785,7 +777,7 @@ file_get_first_support_dir_suffix(const gchar *suffix)
 	elem = elem->next;
     }
 
-    g_warning("file_get_first_support_dir_suffix: no dir with suffix %s found.",
+    debug_print_message("file_get_first_support_dir_suffix: no dir with suffix %s found.",
 	      suffix);
 
     return NULL;    
@@ -970,7 +962,7 @@ file_store_text_in_saves(const gchar *filename, const gchar *text)
 
     if(!file_my_fopen(buf, "w", &fil, FALSE))
     {
-        g_warning("file_store_text_in_saves: failed to store '%s' in file '%s'\n", text, buf);
+        debug_print_message("file_store_text_in_saves: failed to store '%s' in file '%s'\n", text, buf);
 	return;
     }
 
@@ -1015,4 +1007,26 @@ file_load_text_from_saves(const gchar *filename)
     fclose(fil);
 
     return g_strdup(buf);   
+}
+
+/** Return the path to a resource in the Mac OS X bundle. */
+gchar*
+file_get_mac_resource_path(const gchar *resource)
+{
+#ifndef MAC_BUILD
+    return NULL;
+#else
+    gchar buf[SMALL];
+    CFURLRef newurlref;
+    CFStringRef newstring = CFStringCreateWithCString(NULL, resource, kCFStringEncodingASCII);
+
+    newurlref = CFBundleCopyResourceURL(CFBundleGetMainBundle(), newstring, NULL, NULL);
+    CFRelease(newstring);
+    newstring = CFURLCopyPath(newurlref);
+    CFStringGetCString(newstring, buf, SMALL + 1, kCFStringEncodingASCII);
+    CFRelease(newurlref);
+    CFRelease(newstring);
+    
+    return g_strdup(buf);
+#endif
 }

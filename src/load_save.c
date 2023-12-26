@@ -22,6 +22,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#include <ctype.h>
 
 #include "callbacks.h"
 #include "file.h"
@@ -236,9 +237,9 @@ load_save_load_game(const gchar* filename, gboolean create_main_window)
 	PIC_TYPE_LOAD);
 
     g_string_sprintf(buf, "%s%s%s___options", dirname, G_DIR_SEPARATOR_S, prefix);
-    file_load_opt_file(buf->str, &options);
+    file_load_opt_file(buf->str, &options, FALSE);
     g_string_sprintf(buf, "%s%s%s___settings", dirname, G_DIR_SEPARATOR_S, prefix);
-    file_load_opt_file(buf->str, &settings);
+    file_load_opt_file(buf->str, &settings, FALSE);
     language_set(language_get_code_index(opt_str("string_opt_language_code")) + 1);
 
     if(debug > 60)
@@ -358,7 +359,7 @@ load_save_autosave(void)
     printf("load_save_autosave\n");
 #endif
 
-    gchar buf[SMALL];
+    gchar buf[SMALL], name[SMALL];
     const gchar *home = g_get_home_dir();
     FILE *fil = NULL;
     
@@ -371,15 +372,17 @@ load_save_autosave(void)
     if(counters[COUNT_AUTOSAVE] != 0)
 	return;
 
+    load_save_write_autosave_name(name);
+
     if(os_is_unix)
-	sprintf(buf, "%s%s%s%ssaves%sautosave%02d.zip", home, G_DIR_SEPARATOR_S,
+	sprintf(buf, "%s%s%s%ssaves%s%s_%02d.zip", home, G_DIR_SEPARATOR_S,
 		HOMEDIRNAME, G_DIR_SEPARATOR_S, G_DIR_SEPARATOR_S,
-		counters[COUNT_AUTOSAVE_FILE]);
+		name, counters[COUNT_AUTOSAVE_FILE]);
     else
     {
 	gchar *pwd = g_get_current_dir();
-	sprintf(buf, "%s%ssaves%sautosave%02d.zip", pwd, G_DIR_SEPARATOR_S,
-		G_DIR_SEPARATOR_S, counters[COUNT_AUTOSAVE_FILE]);
+	sprintf(buf, "%s%ssaves%s%s_%02d.zip", pwd, G_DIR_SEPARATOR_S,
+		G_DIR_SEPARATOR_S, name, counters[COUNT_AUTOSAVE_FILE]);
 	g_free(pwd);
     }
 
@@ -392,6 +395,27 @@ load_save_autosave(void)
 
 
     counters[COUNT_AUTOSAVE_FILE] = (counters[COUNT_AUTOSAVE_FILE] + 1) % opt_int("int_opt_autosave_files");
+}
+
+/** Write the autosave file name which is put together from
+    the user name, team name etc. into the parameter string. */
+void
+load_save_write_autosave_name(gchar *filename)
+{
+    gchar teamname[SMALL];
+    gint i = 0;
+
+    while(usr(0).tm->name[i] != '\0')
+    {
+        teamname[i] = (isspace(usr(0).tm->name[i]) == 0) ?
+            usr(0).tm->name[i] : '_';
+        i++;
+    }
+    
+    teamname[i] = '\0';
+
+   sprintf(filename, "autosave_%s_%s_%s_S%02d_W%02d",
+            usr(0).name, country.name, teamname, season, week);
 }
 
 /** Try to load a savegame given on the command line. */
@@ -437,7 +461,7 @@ load_game_from_command_line(const gchar *filename)
 	    return FALSE;
     }
     
-    g_warning("Could not find file %s.\n", fullname);
+    debug_print_message("Could not find file %s.\n", fullname);
     g_free(fullname);
 
     return FALSE;

@@ -188,7 +188,7 @@ game_get_player(const Team *tm, gint player_type,
     }
     else
     {
-	g_warning("game_get_player: All players injured or banned, apparently.\n");
+	debug_print_message("game_get_player: All players injured or banned, apparently.\n");
 	g_print("%s %s player list:\n", league_cup_get_name_string(tm->clid), tm->name);
 	for(i=0;i<tm->players->len;i++)
 	{
@@ -365,7 +365,7 @@ game_assign_attendance(Fixture *fix)
 		       tm[0]->stadium.capacity);
 
     if(fix->clid < ID_CUP_START && 
-       team_get_league_rank(tm[1]) <
+       team_get_league_rank(tm[1], fix->clid) <
        (gint)rint((gfloat)league_from_clid(fix->clid)->teams->len *
 		  const_float("float_game_stadium_attendance_rank_percentage")))
 	factor *= const_float("float_game_stadium_attendance_rank_factor");
@@ -648,6 +648,37 @@ game_player_injury(Player *pl)
     }
 }
 
+/** Calculate the probability of a foul event occurring. */
+gfloat
+game_get_foul_prob(const LiveGame *live_game, const LiveGameUnit *unit)
+{
+    gfloat prob;
+    gint i;
+
+    /* Base probability (a linear function of match time). */
+    prob = const_float("float_live_game_foul_base") + 
+        const_float("float_live_game_foul_max_inc") * MIN(1, (gfloat)(unit->minute) / 90);
+
+    /* Add possible boost influence of the team not in possession. */
+    prob *= (1 + live_game->fix->teams[!unit->possession]->boost * 
+             const_float("float_team_boost_foul_factor"));
+
+    /* Reduce probability depending on the current cards of
+       the team not in possession, except if their boost is on. */
+    if(live_game->fix->teams[!unit->possession]->boost != 1)
+    {
+        for(i = 0; i < 11; i++)
+            if(g_array_index(live_game->fix->teams[!unit->possession]->players, Player, i).card_status == 
+               PLAYER_CARD_STATUS_YELLOW)
+                prob *= (1 - const_float("float_live_game_foul_prob_reduction_yellow"));
+            else if(g_array_index(live_game->fix->teams[!unit->possession]->players, Player, i).card_status == 
+                    PLAYER_CARD_STATUS_RED)
+                prob *= (1 - const_float("float_live_game_foul_prob_reduction_red"));
+    }
+
+    return prob;
+}
+
 /** Return a factor influencing who's fouled whom
     depending on the states of the team boosts.
     @param boost1 Boost of the team in possession.
@@ -693,7 +724,7 @@ game_substitute_player(Team *tm, gint player_number)
     if(substitutes->len == 0)
     {
 	g_ptr_array_free(substitutes, TRUE);
-	g_warning("game_substitute_player: no suitable substitutes found (all injured/banned?)");
+	debug_print_message("game_substitute_player: no suitable substitutes found (all injured/banned?)");
 	return -1;
     }
 
@@ -849,7 +880,7 @@ game_substitute_player_send_off(gint clid, Team *tm, gint player_number,
     if(substitutes->len == 0)
     {
 	g_ptr_array_free(substitutes, TRUE);
-	g_warning("game_substitute_player_send_off: no suitable substitutes found (all injured/banned?)");
+	debug_print_message("game_substitute_player_send_off: no suitable substitutes found (all injured/banned?)");
 	*to_substitute = -1;
 	return;
     }

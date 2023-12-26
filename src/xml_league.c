@@ -258,8 +258,8 @@ xml_league_read_start_element (GMarkupParseContext *context,
     else if(strcmp(element_name, TAG_TEAM) == 0)
     {
 	new_team = team_new(TRUE);
-	misc_string_assign(&new_team.symbol, new_league.symbol);
-	misc_string_assign(&new_team.names_file, new_league.names_file);
+	misc_string_assign(&(new_team.symbol), new_league.symbol);
+	misc_string_assign(&(new_team.names_file), new_league.names_file);
 	new_team.clid = new_league.id;
 	g_array_append_val(new_league.teams, new_team);	
 	state = STATE_TEAM;
@@ -275,7 +275,7 @@ xml_league_read_start_element (GMarkupParseContext *context,
     else if(strcmp(element_name, TAG_TEAM_DEF_FILE) == 0)
 	state = STATE_TEAM_DEF_FILE;
     else
-	g_warning("xml_league_read_start_element: unknown tag: %s; I'm in state %d\n",
+	debug_print_message("xml_league_read_start_element: unknown tag: %s; I'm in state %d\n",
 		  element_name, state);
 	
 }
@@ -340,7 +340,7 @@ xml_league_read_end_element    (GMarkupParseContext *context,
 	    strcmp(element_name, TAG_TEAM_NAMES_FILE) == 0)
 	state = STATE_TEAM;
     else if(strcmp(element_name, TAG_LEAGUE) != 0)
-	g_warning("xml_league_end_start_element: unknown tag: %s; I'm in state %d\n",
+	debug_print_message("xml_league_end_start_element: unknown tag: %s; I'm in state %d\n",
 		  element_name, state);
 }
 
@@ -508,7 +508,7 @@ xml_league_read(const gchar *league_name, GArray *leagues)
 
     if(!g_file_get_contents(file_name, &file_contents, &length, &error))
     {
-	g_warning("xml_league_read: error reading file %s\n", file_name);
+	debug_print_message("xml_league_read: error reading file %s\n", file_name);
 	misc_print_error(&error, FALSE);
 	return;
     }

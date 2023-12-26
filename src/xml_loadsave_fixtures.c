@@ -27,6 +27,7 @@
 #include "fixture.h"
 #include "misc.h"
 #include "team.h"
+#include "variables.h"
 #include "xml.h"
 #include "xml_loadsave_fixtures.h"
 
@@ -84,7 +85,7 @@ xml_loadsave_fixtures_start_element (GMarkupParseContext *context,
 	residx1 = residx2 = teamidx = nameidx = 0;
 
     if(!valid_tag)
-	g_warning("xml_loadsave_fixtures_start_element: unknown tag: %s; I'm in state %d\n",
+	debug_print_message("xml_loadsave_fixtures_start_element: unknown tag: %s; I'm in state %d\n",
 		  element_name, state);
 }
 
@@ -129,7 +130,7 @@ xml_loadsave_fixtures_end_element    (GMarkupParseContext *context,
 	    teamidx++;
     }
     else if(tag != TAG_FIXTURES)
-	g_warning("xml_loadsave_fixtures_end_element: unknown tag: %s; I'm in state %d\n",
+	debug_print_message("xml_loadsave_fixtures_end_element: unknown tag: %s; I'm in state %d\n",
 		  element_name, state);	
 }
 
@@ -198,7 +199,7 @@ xml_loadsave_fixtures_read(const gchar *filename, GArray *fixtures)
 
     if(!g_file_get_contents(filename, &file_contents, &length, &error))
     {
-	g_warning("xml_loadsave_fixtures_read: error reading file %s\n", filename);
+	debug_print_message("xml_loadsave_fixtures_read: error reading file %s\n", filename);
 	misc_print_error(&error, TRUE);
     }
 
@@ -212,7 +213,7 @@ xml_loadsave_fixtures_read(const gchar *filename, GArray *fixtures)
     }
     else
     {
-	g_warning("xml_loadsave_fixtures_read: error parsing file %s\n", filename);
+	debug_print_message("xml_loadsave_fixtures_read: error parsing file %s\n", filename);
 	misc_print_error(&error, TRUE);
     }
 }

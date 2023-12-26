@@ -306,7 +306,7 @@ treeview_helper_get_user_history_icon(gint history_type)
     switch(history_type)
     {
     default:
-        g_warning("treeview_helper_get_user_history_icon: unknown type %d.\n", history_type);
+        debug_print_message("treeview_helper_get_user_history_icon: unknown type %d.\n", history_type);
         return NULL;
     case USER_HISTORY_START_GAME:
         return const_app("string_treeview_helper_user_history_symbol_start_game_icon");
@@ -417,7 +417,7 @@ treeview_helper_team_compare(GtkTreeModel *model,
     switch(type)
     {
     default:
-        g_warning("treeview_team_compare: unknown type %d.\n", type);
+        debug_print_message("treeview_team_compare: unknown type %d.\n", type);
         break;
     case TEAM_COMPARE_AV_SKILL:
         return_value = misc_float_compare(team_get_average_skill(tm1, FALSE),
@@ -457,7 +457,7 @@ treeview_helper_player_compare(GtkTreeModel *model,
 	switch(type)
 	{
         default:
-            g_warning("treeview_player_compare: unknown type %d.\n", type);
+            debug_print_message("treeview_player_compare: unknown type %d.\n", type);
             break;
         case PLAYER_LIST_ATTRIBUTE_POS:
             return_value = misc_int_compare(pl1->pos, pl2->pos);
@@ -785,7 +785,7 @@ treeview_helper_team_selection(GtkTreeViewColumn *col,
 	g_object_set(renderer, "text", buf, NULL);
     }
     else
-	g_warning("treeview_helper_team_selection: unknown column: %d\n", column);
+	debug_print_message("treeview_helper_team_selection: unknown column: %d\n", column);
 }
 
 /** Render an integer. This is only so that we know when to draw nothing. */
@@ -843,7 +843,7 @@ treeview_helper_player_ext_info_to_cell(GtkTreeViewColumn *col,
     switch(row_idx)
     {
     default:
-        g_warning("treeview_helper_player_ext_info_to_cell: unknown row index %d\n",
+        debug_print_message("treeview_helper_player_ext_info_to_cell: unknown row index %d\n",
                   row_idx);
         break;
     case PLAYER_INFO_ATTRIBUTE_NAME:
@@ -1127,7 +1127,7 @@ treeview_helper_player_to_cell(GtkTreeViewColumn *col,
     switch(attribute)
     {
     default:
-        g_warning("treeview_helper_player_to_cell: unknown attribute %d.\n", attribute);
+        debug_print_message("treeview_helper_player_to_cell: unknown attribute %d.\n", attribute);
         break;
     case PLAYER_LIST_ATTRIBUTE_NAME:
         treeview_helper_player_name_to_cell(renderer, buf, pl);
@@ -1814,14 +1814,14 @@ treeview_helper_bet_odds(GtkTreeViewColumn *col,
 }
 
 gboolean
-treeview_helper_search_equal(GtkTreeModel *model,
-			     gint column,
-			     const gchar *key,
-			     GtkTreeIter *iter,
-			     gpointer search_data)
+treeview_helper_search_equal_teams(GtkTreeModel *model,
+                                   gint column,
+                                   const gchar *key,
+                                   GtkTreeIter *iter,
+                                   gpointer search_data)
 {
 #ifdef DEBUG
-    printf("treeview_helper_search_equal\n");
+    printf("treeview_helper_search_equal_teams\n");
 #endif
 
     const Team *tm = NULL;
@@ -1835,6 +1835,24 @@ treeview_helper_search_equal(GtkTreeModel *model,
     return_value = (g_strrstr(name_lower, key) == NULL);
 
     return return_value;
+}
+
+gboolean
+treeview_helper_search_equal_strings(GtkTreeModel *model,
+                                     gint column,
+                                     const gchar *key,
+                                     GtkTreeIter *iter,
+                                     gpointer search_data)
+{
+#ifdef DEBUG
+    printf("treeview_helper_search_equal_strings\n");
+#endif
+
+    const gchar *string = NULL;
+
+    gtk_tree_model_get(model, iter, column, &string, -1);
+    
+    return (g_strrstr(string, key) == NULL);
 }
 
 void
@@ -1975,4 +1993,91 @@ treeview_helper_job_exchange(GtkTreeViewColumn *col,
 	sprintf(buf, "%d", job->talent_percent);
 
     g_object_set(renderer, "text", buf, NULL);
+}
+
+void
+treeview_helper_player_name_editing_done(GtkCellRendererText *renderer,
+                                         gchar               *path,
+                                         gchar               *new_text,
+                                         gpointer             user_data)
+{
+    gint idx;
+
+    idx = (gint)strtol(path, NULL, 0);
+
+    if(idx == 11)
+        return;
+
+    idx = (idx > 11) ? idx - 1 : idx;
+    g_free(g_array_index(current_user.tm->players, Player, idx).name);
+    g_array_index(current_user.tm->players, Player, idx).name = g_strdup(new_text);
+
+    gtk_widget_set_sensitive(lookup_widget(window.main, "menubar1"), TRUE);
+    gtk_widget_set_sensitive(lookup_widget(window.main, "hbox1"), TRUE);
+}
+
+void
+treeview_helper_player_name_editing_canceled(GtkCellRendererText *renderer,
+                                             gpointer             user_data)
+{
+    gtk_widget_set_sensitive(lookup_widget(window.main, "menubar1"), TRUE);
+    gtk_widget_set_sensitive(lookup_widget(window.main, "hbox1"), TRUE);
+}
+
+void
+treeview_helper_player_name_editing_started(GtkCellRenderer *renderer,
+                                            GtkCellEditable *editable,
+                                            gchar           *path,
+                                            gpointer         user_data)
+{
+    gtk_widget_set_sensitive(lookup_widget(window.main, "menubar1"), FALSE);
+    gtk_widget_set_sensitive(lookup_widget(window.main, "hbox1"), FALSE);
+}
+
+void
+treeview_helper_constants_editing_done(GtkCellRendererText *renderer,
+                                       gchar               *path,
+                                       gchar               *new_text,
+                                       gpointer             user_data)
+{
+    GtkTreeModel *model = gtk_tree_view_get_model((GtkTreeView*)user_data);
+    GtkTreeIter iter;
+    const gchar *name;
+    gfloat float_value = g_ascii_strtod(new_text, NULL);
+
+    gtk_tree_model_get_iter_from_string(model, &iter, path);
+    gtk_tree_model_get(model, &iter, 0, &name, -1);
+
+    if(g_str_has_prefix(name, "int_"))
+    {
+        option_set_int(name, &constants, (gint)float_value);
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, (gint)float_value, -1);
+    }
+    else if(g_str_has_prefix(name, "float_"))
+    {        
+        option_set_int(name, &constants, (gint)rint(g_ascii_strtod(new_text, NULL) * OPTION_FLOAT_DIVISOR));
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, float_value, -1);
+    }
+    else
+    {
+        option_set_string(name, &constants, new_text);
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, new_text, -1);
+    }
+}
+
+void
+treeview_helper_constants_app_editing_done(GtkCellRendererText *renderer,
+                                           gchar               *path,
+                                           gchar               *new_text,
+                                           gpointer             user_data)
+{
+    GtkTreeModel *model = gtk_tree_view_get_model((GtkTreeView*)user_data);
+    GtkTreeIter iter;
+    const gchar *name;
+
+    gtk_tree_model_get_iter_from_string(model, &iter, path);
+    gtk_tree_model_get(model, &iter, 0, &name, -1);
+
+    option_set_string(name, &constants_app, new_text);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1, new_text, -1);
 }

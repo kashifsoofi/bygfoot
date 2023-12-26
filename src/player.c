@@ -94,6 +94,7 @@ player_new(Team *tm, gfloat average_talent, gboolean new_id)
 		       const_float("float_player_lsu_upper"));
     new.cards = g_array_new(FALSE, FALSE, sizeof(PlayerCard));
     new.games_goals = g_array_new(FALSE, FALSE, sizeof(PlayerGamesGoals));
+    new.card_status = PLAYER_CARD_STATUS_NONE;
 
     for(i=0;i<PLAYER_VALUE_END;i++)
 	new.career[i] = 0;
@@ -932,7 +933,7 @@ player_card_set(Player *pl, gint clid, gint card_type, gint value, gboolean diff
 
 	    if(*card_value < 0)
 	    {
-		g_warning("player_card_set: negative card value; setting to 0\n");
+		debug_print_message("player_card_set: negative card value; setting to 0\n");
 		*card_value = 0;
 	    }
 	    
@@ -1008,7 +1009,7 @@ player_games_goals_set(Player *pl, gint clid, gint type, gint value)
 
 	    if(*games_goals_value < 0)
 	    {
-		g_warning("player_games_goals_set: negative value; setting to 0\n");
+		debug_print_message("player_games_goals_set: negative value; setting to 0\n");
 		*games_goals_value = 0;
 	    }
 	    
@@ -1162,7 +1163,7 @@ player_update_streak(Player *pl)
 	else if(pl->streak == PLAYER_STREAK_COLD)
 	    decrease_factor = 1;
 	else
-	    g_warning("player_update_streak: streak count is positive (%.1f) but player %s is not on a streak!\n", pl->streak_count, pl->name);
+	    debug_print_message("player_update_streak: streak count is positive (%.1f) but player %s is not on a streak!\n", pl->streak_count, pl->name);
 
 	pl->streak_count -= 
 	    (pl->streak_prob * decrease_factor *
@@ -1263,7 +1264,7 @@ player_remove_contract(Player *pl)
 
     if(debug < 50)
         user_event_add(user_from_team(pl->team), EVENT_TYPE_PLAYER_LEFT, -1, -1, NULL,
-                       pl->name);
+                       pl->name, NULL);
     player_remove_from_team(pl->team, player_id_index(pl->team, pl->id));
 }
 
@@ -1312,6 +1313,8 @@ player_update_post_match(Player *pl, const Fixture *fix)
 	if(player_card_get(pl, fix->clid, PLAYER_VALUE_CARD_RED) == 0 && debug < 50)
 	    player_card_set(pl, fix->clid, PLAYER_VALUE_CARD_RED, 1, FALSE);
     }
+
+    pl->card_status = PLAYER_CARD_STATUS_NONE;
 
     if(pl->cpos == PLAYER_POS_GOALIE &&
        ((fix->result[0][0] == 0 && fix->teams[1] == pl->team) ||
@@ -1396,7 +1399,7 @@ player_injury_to_char(gint injury_type)
     switch(injury_type)
     {
 	default:
-	    g_warning("player_injury_to_char: unknown type %d\n", injury_type);
+	    debug_print_message("player_injury_to_char: unknown type %d\n", injury_type);
 	    return "";
 	    break;
 	case PLAYER_INJURY_NONE:
@@ -1503,7 +1506,7 @@ player_get_last_name(const gchar *name)
 
     if(!g_utf8_validate(name, -1, NULL))
     {
-	g_warning("player_get_last_name: invalid utf8-string: %s \n", name);
+	debug_print_message("player_get_last_name: invalid utf8-string: %s \n", name);
 	return "";
     }
 
@@ -1668,3 +1671,4 @@ query_player_star_balks(const Player *pl, const Team *tm, gboolean transfer)
 		    const_float("float_transfer_star_prob_decrease"));
     }
 }
+

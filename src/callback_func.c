@@ -56,8 +56,15 @@ callback_show_next_live_game(void)
 
     gint i, j;
 
-    for(i=0;i<users->len;i++)
+    for(i=0;i<users->len;i++) {
 	usr(i).counters[COUNT_USER_TOOK_TURN] = 0;
+        // Store the player order before the live match this process is
+        // repeated so check first if it hasn't been done yet
+        if (usr(i).default_team->len==0 && option_int("int_opt_user_store_restore_default_team",
+			  &usr(i).options)) {
+            store_default_team(&usr(i));
+        }
+    }
 
     counters[COUNT_NEWS_SHOWN] = 
         counters[COUNT_NEW_NEWS] = 0;
@@ -94,6 +101,14 @@ callback_show_next_live_game(void)
 
     window_destroy(&window.live);
 
+    /* Restore the player_order as it was before the match */
+    for(i=0;i<users->len;i++) {
+        if (usr(i).default_team->len!=0 && option_int("int_opt_user_store_restore_default_team",
+			  &usr(i).options)) {
+            restore_default_team(&usr(i));
+        }
+    }
+    treeview_show_user_player_list();
     /* no more user games to show: end round. */
     end_week_round();
 
@@ -119,6 +134,12 @@ callback_player_activate(gint idx)
     {
 	selected_row = idx;
 	on_menu_move_to_youth_academy_activate(NULL, NULL);
+    }
+    else if(gtk_notebook_get_current_page(
+                GTK_NOTEBOOK(lookup_widget(window.main, "notebook_player"))) == 1)
+    {
+        selected_row = idx;
+        return;        
     }
     else
     {
@@ -261,7 +282,7 @@ callback_show_fixtures_week(gint type)
     switch(type)
     {
 	default:
-	    g_warning("callback_show_fixtures_week: unknown type %d \n", type);
+	    debug_print_message("callback_show_fixtures_week: unknown type %d \n", type);
 	    return;
 	    break;
 	case SHOW_CURRENT:
@@ -332,7 +353,7 @@ callback_show_tables(gint type)
 	clid = league_cup_get_previous_clid(stat1, FALSE);
     else
     {
-	g_warning("callback_show_tables: unknown type %d \n", type);
+	debug_print_message("callback_show_tables: unknown type %d \n", type);
 	return;
     }
 
@@ -709,7 +730,7 @@ callback_show_player_list(gint type)
     switch(type)
     {
 	default:
-	    g_warning("callback_show_player_list: unknown type %d \n", type);
+	    debug_print_message("callback_show_player_list: unknown type %d \n", type);
 	    return;
 	    break;
 	case SHOW_CURRENT:
@@ -764,7 +785,7 @@ callback_show_league_stats(gint type)
     switch(type)
     {
 	default:
-	    g_warning("callback_show_league_stats: unknown type %d \n", type);
+	    debug_print_message("callback_show_league_stats: unknown type %d \n", type);
 	    return;
 	    break;
 	case SHOW_CURRENT:
@@ -802,7 +823,7 @@ callback_show_season_history(gint type)
     switch(type)
     {
 	default:
-	    g_warning("callback_show_season_history: unknown type %d \n", type);
+	    debug_print_message("callback_show_season_history: unknown type %d \n", type);
 	    return;
 	    break;
 	case SHOW_CURRENT:
@@ -911,5 +932,5 @@ callback_show_youth_academy(void)
     treeview_show_player_list(
 	GTK_TREE_VIEW(lookup_widget(window.main, "treeview_right")),
 	player_get_pointers_from_array(current_user.youth_academy.players),
-	attributes, FALSE);
+	attributes, FALSE, FALSE);
 }
