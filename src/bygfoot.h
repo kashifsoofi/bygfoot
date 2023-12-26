@@ -40,8 +40,8 @@
 /**
  * Program version number and year (copyright).
  */
-#define VERS "2.2.0"
-#define YEAR "2005 - 2007"
+#define VERS "2.2.1"
+#define YEAR "2005 - 2008"
 
 /** Home dir name */
 //#define HOMEDIRNAME ".bygfoot-cvs"
@@ -167,7 +167,8 @@ typedef struct
 	*mmatches,
 	*bets,
 	*splash,
-	*training_camp;
+	*training_camp,
+    *league_table;
     
     /** The position of the horizontal divider is stored here. */
     gint paned_pos;
