@@ -125,7 +125,7 @@ target_compile_options(bygfoot PRIVATE
 		       -fcommon)
 # Link the target to the GTK+ libraries
 target_link_libraries (bygfoot ${GTK2_LIBRARIES} ${GLIB_LIBRARIES} m
-                               ${ZLIB_LIBRARIES} bf)
+                               ${ZLIB_LIBRARIES})
 
 install(TARGETS bygfoot RUNTIME DESTINATION bin)
 
