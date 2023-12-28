@@ -4,15 +4,12 @@ Gyozo Both
 Mark Lawrenz (mark@bygfoot.com)
 http://www.bygfoot.com
 
-Further below you find the extensive description on how to use 'configure' and
-'make' to build this package; for most users, however, the standard
-three-step procedure
+Project is updated to use cmake as build system. Following 2 steps
 
-1. ./configure
-2. make
-3. (as root) make install
+1. cmake .
+2. cmake --build .
 
-should work perfectly. The default install prefix is /usr/local;
+should work perfectly to create a working binary in current directory. The default install prefix is /usr/local;
 you can override with './configure --prefix=your_prefix'.
 
 I have also made the experience that giving 'configure' an
