@@ -57,13 +57,10 @@ autom4te.cache/
 aclocal.m4
 compile
 config.h
-config.h~
 config.h.in
-config.h.in~
 config.log
 config.status
 configure
-configure~
 depcomp
 install-sh
 *.gmo
@@ -72,5 +69,9 @@ Makefile
 Makefile.in
 missing
 stamp-h1
-stamp-it
-src/bygfoot
+bygfoot
+
+# CMake
+*.cmake
+CMakeCache.txt
+CMakeFiles/
