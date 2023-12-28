@@ -70,3 +70,8 @@ Makefile.in
 missing
 stamp-h1
 src/bygfoot
+
+# CMake
+*.cmake
+CMakeCache.txt
+CMakeFiles/
