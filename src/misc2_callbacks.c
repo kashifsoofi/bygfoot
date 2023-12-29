@@ -339,7 +339,7 @@ on_window_contract_delete_event        (GtkWidget       *widget,
 #endif
 
 
-    if(GTK_WIDGET_IS_SENSITIVE(lookup_widget(window.contract, "button_contract_cancel")))
+    if(gtk_widget_is_sensitive(lookup_widget(window.contract, "button_contract_cancel")))
 	window_destroy(&window.contract);    
 
     return TRUE;

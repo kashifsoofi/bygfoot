@@ -918,10 +918,10 @@ file_copy_file(const gchar *source_file, const gchar *dest_file)
   GString *buf = g_string_new("");
 
   if(os_is_unix)
-    g_string_sprintf(buf, "%s %s %s", const_str("string_fs_copy_file_command"),
+    g_string_printf(buf, "%s %s %s", const_str("string_fs_copy_file_command"),
         source_file, dest_file);
   else
-    g_string_sprintf(buf, "%s \"%s\" \"%s\"", const_str("string_fs_copy_file_command"),
+    g_string_printf(buf, "%s \"%s\" \"%s\"", const_str("string_fs_copy_file_command"),
         source_file, dest_file);
 
   file_my_system(buf);

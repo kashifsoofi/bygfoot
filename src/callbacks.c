@@ -537,7 +537,7 @@ on_player_list1_key_press_event        (GtkWidget       *widget,
 
     gint idx = -1;
 
-    if(event->keyval != GDK_Return)
+    if(event->keyval != GDK_KEY_Return)
 	return FALSE;
 
     idx = treeview_helper_get_index(GTK_TREE_VIEW(widget), 0);

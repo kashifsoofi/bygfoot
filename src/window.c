@@ -161,11 +161,12 @@ window_show_progress(gint pictype)
 		      pictype);
 	    break;
 	case PIC_TYPE_SAVE:
-	    gtk_image_set_from_stock(image, GTK_STOCK_FLOPPY,
+	    gtk_image_set_from_icon_name(image, "document-save",
 				     GTK_ICON_SIZE_DIALOG);
 	    break;
 	case PIC_TYPE_LOAD:
-	    gtk_image_set_from_stock(image, GTK_STOCK_OPEN,
+
+	    gtk_image_set_from_icon_name(image, "document-open",
 				     GTK_ICON_SIZE_DIALOG);
 	    break;
 	case PIC_TYPE_MATCHPIC:
@@ -540,12 +541,12 @@ window_show_digits(const gchar *text_main, const gchar* text1, gint value1,
     if(text1 != NULL)
 	gtk_label_set_text(label_1, text1);
     else
-	gtk_widget_hide(GTK_WIDGET(label_1)->parent);
+	gtk_widget_hide(gtk_widget_get_parent(GTK_WIDGET(label_1)));
 
     if(text2 != NULL)
 	gtk_label_set_text(label_2, text2);
     else
-	gtk_widget_hide(GTK_WIDGET(label_2)->parent);
+	gtk_widget_hide(gtk_widget_get_parent(GTK_WIDGET(label_2)));
 
     if(show_alr)
         gtk_widget_show(lookup_widget(window.digits, "button_digits_alr"));
@@ -1048,9 +1049,9 @@ window_show_training_camp(void)
     GtkLabel *l_recreation;
     GtkLabel *l_training;
     GtkLabel *l_camp_points;
-    GtkHScale *hs_recreation;
-    GtkHScale *hs_training;
-    GtkHScale *hs_camp_points;
+    GtkScale *hs_recreation;
+    GtkScale *hs_training;
+    GtkScale *hs_camp_points;
 	gchar buf[SMALL];
 	
     window_create(WINDOW_TRAINING_CAMP);
@@ -1085,9 +1086,9 @@ window_show_training_camp(void)
     gtk_misc_set_alignment (GTK_MISC(l_camp_points), 0.0, 0.5);
     
     //Initialize hScales
-    hs_recreation = GTK_HSCALE(lookup_widget(window.training_camp, "hs_recreation"));
-    hs_training = GTK_HSCALE(lookup_widget(window.training_camp, "hs_training"));
-    hs_camp_points = GTK_HSCALE(lookup_widget(window.training_camp, "hs_camp_points"));
+    hs_recreation = GTK_SCALE(lookup_widget(window.training_camp, "hs_recreation"));
+    hs_training = GTK_SCALE(lookup_widget(window.training_camp, "hs_training"));
+    hs_camp_points = GTK_SCALE(lookup_widget(window.training_camp, "hs_camp_points"));
     gtk_range_set_range (GTK_RANGE(hs_recreation), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
     gtk_range_set_range (GTK_RANGE(hs_training), CAMP_SCALE_MIN, CAMP_SCALE_MAX);
     gtk_range_set_range (GTK_RANGE(hs_camp_points), CAMP_SCALE_MIN, CAMP_SCALE_MAX);

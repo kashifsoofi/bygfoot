@@ -55,8 +55,8 @@ game_gui_live_game_show_unit(const LiveGameUnit *unit)
     gfloat fraction = (gfloat)live_game_unit_get_minute(unit) / 90;
     GtkProgressBar *progress_bar =
 	GTK_PROGRESS_BAR(lookup_widget(window.live, "progressbar_live"));
-    GtkHScale *hscale = 
-	GTK_HSCALE(lookup_widget(window.live, "hscale_area"));
+    GtkScale *hscale = 
+	GTK_SCALE(lookup_widget(window.live, "hscale_area"));
     GtkWidget *button_pause = lookup_widget(window.live, "button_pause"),
 	*button_resume = lookup_widget(window.live, "button_resume"),
 	*button_live_close = lookup_widget(window.live, "button_live_close"),
@@ -121,7 +121,7 @@ game_gui_live_game_show_unit(const LiveGameUnit *unit)
     @param unit The current unit.
     @param hscale The scale widget. */
 void
-game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkHScale *hscale)
+game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkScale *hscale)
 {
 #ifdef DEBUG
     printf("game_gui_live_game_set_hscale\n");

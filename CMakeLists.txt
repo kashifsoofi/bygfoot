@@ -30,14 +30,14 @@ if (GLIB_PKG_FOUND)
     # include_directories(${GLIB_PKG_INCLUDE_DIRS})
 endif (GLIB_PKG_FOUND)
 
-pkg_check_modules (GTK2 REQUIRED gtk+-2.0)
+pkg_check_modules (GTK3 REQUIRED gtk+-3.0)
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
 # Setup CMake to use GTK+, tell the compiler where to look for headers
-include_directories (${GTK2_INCLUDE_DIRS})
-link_directories (${GTK2_LIBRARY_DIRS})
+include_directories (${GTK3_INCLUDE_DIRS})
+link_directories (${GTK3_LIBRARY_DIRS})
 # Add other flags to the compiler
-add_definitions (${GTK2_CFLAGS_OTHER})
+add_definitions (${GTK3_CFLAGS_OTHER})
 pkg_check_modules (GETTEXT REQUIRED)
 add_definitions("-DGETTEXT_PACKAGE=\"${PROJECT_NAME}\"")
 find_package(ZLIB)
@@ -139,12 +139,16 @@ add_executable(bygfoot WIN32
 # this won't work with the global variables in bygfoot.
 target_compile_options(bygfoot PRIVATE
 	               -Wno-deprecated-declarations
-		       -fcommon)
+                   -DGTK_DISABLE_SINGLE_INCLUDES
+                   -DGDK_DISABLE_DEPRECATED
+                   -DGTK_DISABLE_DEPRECATED
+                   -DGSEAL_ENABLE
+                   -fcommon)
 
 add_dependencies(bygfoot libbygfoot)
 
 # Link the target to the GTK+ libraries
-target_link_libraries (bygfoot ${GTK2_LIBRARIES} ${GLIB_LIBRARIES} m
+target_link_libraries (bygfoot ${GTK3_LIBRARIES} ${GLIB_LIBRARIES} m
                                ${ZLIB_LIBRARIES} bf)
 
 install(TARGETS bygfoot RUNTIME DESTINATION bin)

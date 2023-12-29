@@ -36,13 +36,13 @@
 
 #define setsav1 gtk_widget_set_sensitive(lookup_widget(window.main, "button_save"), FALSE);gtk_widget_set_sensitive(lookup_widget(window.main, "menu_save"), FALSE)
 #define setsav0 gtk_widget_set_sensitive(lookup_widget(window.main, "button_save"), TRUE);gtk_widget_set_sensitive(lookup_widget(window.main, "menu_save"), TRUE)
-#define getsav GTK_WIDGET_SENSITIVE(lookup_widget(window.main, "button_save"))
+#define getsav gtk_widget_get_sensitive(lookup_widget(window.main, "button_save"))
 
 void
 game_gui_live_game_show_unit(const LiveGameUnit *unit);
 
 void
-game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkHScale *hscale);
+game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkScale *hscale);
 
 void
 game_gui_live_game_show_opponent(void);

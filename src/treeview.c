@@ -535,8 +535,7 @@ treeview_live_game_show_commentary(const LiveGameUnit *unit)
                                 treeview_helper_live_game_icon(unit->event.type));
     gtk_list_store_set(ls, &iter, 0, buf, 2, buf2, -1);
 
-    adjustment->value = adjustment->lower - adjustment->page_size;
-    gtk_adjustment_value_changed(adjustment);
+    gtk_adjustment_set_value(adjustment, gtk_adjustment_get_lower(adjustment) - gtk_adjustment_get_page_size(adjustment));
 
     path = gtk_tree_model_get_path(GTK_TREE_MODEL(ls), &iter);
     gtk_tree_view_set_cursor(treeview, path, NULL, FALSE);

@@ -55,8 +55,8 @@
 
 #define GTK_HOOKUP_OBJECT(component,builder,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
-    gtk_widget_ref (GTK_WIDGET (gtk_builder_get_object \
-      (builder, name))), (GDestroyNotify) gtk_widget_unref)
+    g_object_ref (GTK_WIDGET (gtk_builder_get_object \
+      (builder, name))), (GDestroyNotify) g_object_unref)
 
 /*
  * Public Functions.

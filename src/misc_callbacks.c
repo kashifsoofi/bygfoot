@@ -110,7 +110,7 @@ on_button_font_sel_ok_clicked          (GtkButton       *button,
 #endif
 
     gchar *font = 
-	gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(window.font_sel));
+	gtk_font_chooser_get_font(GTK_FONT_CHOOSER(window.font_sel));
 
     if(font != NULL)
     {
@@ -131,7 +131,7 @@ on_button_font_sel_apply_clicked       (GtkButton       *button,
 #endif
 
     gchar *font = 
-	gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(window.font_sel));
+	gtk_font_chooser_get_font(GTK_FONT_CHOOSER(window.font_sel));
 
     if(font != NULL)
     {
@@ -156,7 +156,7 @@ on_live_window_delete_event            (GtkWidget       *widget,
     printf("on_live_window_delete_event\n");
 #endif
 
-    if(GTK_WIDGET_IS_SENSITIVE(lookup_widget(widget, "button_live_close")))
+    if(gtk_widget_is_sensitive(lookup_widget(widget, "button_live_close")))
     {
 	on_button_live_close_clicked(NULL, NULL);
 	return FALSE;

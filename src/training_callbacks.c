@@ -65,8 +65,8 @@ on_b_ok_clicked                        (GtkButton       *button,
 
     GtkWidget *rb_camp1;
     GtkWidget *rb_camp2;
-    GtkHScale *hs_recreation;
-    GtkHScale *hs_training;
+    GtkScale *hs_recreation;
+    GtkScale *hs_training;
     gdouble value_training;
     gdouble value_recreation;
     gint number_camp;
@@ -88,8 +88,8 @@ on_b_ok_clicked                        (GtkButton       *button,
 	number_camp = TRAINING_CAMP_HOTEL_PREMIUM;
 	
     //Get values for training and recreation	
-    hs_recreation = GTK_HSCALE(lookup_widget(window.training_camp, "hs_recreation"));
-    hs_training = GTK_HSCALE(lookup_widget(window.training_camp, "hs_training"));
+    hs_recreation = GTK_SCALE(lookup_widget(window.training_camp, "hs_recreation"));
+    hs_training = GTK_SCALE(lookup_widget(window.training_camp, "hs_training"));
     value_training = gtk_range_get_value(GTK_RANGE(hs_training));
     value_recreation = gtk_range_get_value(GTK_RANGE(hs_recreation));
     
@@ -186,13 +186,13 @@ on_b_dec_recreation_clicked            (GtkButton       *button,
     printf("on_b_dec_recreation_clicked\n");
 #endif
 
-    GtkHScale *hs_camp_points;
-    GtkHScale *hs_recreation;
+    GtkScale *hs_camp_points;
+    GtkScale *hs_recreation;
     gdouble value_camp_points;
     gdouble value_recreation;
 		
-    hs_camp_points = GTK_HSCALE(lookup_widget(window.training_camp, "hs_camp_points"));
-    hs_recreation = GTK_HSCALE(lookup_widget(window.training_camp, "hs_recreation"));
+    hs_camp_points = GTK_SCALE(lookup_widget(window.training_camp, "hs_camp_points"));
+    hs_recreation = GTK_SCALE(lookup_widget(window.training_camp, "hs_recreation"));
     value_camp_points = gtk_range_get_value(GTK_RANGE(hs_camp_points));
     value_recreation = gtk_range_get_value(GTK_RANGE(hs_recreation));
 	
@@ -214,13 +214,13 @@ on_b_inc_recreation_clicked            (GtkButton       *button,
     printf("on_b_inc_recreation_clicked\n");
 #endif
 
-    GtkHScale *hs_camp_points;
-    GtkHScale *hs_recreation;
+    GtkScale *hs_camp_points;
+    GtkScale *hs_recreation;
     gdouble value_camp_points;
     gdouble value_recreation;
 		
-    hs_camp_points = GTK_HSCALE(lookup_widget(window.training_camp, "hs_camp_points"));
-    hs_recreation = GTK_HSCALE(lookup_widget(window.training_camp, "hs_recreation"));
+    hs_camp_points = GTK_SCALE(lookup_widget(window.training_camp, "hs_camp_points"));
+    hs_recreation = GTK_SCALE(lookup_widget(window.training_camp, "hs_recreation"));
     value_camp_points = gtk_range_get_value(GTK_RANGE(hs_camp_points));
     value_recreation = gtk_range_get_value(GTK_RANGE(hs_recreation));
 	
@@ -242,13 +242,13 @@ on_b_dec_training_clicked              (GtkButton       *button,
     printf("on_b_dec_training_clicked\n");
 #endif
 
-    GtkHScale *hs_camp_points;
-    GtkHScale *hs_training;
+    GtkScale *hs_camp_points;
+    GtkScale *hs_training;
     gdouble value_camp_points;
     gdouble value_training;
 		
-    hs_camp_points = GTK_HSCALE(lookup_widget(window.training_camp, "hs_camp_points"));
-    hs_training = GTK_HSCALE(lookup_widget(window.training_camp, "hs_training"));
+    hs_camp_points = GTK_SCALE(lookup_widget(window.training_camp, "hs_camp_points"));
+    hs_training = GTK_SCALE(lookup_widget(window.training_camp, "hs_training"));
     value_camp_points = gtk_range_get_value(GTK_RANGE(hs_camp_points));
     value_training = gtk_range_get_value(GTK_RANGE(hs_training));
 	
@@ -270,13 +270,13 @@ on_b_inc_training_clicked              (GtkButton       *button,
     printf("on_b_inc_training_clicked\n");
 #endif
 
-    GtkHScale *hs_camp_points;
-    GtkHScale *hs_training;
+    GtkScale *hs_camp_points;
+    GtkScale *hs_training;
     gdouble value_camp_points;
     gdouble value_training;
 		
-    hs_camp_points = GTK_HSCALE(lookup_widget(window.training_camp, "hs_camp_points"));
-    hs_training = GTK_HSCALE(lookup_widget(window.training_camp, "hs_training"));
+    hs_camp_points = GTK_SCALE(lookup_widget(window.training_camp, "hs_camp_points"));
+    hs_training = GTK_SCALE(lookup_widget(window.training_camp, "hs_training"));
     value_camp_points = gtk_range_get_value(GTK_RANGE(hs_camp_points));
     value_training = gtk_range_get_value(GTK_RANGE(hs_training));
 	
