@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 set(BYGFOOT_VERSION "2.3.4" CACHE STRING "Bygfoot version suffix")
@@ -145,11 +145,9 @@ target_compile_options(bygfoot PRIVATE
                    -DGSEAL_ENABLE
                    -fcommon)
 
-add_dependencies(bygfoot libbygfoot)
-
 # Link the target to the GTK+ libraries
 target_link_libraries (bygfoot ${GTK3_LIBRARIES} ${GLIB_LIBRARIES} m
-                               ${ZLIB_LIBRARIES} bf)
+                               ${ZLIB_LIBRARIES})
 
 install(TARGETS bygfoot RUNTIME DESTINATION bin)
 

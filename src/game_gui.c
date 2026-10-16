@@ -62,7 +62,7 @@ game_gui_live_game_show_unit(const LiveGameUnit *unit)
 	*button_live_close = lookup_widget(window.live, "button_live_close"),
 	*eventbox_poss[2] = {lookup_widget(window.live, "eventbox_poss0"),
 			     lookup_widget(window.live, "eventbox_poss1")};
-    GdkColor color;
+    GdkRGBA color;
 
     if(unit->event.type == LIVE_GAME_EVENT_START_MATCH)
 	treeview_live_game_show_initial_commentary(unit);
@@ -72,9 +72,9 @@ game_gui_live_game_show_unit(const LiveGameUnit *unit)
 
     treeview_live_game_show_result(unit);
 
-    gdk_color_parse (const_app("string_live_game_possession_color"), &color);
-    gtk_widget_modify_bg(eventbox_poss[unit->possession], GTK_STATE_NORMAL, &color);
-    gtk_widget_modify_bg(eventbox_poss[!unit->possession], GTK_STATE_NORMAL, NULL);
+    gdk_rgba_parse(&color, const_app("string_live_game_possession_color"));
+    gtk_widget_override_background_color(eventbox_poss[unit->possession], GTK_STATE_FLAG_NORMAL, &color);
+    gtk_widget_override_background_color(eventbox_poss[!unit->possession], GTK_STATE_FLAG_NORMAL, NULL);
 
     if(option_int("int_opt_user_show_tendency_bar",
 		  &usr(stat2).options))
@@ -127,20 +127,20 @@ game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkScale *hscale)
     printf("game_gui_live_game_set_hscale\n");
 #endif
 
-    GdkColor color;
+    GdkRGBA color;
 
-    gtk_widget_modify_bg(GTK_WIDGET(hscale), GTK_STATE_NORMAL, NULL);
+    gtk_widget_override_background_color(GTK_WIDGET(hscale), GTK_STATE_FLAG_NORMAL, NULL);
 
     if(unit->area == LIVE_GAME_UNIT_AREA_MIDFIELD)
     {
-	gdk_color_parse(const_app("string_game_gui_live_game_scale_color_midfield"), &color);
+	gdk_rgba_parse(&color, const_app("string_game_gui_live_game_scale_color_midfield"));
 	gtk_range_set_value(GTK_RANGE(hscale),
 			    const_float("float_game_gui_live_game_scale_range") / 2);
     }
     else if(unit->event.type == LIVE_GAME_EVENT_GOAL ||
 	    unit->event.type == LIVE_GAME_EVENT_OWN_GOAL)
     {
-	gdk_color_parse(const_app("string_game_gui_live_game_scale_color_goal"), &color);
+	gdk_rgba_parse(&color, const_app("string_game_gui_live_game_scale_color_goal"));
 
 	gtk_range_set_value(GTK_RANGE(hscale), 
 			    const_float("float_game_gui_live_game_scale_range") *
@@ -150,7 +150,7 @@ game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkScale *hscale)
 	    unit->event.type == LIVE_GAME_EVENT_PENALTY ||
 	    unit->event.type == LIVE_GAME_EVENT_FREE_KICK)
     {
-	gdk_color_parse(const_app("string_game_gui_live_game_scale_color_chance"), &color);
+	gdk_rgba_parse(&color, const_app("string_game_gui_live_game_scale_color_chance"));
 
 	gtk_range_set_value(GTK_RANGE(hscale), 
 			    const_float("float_game_gui_live_game_scale_range") / 2 +
@@ -162,10 +162,10 @@ game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkScale *hscale)
 	    unit->event.type == LIVE_GAME_EVENT_MISS ||
 	    unit->event.type == LIVE_GAME_EVENT_SAVE ||
 	    unit->event.type == LIVE_GAME_EVENT_CROSS_BAR)
-	gdk_color_parse(const_app("string_game_gui_live_game_scale_color_miss"), &color);
+	gdk_rgba_parse(&color, const_app("string_game_gui_live_game_scale_color_miss"));
     else if(unit->area == LIVE_GAME_UNIT_AREA_ATTACK)
     {
-	gdk_color_parse(const_app("string_game_gui_live_game_scale_color_attack"), &color);	
+	gdk_rgba_parse(&color, const_app("string_game_gui_live_game_scale_color_attack"));	
 	gtk_range_set_value(GTK_RANGE(hscale),
 			    const_float("float_game_gui_live_game_scale_range") / 2 +
 			    (const_float("float_game_gui_live_game_scale_range") * 
@@ -174,7 +174,7 @@ game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkScale *hscale)
     }
     else if(unit->area == LIVE_GAME_UNIT_AREA_DEFEND)
     {
-	gdk_color_parse(const_app("string_game_gui_live_game_scale_color_defend"), &color);
+	gdk_rgba_parse(&color, const_app("string_game_gui_live_game_scale_color_defend"));
 	gtk_range_set_value(GTK_RANGE(hscale),
 			    const_float("float_game_gui_live_game_scale_range") / 2 +
 			    (const_float("float_game_gui_live_game_scale_range") * 
@@ -184,7 +184,7 @@ game_gui_live_game_set_hscale(const LiveGameUnit *unit, GtkScale *hscale)
     else
 	debug_print_message("game_gui_live_game_set_hscale: don't know what to do!\n");
 
-    gtk_widget_modify_bg(GTK_WIDGET(hscale), GTK_STATE_NORMAL, &color);
+    gtk_widget_override_background_color(GTK_WIDGET(hscale), GTK_STATE_FLAG_NORMAL, &color);
 }
 
 /** Show the player list of the opposing team in the live game

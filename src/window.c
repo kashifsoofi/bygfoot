@@ -1103,18 +1103,18 @@ window_show_training_camp(void)
     gtk_widget_set_sensitive (GTK_WIDGET(hs_training), FALSE);
     gtk_widget_set_sensitive (GTK_WIDGET(hs_camp_points), FALSE);
     
-	GdkColor color;
-    //gtk_widget_modify_fg(GTK_WIDGET(hs_recreation), GTK_STATE_INSENSITIVE , NULL);
-    //gtk_widget_modify_fg(GTK_WIDGET(hs_training), GTK_STATE_INSENSITIVE , NULL);
-    //gtk_widget_modify_fg(GTK_WIDGET(hs_camp_points), GTK_STATE_INSENSITIVE , NULL);
-    //gtk_widget_modify_bg(GTK_WIDGET(hs_recreation), GTK_STATE_NORMAL, NULL);
-    gdk_color_parse("black", &color);
-    gtk_widget_modify_fg(GTK_WIDGET(hs_recreation), GTK_STATE_INSENSITIVE , &color);
-    gtk_widget_modify_fg(GTK_WIDGET(hs_training), GTK_STATE_INSENSITIVE , &color);
-    gtk_widget_modify_fg(GTK_WIDGET(hs_camp_points), GTK_STATE_INSENSITIVE , &color);
-    gtk_widget_modify_bg(GTK_WIDGET(hs_recreation), GTK_STATE_NORMAL, &color);
-    gtk_widget_modify_bg(GTK_WIDGET(hs_training), GTK_STATE_NORMAL, &color);
-    gtk_widget_modify_bg(GTK_WIDGET(hs_camp_points), GTK_STATE_NORMAL, &color);
+	GdkRGBA color;
+    //gtk_widget_override_color(GTK_WIDGET(hs_recreation), GTK_STATE_FLAG_INSENSITIVE , NULL);
+    //gtk_widget_override_color(GTK_WIDGET(hs_training), GTK_STATE_FLAG_INSENSITIVE , NULL);
+    //gtk_widget_override_color(GTK_WIDGET(hs_camp_points), GTK_STATE_FLAG_INSENSITIVE , NULL);
+    //gtk_widget_override_background_color(GTK_WIDGET(hs_recreation), GTK_STATE_FLAG_NORMAL, NULL);
+    gdk_rgba_parse(&color, "black");
+    gtk_widget_override_color(GTK_WIDGET(hs_recreation), GTK_STATE_FLAG_INSENSITIVE , &color);
+    gtk_widget_override_color(GTK_WIDGET(hs_training), GTK_STATE_FLAG_INSENSITIVE , &color);
+    gtk_widget_override_color(GTK_WIDGET(hs_camp_points), GTK_STATE_FLAG_INSENSITIVE , &color);
+    gtk_widget_override_background_color(GTK_WIDGET(hs_recreation), GTK_STATE_FLAG_NORMAL, &color);
+    gtk_widget_override_background_color(GTK_WIDGET(hs_training), GTK_STATE_FLAG_NORMAL, &color);
+    gtk_widget_override_background_color(GTK_WIDGET(hs_camp_points), GTK_STATE_FLAG_NORMAL, &color);
 }
 
 /** Create and set up the debt repayment window. */
